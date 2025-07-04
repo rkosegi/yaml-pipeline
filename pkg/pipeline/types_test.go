@@ -67,7 +67,7 @@ v: aaa
 v:
   ref: a.b.c
 `
-	d := b.Container()
+	d := dom.ContainerNode()
 	d.AddValueAt("a.b.c", dom.LeafNode("X"))
 	ts.V.Val = ""
 	err = yaml.Unmarshal([]byte(d2), &ts)
@@ -92,7 +92,7 @@ v: []`
 v:
   ref: a.b.c
 `
-	d = b.Container()
+	d = dom.ContainerNode()
 	d.AddValueAt("a.b.c", dom.ListNode(dom.LeafNode("X")))
 	ts.V.Val = ""
 	err = yaml.Unmarshal([]byte(d5), &ts)

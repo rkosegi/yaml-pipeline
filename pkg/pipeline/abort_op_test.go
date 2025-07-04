@@ -34,7 +34,7 @@ func TestAbortOpCloneWith(t *testing.T) {
 	eo := &AbortOp{
 		Message: "Unsupported format: {{ .Format }}",
 	}
-	d := b.Container()
+	d := dom.ContainerNode()
 	d.AddValue("Format", dom.LeafNode("toml"))
 	eo = eo.CloneWith(newMockActBuilder().data(d).build()).(*AbortOp)
 	assert.Equal(t, "Unsupported format: toml", eo.Message)
@@ -54,7 +54,7 @@ func TestAbortPipeline(t *testing.T) {
 			},
 		},
 	}
-	d := b.Container()
+	d := dom.ContainerNode()
 	d.AddValue("ENV", dom.LeafNode("prod"))
 	err = newTestExec(d).Execute(p)
 	assert.Error(t, err)

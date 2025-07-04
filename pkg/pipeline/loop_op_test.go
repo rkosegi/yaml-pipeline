@@ -19,6 +19,7 @@ package pipeline
 import (
 	"testing"
 
+	"github.com/rkosegi/yaml-toolkit/dom"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -75,7 +76,7 @@ func TestLoopOpSimple(t *testing.T) {
 		},
 	}
 
-	d := b.Container()
+	d := dom.ContainerNode()
 	ac := newMockActBuilder().data(d).build()
 	err := op.Do(ac)
 	assert.NoError(t, err)

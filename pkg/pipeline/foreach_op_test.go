@@ -73,7 +73,7 @@ func TestForeachStringItem(t *testing.T) {
 			},
 		},
 	}
-	d := b.Container()
+	d := dom.ContainerNode()
 	err := op.Do(newMockActBuilder().data(d).build())
 	assert.NoError(t, err)
 	assert.Equal(t, "abc", d.Lookup("a.X").AsLeaf().Value())
@@ -92,7 +92,7 @@ func TestForeachStringItemChildError(t *testing.T) {
 			},
 		},
 	}
-	d := b.Container()
+	d := dom.ContainerNode()
 	err := op.Do(newMockActBuilder().data(d).build())
 	assert.Error(t, err)
 }
@@ -190,7 +190,7 @@ func TestForeachGlob(t *testing.T) {
 			},
 		},
 	}
-	d := b.Container()
+	d := dom.ContainerNode()
 	err := op.Do(newMockActBuilder().data(d).build())
 	assert.NoError(t, err)
 	assert.Equal(t, 2, len(d.Lookup("import.files").AsContainer().Children()))
@@ -233,7 +233,7 @@ func TestForeachActionSpec(t *testing.T) {
 			},
 		},
 	}
-	d := b.Container()
+	d := dom.ContainerNode()
 	d.AddValue("X", dom.LeafNode(100))
 	err = op.Do(newMockActBuilder().data(d).build())
 	assert.NoError(t, err)
@@ -268,7 +268,7 @@ func TestForeachGlobInvalid(t *testing.T) {
 			},
 		},
 	}
-	d := b.Container()
+	d := dom.ContainerNode()
 	err := op.Do(newMockActBuilder().data(d).build())
 	assert.Error(t, err)
 }

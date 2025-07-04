@@ -33,7 +33,7 @@ func TestLogOpCloneWith(t *testing.T) {
 		Message: "Output format: {{ .Format }}",
 	}
 	assert.Contains(t, eo.String(), "Log[")
-	d := b.Container()
+	d := dom.ContainerNode()
 	d.AddValue("Format", dom.LeafNode("toml"))
 	eo = eo.CloneWith(newMockActBuilder().data(d).build()).(*LogOp)
 	assert.Equal(t, "Output format: toml", eo.Message)

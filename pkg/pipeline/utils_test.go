@@ -53,7 +53,7 @@ func strPointer(str string) *string {
 }
 
 func newMockActBuilder() *mockActCtxBuilder {
-	return &mockActCtxBuilder{d: b.Container()}
+	return &mockActCtxBuilder{d: dom.ContainerNode()}
 }
 
 type mockActCtxBuilder struct {

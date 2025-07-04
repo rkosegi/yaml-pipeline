@@ -31,7 +31,7 @@ func TestTemplateFileOp(t *testing.T) {
 		f   *os.File
 		tfo *TemplateFileOp
 	)
-	d := b.Container()
+	d := dom.ContainerNode()
 	ctx := newMockActBuilder().testLogger(t).data(d).build()
 	tfo = &TemplateFileOp{}
 	assert.Error(t, tfo.Do(ctx))

@@ -20,8 +20,8 @@ github.com/magiconair/properties v1.8.10 h1:s31yESBquKXCV9a/ScB3ESkOjUYYv+X0rg8S
 github.com/magiconair/properties v1.8.10/go.mod h1:Dhd985XPs7jluiymwWYZ0G4Z61jb3vdS329zhj2hYo0=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
-github.com/rkosegi/yaml-toolkit v1.0.65 h1:6njSvdfoEiMJBdLcOuD4TgFRkeYFmeYCf2DOeMnXszE=
-github.com/rkosegi/yaml-toolkit v1.0.65/go.mod h1:8/rgsOuwB7CwOwgVnAOJN/DvBHcg1nERK1917Hi8IhE=
+github.com/rkosegi/yaml-toolkit v1.0.66-0.20250703193006-67013e31cdfe h1:Y0+v+tQ/lA9Plr1WWgkezKlUEsgR4w0tZAHqWohycEc=
+github.com/rkosegi/yaml-toolkit v1.0.66-0.20250703193006-67013e31cdfe/go.mod h1:uAx1a7l8FBz+mnQdBJFeOijQcF/4Osa2fEzbvZczL6c=
 github.com/samber/lo v1.51.0 h1:kysRYLbHy/MB7kQZf5DSN50JHmMsNEdeY24VzJFu7wI=
 github.com/samber/lo v1.51.0/go.mod h1:4+MXEGsJzbKGaUEQFKBq2xtfuznW9oz/WrgyzMzRoM0=
 github.com/stretchr/testify v1.10.0 h1:Xv5erBjTwe/5IxqUQTdXv5kgmIvbHo3QQyRwhJsOfJA=
