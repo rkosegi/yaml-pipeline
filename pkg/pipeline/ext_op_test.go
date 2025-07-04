@@ -19,6 +19,7 @@ package pipeline
 import (
 	"testing"
 
+	"github.com/rkosegi/yaml-toolkit/dom"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -31,7 +32,7 @@ func (n *noopOp) CloneWith(_ ActionContext) Action { return &noopOp{} }
 
 func TestExtOpDo(t *testing.T) {
 	var ex *ExtOp
-	d := b.Container()
+	d := dom.ContainerNode()
 	ctx := newMockActBuilder().ext(map[string]ActionFactory{
 		"dummyfn": &dummyActFactory{
 			act: &SetOp{

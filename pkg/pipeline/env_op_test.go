@@ -43,7 +43,7 @@ func TestEnvOpDo(t *testing.T) {
 		Include: createRePtr(`MOCK\d+`),
 		Exclude: createRePtr("XYZ"),
 	}
-	d := b.Container()
+	d := dom.ContainerNode()
 	err := eo.Do(newMockActBuilder().data(d).build())
 	assert.NoError(t, err)
 	assert.Equal(t, "val1", d.Lookup("Sub.Env.MOCK1").AsLeaf().Value())
@@ -55,7 +55,7 @@ func TestEnvOpCloneWith(t *testing.T) {
 	eo := &EnvOp{
 		Path: "{{ .NewPath }}",
 	}
-	d := b.Container()
+	d := dom.ContainerNode()
 	d.AddValue("NewPath", dom.LeafNode("root"))
 	eo = eo.CloneWith(newMockActBuilder().data(d).build()).(*EnvOp)
 	assert.Equal(t, "root", eo.Path)

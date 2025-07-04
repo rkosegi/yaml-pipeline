@@ -73,7 +73,7 @@ func (e *ExportOp) Do(ctx ActionContext) (err error) {
 		enc    dom.EncoderFunc
 		defVal dom.Node
 	)
-	defVal = b.Container()
+	defVal = dom.ContainerNode()
 	d = ctx.Data()
 	if e.Path != nil {
 		d = ctx.Data().Lookup(e.Path.Resolve(ctx))

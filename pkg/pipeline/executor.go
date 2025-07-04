@@ -161,7 +161,7 @@ func WithServices(s map[string]Service) Opt {
 
 var defOpts = []Opt{
 	WithListener(&noopListener{}),
-	WithData(b.Container()),
+	WithData(dom.ContainerNode()),
 	WithTemplateEngine(te.DefaultTemplateEngine()),
 	WithExtActions(make(map[string]ActionFactory)),
 	WithServices(make(map[string]Service)),

@@ -30,7 +30,7 @@ func TestExecuteTemplateOp(t *testing.T) {
 		gd  dom.ContainerBuilder
 	)
 
-	gd = b.Container()
+	gd = dom.ContainerNode()
 	gd.AddValueAt("root.leaf1", dom.LeafNode(123456))
 	ts = TemplateOp{
 		Template: `{{ (mul .root.leaf1 2) | quote }}`,
@@ -76,7 +76,7 @@ func TestExecuteTemplateOpAsYaml(t *testing.T) {
 	)
 
 	// 1, render yaml source manually
-	gd = b.Container()
+	gd = dom.ContainerNode()
 	ts = TemplateOp{
 		Template: `
 items:
@@ -91,7 +91,7 @@ items:
 	assert.Equal(t, 3, gd.Lookup("Out.items").AsList().Size())
 
 	// 2, render using template function
-	gd = b.Container()
+	gd = dom.ContainerNode()
 	ts = TemplateOp{
 		Template: `
 items:
@@ -105,7 +105,7 @@ items:
 	assert.Equal(t, 3, len(gd.Lookup("Out.items").AsList().Items()[0].AsContainer().Children()))
 
 	// 3, render invalid
-	gd = b.Container()
+	gd = dom.ContainerNode()
 	ts = TemplateOp{
 		Template: `*** this is not a YAML ***`,
 		Path:     "Out",
@@ -129,7 +129,7 @@ func TestExecuteTemplateOpAsFloat64(t *testing.T) {
 		ts  *TemplateOp
 		err error
 	)
-	gd = b.Container()
+	gd = dom.ContainerNode()
 	ts = &TemplateOp{
 		Template: `{{ maxf 1.5 3 4.5 }}`,
 		Path:     "Out",
@@ -155,7 +155,7 @@ func TestExecuteTemplateOpAsInt64(t *testing.T) {
 		ts  *TemplateOp
 		err error
 	)
-	gd = b.Container()
+	gd = dom.ContainerNode()
 	ts = &TemplateOp{
 		Template: `{{ max 1 3 5 }}`,
 		Path:     "Out",

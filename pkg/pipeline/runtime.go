@@ -117,7 +117,7 @@ func (r *runtimeCtx) getRef(prefix string, name string) any {
 
 func newRuntimeCtx() *runtimeCtx {
 	rt := &runtimeCtx{
-		sys: b.Container(),
+		sys: dom.ContainerNode(),
 	}
 	return rt
 }

@@ -80,7 +80,7 @@ func TestExecute(t *testing.T) {
 		gd dom.ContainerBuilder
 		ex *exec
 	)
-	gd = b.Container()
+	gd = dom.ContainerNode()
 	ex = newTestExec(gd)
 	assert.NoError(t, ex.Execute(&ActionSpec{
 		ActionMeta: ActionMeta{
@@ -110,7 +110,7 @@ func TestExecute(t *testing.T) {
 	assert.Equal(t, "abcd", gd.Lookup("leaf").AsLeaf().Value())
 	assert.Equal(t, "abcd", gd.Lookup("sub1.sub2.leaf").AsLeaf().Value())
 
-	gd = b.Container()
+	gd = dom.ContainerNode()
 	ex = newTestExec(gd)
 	assert.NoError(t, ex.Execute(&ActionSpec{
 		ActionMeta: ActionMeta{
@@ -139,7 +139,7 @@ func TestExecuteImport(t *testing.T) {
 		gd dom.ContainerBuilder
 		ex *exec
 	)
-	gd = b.Container()
+	gd = dom.ContainerNode()
 	ex = newTestExec(gd)
 	assert.NoError(t, ex.Execute(&ActionSpec{
 		ActionMeta: ActionMeta{
@@ -161,7 +161,7 @@ func TestExecuteImportInvalid(t *testing.T) {
 		gd dom.ContainerBuilder
 		ex *exec
 	)
-	gd = b.Container()
+	gd = dom.ContainerNode()
 	ex = newTestExec(gd)
 	assert.Error(t, ex.Execute(&ActionSpec{
 		ActionMeta: ActionMeta{
@@ -178,7 +178,7 @@ func TestExecutePatch(t *testing.T) {
 		gd dom.ContainerBuilder
 		ex *exec
 	)
-	gd = b.Container()
+	gd = dom.ContainerNode()
 	ex = newTestExec(gd)
 	assert.NoError(t, ex.Execute(&ActionSpec{
 		ActionMeta: ActionMeta{
@@ -200,7 +200,7 @@ func TestExecuteInnerSteps(t *testing.T) {
 		gd dom.ContainerBuilder
 		ex *exec
 	)
-	gd = b.Container()
+	gd = dom.ContainerNode()
 	ex = newTestExec(gd)
 	assert.NoError(t, ex.Execute(&ActionSpec{
 		ActionMeta: ActionMeta{
@@ -296,7 +296,7 @@ func TestExecuteForEachFileGlob(t *testing.T) {
 		gd dom.ContainerBuilder
 		ex *exec
 	)
-	gd = b.Container()
+	gd = dom.ContainerNode()
 	ex = newTestExec(gd)
 	fe := &ForEachOp{
 		Glob: &ValOrRef{Val: "../../testdata/doc?.yaml"},
@@ -335,7 +335,7 @@ func (d *dummyService) Init() error                                        { ret
 func (d *dummyService) Close() error                                       { return nil }
 
 func TestServiceRefs(t *testing.T) {
-	e := newTestExec(b.Container())
+	e := newTestExec(dom.ContainerNode())
 	x := e.GetService("bad")
 	assert.Nil(t, x)
 	e.RegisterService("good", &dummyService{})
@@ -344,7 +344,7 @@ func TestServiceRefs(t *testing.T) {
 }
 
 func TestInvalidateSnapshot(t *testing.T) {
-	d := b.Container()
+	d := dom.ContainerNode()
 	d.AddValue("x", dom.LeafNode("X"))
 	ac := newMockActBuilder().data(d).build().(*clientCtx)
 	assert.False(t, ac.dirty)

@@ -42,7 +42,7 @@ func TestExportOpDo(t *testing.T) {
 		Format: OutputFormatJson,
 	}
 	assert.Contains(t, eo.String(), f.Name())
-	d := b.Container()
+	d := dom.ContainerNode()
 	d.AddValueAt("root.sub1.sub2", dom.LeafNode(123))
 	err = eo.Do(newMockActBuilder().data(d).build())
 	assert.NoError(t, err)
@@ -103,7 +103,7 @@ func TestExportOpCloneWith(t *testing.T) {
 		Path:   &ValOrRef{Val: "root.sub10.{{ .Sub }}"},
 		Format: "{{ .Format }}",
 	}
-	d := b.Container()
+	d := dom.ContainerNode()
 	d.AddValueAt("Format", dom.LeafNode("yaml"))
 	d.AddValueAt("Sub", dom.LeafNode("sub20"))
 	eo = eo.CloneWith(newMockActBuilder().data(d).build()).(*ExportOp)

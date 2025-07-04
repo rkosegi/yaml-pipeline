@@ -28,7 +28,7 @@ func TestExecuteImportOp(t *testing.T) {
 		is ImportOp
 		gd dom.ContainerBuilder
 	)
-	gd = b.Container()
+	gd = dom.ContainerNode()
 	is = ImportOp{
 		File: "../../testdata/doc1.json",
 		Path: "step1.data",
@@ -45,7 +45,7 @@ func TestExecuteImportOp(t *testing.T) {
 	}
 	assert.Error(t, New(WithData(gd)).Execute(&is))
 
-	gd = b.Container()
+	gd = dom.ContainerNode()
 	is = ImportOp{
 		File: "../../testdata/doc1.yaml",
 		Mode: ParseFileModeYaml,
@@ -54,7 +54,7 @@ func TestExecuteImportOp(t *testing.T) {
 	assert.NoError(t, New(WithData(gd)).Execute(&is))
 	assert.Equal(t, 456, gd.Lookup("step1.data.level1.level2a.level3b").AsLeaf().Value())
 
-	gd = b.Container()
+	gd = dom.ContainerNode()
 	is = ImportOp{
 		File: "../../testdata/doc1.yaml",
 		Mode: ParseFileModeText,
@@ -64,7 +64,7 @@ func TestExecuteImportOp(t *testing.T) {
 	assert.NotEmpty(t, gd.Lookup("step3").AsLeaf().Value())
 	assert.Contains(t, is.String(), "path=step3,mode=text")
 
-	gd = b.Container()
+	gd = dom.ContainerNode()
 	is = ImportOp{
 		File: "../../testdata/doc1.yaml",
 		Mode: ParseFileModeBinary,
@@ -73,7 +73,7 @@ func TestExecuteImportOp(t *testing.T) {
 	assert.NoError(t, New(WithData(gd)).Execute(&is))
 	assert.NotEmpty(t, gd.Lookup("files.doc1").AsLeaf().Value())
 
-	gd = b.Container()
+	gd = dom.ContainerNode()
 	is = ImportOp{
 		File: "../../testdata/doc1.json",
 		Path: "files.doc1_json",

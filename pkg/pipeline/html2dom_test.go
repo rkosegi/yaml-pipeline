@@ -29,7 +29,7 @@ func TestHtml2Dom(t *testing.T) {
 		doc1data []byte
 		err      error
 	)
-	d := b.Container()
+	d := dom.ContainerNode()
 	d.AddValue("html1", dom.LeafNode("<root />"))
 	doc1data, err = os.ReadFile("../../testdata/doc1.html")
 	d.AddValue("html2", dom.LeafNode(string(doc1data)))
@@ -76,7 +76,7 @@ func TestHtml2Dom(t *testing.T) {
 }
 
 func TestHtml2DomCloneWith(t *testing.T) {
-	d := b.Container()
+	d := dom.ContainerNode()
 	d.AddValueAt("Args.From", dom.LeafNode("from.here"))
 	d.AddValueAt("Args.To", dom.LeafNode("to.here"))
 	ctx := newMockActBuilder().data(d).testLogger(t).build()

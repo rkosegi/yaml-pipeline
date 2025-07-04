@@ -114,7 +114,7 @@ func (x *Html2DomOp) Do(ctx ActionContext) error {
 	if srcNode == nil {
 		return fmt.Errorf("cannot find node at %s", from)
 	}
-	cb := ctx.Factory().Container()
+	cb := dom.ContainerNode()
 	layoutFn(cb, srcNode)
 	ctx.Data().AddValueAt(to, cb)
 	ctx.InvalidateSnapshot()
@@ -124,7 +124,7 @@ func (x *Html2DomOp) Do(ctx ActionContext) error {
 func convertHtmlNode2Dom(cb dom.ContainerBuilder, node *html.Node) {
 	switch node.Type {
 	case html.ElementNode:
-		c := cf.Container()
+		c := dom.ContainerNode()
 		if existing := cb.Child(node.Data); existing != nil {
 			if existing.IsList() {
 				existing.(dom.ListBuilder).Append(c)
