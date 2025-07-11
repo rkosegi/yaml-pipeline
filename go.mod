@@ -22,7 +22,7 @@ require (
 	github.com/rkosegi/yaml-toolkit v1.0.66-0.20250709170142-11aedfe64743
 	github.com/samber/lo v1.51.0
 	github.com/stretchr/testify v1.10.0
-	golang.org/x/net v0.41.0
+	golang.org/x/net v0.42.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -34,5 +34,5 @@ require (
 	github.com/kr/pretty v0.2.1 // indirect
 	github.com/magiconair/properties v1.8.10 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	golang.org/x/text v0.26.0 // indirect
+	golang.org/x/text v0.27.0 // indirect
 )
