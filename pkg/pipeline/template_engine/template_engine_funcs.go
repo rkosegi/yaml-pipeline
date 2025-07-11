@@ -27,8 +27,8 @@ import (
 	"github.com/rkosegi/yaml-toolkit/common"
 	"github.com/rkosegi/yaml-toolkit/diff"
 	"github.com/rkosegi/yaml-toolkit/dom"
+	"github.com/rkosegi/yaml-toolkit/fluent"
 	"github.com/rkosegi/yaml-toolkit/props"
-	"github.com/rkosegi/yaml-toolkit/utils"
 )
 
 func tplFunc(tmpl *template.Template) func(string, interface{}) (string, error) {
@@ -46,7 +46,7 @@ func tplFunc(tmpl *template.Template) func(string, interface{}) (string, error) 
 
 func toYamlFunc(v interface{}) (string, error) {
 	var buf strings.Builder
-	err := utils.NewYamlEncoder(&buf).Encode(v)
+	err := common.NewYamlEncoder(&buf).Encode(v)
 	return strings.TrimSuffix(buf.String(), "\n"), err
 }
 
@@ -65,7 +65,7 @@ func isEmptyFunc(v interface{}) bool {
 
 // un-flatten map
 func unflattenFunc(v map[string]interface{}) map[string]interface{} {
-	return utils.Unflatten(v)
+	return common.Unflatten(v)
 }
 
 // fileExistsFunc checks if files exists.
@@ -94,7 +94,7 @@ func globFunc(pattern string) ([]string, error) {
 func mergeFilesFunc(files []string) (dom.Container, error) {
 	ds := analytics.NewDocumentSet()
 	for _, f := range files {
-		err := ds.AddDocumentFromFile(f, common.DefaultFileDecoderProvider(f))
+		err := ds.AddDocumentFromFile(f, fluent.DefaultFileDecoderProvider(f))
 		if err != nil {
 			return nil, err
 		}

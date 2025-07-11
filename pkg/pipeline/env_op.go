@@ -24,7 +24,6 @@ import (
 
 	"github.com/rkosegi/yaml-toolkit/common"
 	"github.com/rkosegi/yaml-toolkit/dom"
-	"github.com/rkosegi/yaml-toolkit/utils"
 )
 
 // for mock purposes only. this could be used to override os.Environ() to arbitrary func
@@ -62,7 +61,7 @@ func (eo *EnvOp) Do(ctx ActionContext) error {
 	for _, env := range envGetter() {
 		parts := strings.SplitN(env, "=", 2)
 		if inclFn(parts[0]) && !exclFn(parts[0]) {
-			k := utils.ToPath(eo.Path, fmt.Sprintf("Env.%s", parts[0]))
+			k := common.ToPath(eo.Path, fmt.Sprintf("Env.%s", parts[0]))
 			ctx.Data().AddValueAt(k, dom.LeafNode(parts[1]))
 		}
 	}
