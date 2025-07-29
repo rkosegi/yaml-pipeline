@@ -19,7 +19,7 @@ go 1.24.2
 require (
 	github.com/antchfx/htmlquery v1.3.4
 	github.com/go-task/slim-sprig/v3 v3.0.0
-	github.com/rkosegi/yaml-toolkit v1.0.66-0.20250724203231-b9377a7d528d
+	github.com/rkosegi/yaml-toolkit v1.0.66
 	github.com/samber/lo v1.51.0
 	github.com/stretchr/testify v1.10.0
 	golang.org/x/net v0.42.0
