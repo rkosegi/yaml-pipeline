@@ -43,7 +43,7 @@ type TemplateOp struct {
 	// template to render
 	Template string `yaml:"template"`
 	// path within global data tree where to set result at
-	Path string `yaml:"path" clone:"template"`
+	Path *ValOrRef `yaml:"path" clone:"template"`
 	// How to treat rendered text after template engine completes successfully.
 	// It's responsibility of template to produce source that is parseable by chosen mode
 	ParseAs *ParseTextAs `yaml:"parseAs,omitempty" clone:"text"`
@@ -59,7 +59,11 @@ func (ts *TemplateOp) Do(ctx ActionContext) error {
 	if len(ts.Template) == 0 {
 		return ErrTemplateEmpty
 	}
-	if len(ts.Path) == 0 {
+	if ts.Path == nil {
+		return ErrPathEmpty
+	}
+	p := ts.Path.Resolve(ctx)
+	if len(p) == 0 {
 		return ErrPathEmpty
 	}
 	ss := ctx.Snapshot()
@@ -100,7 +104,7 @@ func (ts *TemplateOp) Do(ctx ActionContext) error {
 	default:
 		return fmt.Errorf("unknown ParseAs mode: %v", *ts.ParseAs)
 	}
-	ctx.Data().AddValueAt(ctx.TemplateEngine().RenderLenient(ts.Path, ss), node)
+	ctx.Data().AddValueAt(p, node)
 	ctx.InvalidateSnapshot()
 	return err
 }
@@ -109,6 +113,6 @@ func (ts *TemplateOp) CloneWith(ctx ActionContext) Action {
 	return &TemplateOp{
 		Template: ts.Template,
 		Trim:     ts.Trim,
-		Path:     ctx.TemplateEngine().RenderLenient(ts.Path, ctx.Snapshot()),
+		Path:     safeCloneValOrRef(ts.Path, ctx),
 	}
 }

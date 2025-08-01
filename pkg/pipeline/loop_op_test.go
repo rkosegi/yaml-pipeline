@@ -70,7 +70,7 @@ func TestLoopOpSimple(t *testing.T) {
 			Operations: OpSpec{
 				Template: &TemplateOp{
 					Template: "{{ add .i  1 }}",
-					Path:     "i",
+					Path:     &ValOrRef{Val: "i"},
 				},
 			},
 		},
