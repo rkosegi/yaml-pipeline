@@ -34,7 +34,7 @@ func TestExecuteTemplateOp(t *testing.T) {
 	gd.AddValueAt("root.leaf1", dom.LeafNode(123456))
 	ts = TemplateOp{
 		Template: `{{ (mul .root.leaf1 2) | quote }}`,
-		Path:     "result.x1",
+		Path:     &ValOrRef{Val: "result.x1"},
 		Trim:     ptr(true),
 	}
 	assert.NoError(t, New(WithData(gd)).Execute(&ts))
@@ -55,15 +55,24 @@ func TestExecuteTemplateOp(t *testing.T) {
 	assert.Error(t, err)
 	assert.Equal(t, ErrPathEmpty, err)
 
+	// empty path error (other form)
+	ts = TemplateOp{
+		Template: `TEST`,
+		Path:     &ValOrRef{Ref: "a.b.c.d"},
+	}
+	err = New(WithData(gd)).Execute(&ts)
+	assert.Error(t, err)
+	assert.Equal(t, ErrPathEmpty, err)
+
 	ts = TemplateOp{
 		Template: `{{}}{{`,
-		Path:     "result",
+		Path:     &ValOrRef{Val: "result"},
 	}
 	assert.Error(t, New(WithData(gd)).Execute(&ts))
 
 	ts = TemplateOp{
 		Template: `{{ invalid_func }}`,
-		Path:     "result",
+		Path:     &ValOrRef{Val: "result"},
 	}
 	assert.Error(t, New(WithData(gd)).Execute(&ts))
 }
@@ -83,7 +92,7 @@ items:
 {{- range (split "," "a,b,c") }}
 {{ printf "- %s" . }}
 {{- end }}`,
-		Path:    "Out",
+		Path:    &ValOrRef{Val: "Out"},
 		ParseAs: ptr(ParseTextAsYaml),
 	}
 	err = New(WithData(gd)).Execute(&ts)
@@ -97,7 +106,7 @@ items:
 items:
 {{ (split "," "a,b,c") | list | toYaml }}
 `,
-		Path:    "Out",
+		Path:    &ValOrRef{Val: "Out"},
 		ParseAs: ptr(ParseTextAsYaml),
 	}
 	err = New(WithData(gd)).Execute(&ts)
@@ -108,7 +117,7 @@ items:
 	gd = dom.ContainerNode()
 	ts = TemplateOp{
 		Template: `*** this is not a YAML ***`,
-		Path:     "Out",
+		Path:     &ValOrRef{Val: "Out"},
 		ParseAs:  ptr(ParseTextAsYaml),
 	}
 	err = New(WithData(gd)).Execute(&ts)
@@ -118,7 +127,7 @@ items:
 func TestExecuteTemplateOpAsInvalid(t *testing.T) {
 	assert.Error(t, New().Execute(&TemplateOp{
 		Template: `---\nOla: Hi`,
-		Path:     "Out",
+		Path:     &ValOrRef{Val: "Out"},
 		ParseAs:  ptr(ParseTextAs("invalid")),
 	}))
 }
@@ -132,7 +141,7 @@ func TestExecuteTemplateOpAsFloat64(t *testing.T) {
 	gd = dom.ContainerNode()
 	ts = &TemplateOp{
 		Template: `{{ maxf 1.5 3 4.5 }}`,
-		Path:     "Out",
+		Path:     &ValOrRef{Val: "Out"},
 		ParseAs:  ptr(ParseTextAsFloat64),
 	}
 	err = New(WithData(gd)).Execute(ts)
@@ -142,7 +151,7 @@ func TestExecuteTemplateOpAsFloat64(t *testing.T) {
 	gd.AddValueAt("X", dom.LeafNode("Ou"))
 	ts = &TemplateOp{
 		Template: `XYZ`,
-		Path:     "Out",
+		Path:     &ValOrRef{Val: "Out"},
 		ParseAs:  ptr(ParseTextAsFloat64),
 	}
 	err = New(WithData(gd)).Execute(ts)
@@ -158,7 +167,7 @@ func TestExecuteTemplateOpAsInt64(t *testing.T) {
 	gd = dom.ContainerNode()
 	ts = &TemplateOp{
 		Template: `{{ max 1 3 5 }}`,
-		Path:     "Out",
+		Path:     &ValOrRef{Val: "Out"},
 		ParseAs:  ptr(ParseTextAsInt64),
 	}
 	err = New(WithData(gd)).Execute(ts)
@@ -168,7 +177,7 @@ func TestExecuteTemplateOpAsInt64(t *testing.T) {
 	gd.AddValueAt("X", dom.LeafNode("Ou"))
 	ts = &TemplateOp{
 		Template: `XYZ`,
-		Path:     "Out",
+		Path:     &ValOrRef{Val: "Out"},
 		ParseAs:  ptr(ParseTextAsInt64),
 	}
 	err = New(WithData(gd)).Execute(ts)

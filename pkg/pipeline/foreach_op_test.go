@@ -165,7 +165,7 @@ func TestForeachQuery(t *testing.T) {
 				Operations: OpSpec{
 					Template: &TemplateOp{
 						Template: tc.tmpl,
-						Path:     tc.path,
+						Path:     &ValOrRef{Val: tc.path},
 					},
 				},
 			},
@@ -225,7 +225,7 @@ func TestForeachActionSpec(t *testing.T) {
 				"sub": {
 					Operations: OpSpec{
 						Template: &TemplateOp{
-							Path:     "X",
+							Path:     &ValOrRef{Val: "X"},
 							Template: "{{ add .X 1 }}",
 						},
 					},

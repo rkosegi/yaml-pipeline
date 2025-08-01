@@ -40,7 +40,7 @@ func TestOpSpecCloneWith(t *testing.T) {
 			},
 		},
 		Template: &TemplateOp{
-			Path: "{{ .Path }}",
+			Path: &ValOrRef{Val: "{{ .Path }}"},
 		},
 		TemplateFile: &TemplateFileOp{
 			File:   "{{ .Path }}",
@@ -102,7 +102,7 @@ func TestOpSpecCloneWith(t *testing.T) {
 	assert.Equal(t, "root.sub2", a.Set.Path)
 	assert.Equal(t, "root.sub2", a.Import.Path)
 	assert.Equal(t, "/root/sub3", a.Patch.Path)
-	assert.Equal(t, "root.sub2", a.Template.Path)
+	assert.Equal(t, "root.sub2", a.Template.Path.Val)
 	assert.Equal(t, "root.sub2", a.Export.Path.Val)
 	assert.Equal(t, "root.sub2", a.Env.Path)
 	assert.Equal(t, "/bin/bash", a.Exec.Program)
