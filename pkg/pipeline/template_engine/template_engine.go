@@ -26,19 +26,20 @@ import (
 )
 
 var defFuncs = template.FuncMap{
-	"toYaml":         toYamlFunc,
-	"isEmpty":        isEmptyFunc,
-	"unflatten":      unflattenFunc,
-	"fileExists":     fileExistsFunc,
-	"mergeFiles":     mergeFilesFunc,
-	"isDir":          isDirFunc,
-	"glob":           globFunc,
-	"dom2yaml":       dom2yamlFunc,
-	"dom2json":       dom2jsonFunc,
-	"dom2properties": dom2propertiesFunc,
-	"domdiff":        domDiffFunc,
-	"urlParseQuery":  urlParseQuery,
-	"fileGlob":       fileGlobFunc,
+	"toYaml":            toYamlFunc,
+	"isEmpty":           isEmptyFunc,
+	"unflatten":         unflattenFunc,
+	"fileExists":        fileExistsFunc,
+	"mergeFiles":        mergeFilesFunc,
+	"isDir":             isDirFunc,
+	"glob":              globFunc,
+	"dom2yaml":          dom2yamlFunc,
+	"dom2json":          dom2jsonFunc,
+	"dom2properties":    dom2propertiesFunc,
+	"domdiff":           domDiffFunc,
+	"urlParseQuery":     urlParseQuery,
+	"regexNamedExtract": regexNamedExtractFunc,
+	"fileGlob":          fileGlobFunc,
 }
 
 type templateEngine struct {

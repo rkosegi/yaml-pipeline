@@ -339,6 +339,28 @@ func TestTemplateFuncFileGlob(t *testing.T) {
 	assert.Equal(t, 0, len(files))
 }
 
+func TestTemplateFuncRegexNamedExtract(t *testing.T) {
+	var (
+		res map[string]string
+		err error
+	)
+	re := `^(?P<package>[\S]+)-(?P<version>[\d\.]+)-(?P<rev>r\d+)$`
+	res, err = regexNamedExtractFunc(re, "libcrypto3-3.3.2-r4")
+	assert.NoError(t, err)
+	assert.Len(t, res, 3)
+	assert.Equal(t, "libcrypto3", res["package"])
+	assert.Equal(t, "3.3.2", res["version"])
+	assert.Equal(t, "r4", res["rev"])
+
+	res, err = regexNamedExtractFunc(re, "\\")
+	assert.NoError(t, err)
+	assert.Nil(t, res)
+
+	_, err = regexNamedExtractFunc(`\d\`, "")
+	assert.Error(t, err)
+
+}
+
 func TestBoolExpressionEval(t *testing.T) {
 	var (
 		val bool

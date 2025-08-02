@@ -20,6 +20,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"text/template"
 
@@ -137,4 +138,26 @@ func urlParseQuery(qry string) (url.Values, error) {
 // fileGlobFunc just delegates call to filepath.Glob
 func fileGlobFunc(pattern string) ([]string, error) {
 	return filepath.Glob(pattern)
+}
+
+func regexNamedExtractFunc(pattern string, str string) (map[string]string, error) {
+	var (
+		re      *regexp.Regexp
+		err     error
+		res     map[string]string
+		matches []string
+	)
+	if re, err = regexp.Compile(pattern); err != nil {
+		return nil, err
+	}
+	if matches = re.FindStringSubmatch(str); matches == nil {
+		return nil, nil
+	}
+	res = make(map[string]string)
+	for i, nm := range re.SubexpNames() {
+		if i > 0 && nm != "" {
+			res[nm] = matches[i]
+		}
+	}
+	return res, nil
 }
