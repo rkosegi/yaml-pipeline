@@ -130,6 +130,21 @@ func domDiffFunc(left, right dom.Node) ([]diff.Modification, error) {
 	return []diff.Modification{}, nil
 }
 
+// diffTreeFunc computes difference between 2 container nodes.
+// Both of nodes must be of dom.Container type, otherwise result is empty slice
+func diffTreeFunc(v1, v2 interface{}) ([]diff.Modification, error) {
+	var (
+		c1, c2 dom.Node
+	)
+	if c1 = dom.DecodeAnyToNode(v1); !c1.IsContainer() {
+		return nil, nil
+	}
+	if c2 = dom.DecodeAnyToNode(v2); !c2.IsContainer() {
+		return nil, nil
+	}
+	return *diff.Diff(c1.AsContainer(), c2.AsContainer()), nil
+}
+
 // urlParseQuery just delegates call to url.ParseQuery
 func urlParseQuery(qry string) (url.Values, error) {
 	return url.ParseQuery(qry)

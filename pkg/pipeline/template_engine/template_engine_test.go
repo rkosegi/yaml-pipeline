@@ -23,6 +23,7 @@ import (
 
 	sprig "github.com/go-task/slim-sprig/v3"
 	"github.com/rkosegi/yaml-toolkit/dom"
+	"github.com/rkosegi/yaml-toolkit/props"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -279,7 +280,16 @@ func TestTemplateFuncDom2Yaml(t *testing.T) {
 	removeFilesLater(t, f1, f2)
 }
 
+func domToAnyAt(d dom.Container, p string) any {
+	if x := d.Lookup(p); x == nil {
+		return nil
+	} else {
+		return x.AsAny()
+	}
+}
+
 func TestTemplateFuncDomDiff(t *testing.T) {
+	pp := props.NewPathParser()
 	d := b.FromMap(map[string]interface{}{
 		"a": map[string]interface{}{
 			"b": map[string]interface{}{
@@ -306,8 +316,18 @@ func TestTemplateFuncDomDiff(t *testing.T) {
 			rightPath: "a.d.x.z",
 			diffLen:   0,
 		},
+		{
+			leftPath:  "c.b",
+			rightPath: "a",
+			diffLen:   0,
+		},
 	} {
-		x, err := domDiffFunc(d.Lookup(testcase.leftPath), d.Lookup(testcase.rightPath))
+		t.Logf("left path=%s right path=%s", testcase.leftPath, testcase.rightPath)
+		x, err := diffTreeFunc(domToAnyAt(d, testcase.leftPath), domToAnyAt(d, testcase.rightPath))
+		assert.NoError(t, err)
+		assert.Equal(t, testcase.diffLen, len(x))
+
+		x, err = domDiffFunc(d.Get(pp.MustParse(testcase.leftPath)), d.Get(pp.MustParse(testcase.rightPath)))
 		assert.NoError(t, err)
 		assert.Equal(t, testcase.diffLen, len(x))
 	}

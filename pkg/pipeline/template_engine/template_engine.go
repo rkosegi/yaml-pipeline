@@ -40,6 +40,7 @@ var defFuncs = template.FuncMap{
 	"urlParseQuery":     urlParseQuery,
 	"regexNamedExtract": regexNamedExtractFunc,
 	"fileGlob":          fileGlobFunc,
+	"diffTree":          diffTreeFunc,
 }
 
 type templateEngine struct {
