@@ -45,4 +45,4 @@ component/pipeline:
 component/cli:
   - changed-files:
       - any-glob-to-any-file:
-          - pkg/cli/*
+          - pkg/cmd/*
