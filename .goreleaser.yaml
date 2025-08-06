@@ -14,10 +14,17 @@
 ---
 version: 2
 project_name: yaml-pipeline
+changelog:
+  use: github-native
 release:
   github: {}
+before:
+  hooks:
+    - go mod tidy
 builds:
   - id: yp
+    env:
+      - CGO_ENABLED=0
     targets:
       - linux_amd64_v1
       - linux_arm64
@@ -28,3 +35,12 @@ builds:
     dir: pkg/cmd/pipeline
     main: main.go
     binary: yp
+    flags:
+      - -trimpath
+    ldflags:
+      - -s -w
+      - -X github.com/rkosegi/yaml-pipeline/pkg/version.BuildDate={{ .Date }}
+      - -X github.com/rkosegi/yaml-pipeline/pkg/version.Version={{ .Version }}
+      - -X github.com/rkosegi/yaml-pipeline/pkg/version.Revision={{ .ShortCommit }}
+      - -X github.com/rkosegi/yaml-pipeline/pkg/version.Branch={{ .Branch }}
+      - -X github.com/rkosegi/yaml-pipeline/pkg/version.Tag={{ .Tag }}

@@ -24,6 +24,7 @@ import (
 	"strings"
 
 	"github.com/rkosegi/yaml-pipeline/pkg/cmd/pipeline/internal"
+	"github.com/rkosegi/yaml-pipeline/pkg/cmd/pipeline/version"
 	ytp "github.com/rkosegi/yaml-pipeline/pkg/pipeline"
 	"github.com/rkosegi/yaml-toolkit/dom"
 	"github.com/spf13/cobra"
@@ -128,7 +129,8 @@ func runCmd() *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Short: "Runs a pipeline from a file",
+		Short:   "Runs a pipeline from a file",
+		Version: version.Get(),
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			d.logger = d.sc.Logger()
 			if len(d.file) == 0 {
