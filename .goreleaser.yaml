@@ -32,7 +32,7 @@ builds:
       - darwin_arm64
       - windows_amd64_v1
       - windows_arm64
-    dir: pkg/cmd/pipeline
+    dir: pkg/cmd/cli
     main: main.go
     binary: yp
     flags:

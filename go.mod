@@ -21,7 +21,6 @@ require (
 	github.com/go-task/slim-sprig/v3 v3.0.0
 	github.com/gookit/color v1.5.4
 	github.com/kaptinlin/jsonschema v0.4.6
-	github.com/magiconair/properties v1.8.10
 	github.com/rkosegi/slog-config v0.0.0-20250720232421-a7890a122727
 	github.com/rkosegi/yaml-toolkit v1.0.67-0.20250802061906-849881e3e95e
 	github.com/samber/lo v1.51.0
@@ -44,6 +43,7 @@ require (
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/kaptinlin/go-i18n v0.1.4 // indirect
 	github.com/kr/pretty v0.3.1 // indirect
+	github.com/magiconair/properties v1.8.10 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/prometheus/common v0.65.0 // indirect
 	github.com/spf13/pflag v1.0.6 // indirect
