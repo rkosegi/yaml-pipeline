@@ -211,6 +211,30 @@
       ],
       "type": "object"
     },
+    "html2domSpec": {
+      "properties": {
+        "from": {
+          "description": "path within the global data to the leaf node where XML source is stored as string",
+          "type": "string"
+        },
+        "layout": {
+          "description": "layout defines how HTML data are put into DOM",
+          "type": "string"
+        },
+        "query": {
+          "description": "optional xpath expression to use to extract subset from source XML document",
+          "type": "string"
+        },
+        "to": {
+          "description": "destination where to put converted document as dom.Container",
+          "type": "string"
+        }
+      },
+      "required": [
+        "from",
+        "to"
+      ]
+    },
     "importOpSpec": {
       "properties": {
         "file": {
