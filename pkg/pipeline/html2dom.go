@@ -105,9 +105,10 @@ func (x *Html2DomOp) Do(ctx ActionContext) error {
 	_, _ = buff.WriteString(htmlData)
 	// TODO: how can parse return an error?
 	srcNode, _ = htmlquery.Parse(&buff)
-	if len(qry) != 0 {
-		srcNode, err = htmlquery.Query(srcNode, qry)
+	if len(qry) == 0 {
+		qry = "//html"
 	}
+	srcNode, err = htmlquery.Query(srcNode, qry)
 	if err != nil {
 		return err
 	}
