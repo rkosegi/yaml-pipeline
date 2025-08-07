@@ -37,14 +37,14 @@ repos:
     rev: v1.37.1
     hooks:
       - id: yamllint
-        files: testdata/.*\.yaml
+        files: testdata/.*\.yaml|docs/.*\.yaml
         args:
           - -c=.yamllint-config.yaml
   - repo: https://github.com/santhosh-tekuri/jsonschema
     rev: v6.0.2
     hooks:
       - id: jsonschema-validate
-        files: testdata/pipeline.*\.yaml
+        files: testdata/pipeline.*\.yaml|docs/.*\.yaml
         args:
           - schemas/pipeline.json
   - repo: https://github.com/gitleaks/gitleaks

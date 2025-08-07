@@ -15,3 +15,5 @@
 
 
 It's like scripting, but described in YAML.
+
+Check [examples](docs/examples.md) for more info.

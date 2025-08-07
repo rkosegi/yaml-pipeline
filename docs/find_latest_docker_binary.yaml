@@ -1,0 +1,77 @@
+#  Copyright 2025 Richard Kosegi
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#  http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+---
+# this pipeline finds latest docker binary for download.
+# It needs local directory ".private", where is stores temp data.
+vars:
+  indexUrl: https://download.docker.com/linux/static/stable/x86_64/
+  pattern: docker-(?P<version>\d+\.\d+\.\d+)\.tgz
+  debug: "false"
+steps:
+  100-download-index-if-not-present:
+    order: 100
+    exec:
+      program: curl
+      args:
+        - -o
+        - .private/download.docker.com_index.html
+        - -sSLf
+        - '{{ .vars.indexUrl }}'
+      stdout: .private/100-curl_stdout.txt
+      stderr: .private/100-curl_stderr.txt
+    when: |
+      {{ not (fileExists ".private/download.docker.com_index.html") }}
+  200-load-index:
+    order: 200
+    import:
+      file: .private/download.docker.com_index.html
+      path: input.html
+      mode: text
+  210-parse-index-html:
+    order: 210
+    html2dom:
+      from: input.html
+      to: input.yaml
+      query: //pre
+  220-parse-input-yaml:
+    order: 220
+    template:
+      template: |
+        {{- $found := "" }}
+        {{- range .input.yaml.pre.a }}
+        {{-   $matches := regexNamedExtract $.vars.pattern .Value }}
+        {{-   if (len $matches) }}
+        {{-     $found = index $matches "version" }}
+        {{-   end }}
+        {{- end }}
+        {{ $found }}
+      path: output
+      trim: true
+  225-fail-if-not-found:
+    order: 225
+    abort:
+      message: Can't find the version
+    when: |
+      {{ not (len .output) }}
+  230-print-result:
+    order: 230
+    log:
+      message: Latest version of docker binary is {{ .output }}
+  999-dump-results:
+    order: 999
+    export:
+      file: .private/out.yaml
+      format: yaml
+    when: |
+      {{ eq .vars.debug "true" }}
