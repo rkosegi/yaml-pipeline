@@ -86,11 +86,6 @@ func isDirFunc(path string) bool {
 	return fi.IsDir()
 }
 
-// globFunc exposes filepath.Glob
-func globFunc(pattern string) ([]string, error) {
-	return filepath.Glob(pattern)
-}
-
 // mergeFilesFunc merges 0 or more files into dom.Container
 func mergeFilesFunc(files []string) (dom.Container, error) {
 	ds := analytics.NewDocumentSet()
@@ -150,8 +145,8 @@ func urlParseQuery(qry string) (url.Values, error) {
 	return url.ParseQuery(qry)
 }
 
-// fileGlobFunc just delegates call to filepath.Glob
-func fileGlobFunc(pattern string) ([]string, error) {
+// globFunc exposes filepath.Glob
+func globFunc(pattern string) ([]string, error) {
 	return filepath.Glob(pattern)
 }
 

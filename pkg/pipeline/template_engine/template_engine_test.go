@@ -229,13 +229,27 @@ func TestTemplateFuncIsDir(t *testing.T) {
 }
 
 func TestTemplateFuncGlob(t *testing.T) {
-	d, err := os.MkdirTemp("", "yt*")
+	var (
+		files []string
+		err   error
+		d     string
+	)
+	d, err = os.MkdirTemp("", "yt*")
 	assert.NoError(t, err)
 	assert.NoError(t, os.WriteFile(d+"/1.yaml", []byte{}, 0o664))
 	removeDirsLater(t, d)
-	files, err := globFunc(d + "/*.yaml")
+
+	files, err = globFunc(d + "/*.yaml")
 	assert.NoError(t, err)
 	assert.Equal(t, 1, len(files))
+
+	files, err = globFunc("../../../testdata")
+	assert.NoError(t, err)
+	assert.True(t, len(files) > 0)
+
+	files, err = globFunc("../../non-existent")
+	assert.NoError(t, err)
+	assert.Equal(t, 0, len(files))
 }
 
 func TestTemplateFuncDom2Yaml(t *testing.T) {
@@ -343,20 +357,6 @@ func TestTemplateFuncUrlParseQuery(t *testing.T) {
 	assert.Equal(t, 2, len(uv["b[]"]))
 	_, err = urlParseQuery(":invalid;./,/<>")
 	assert.Error(t, err)
-}
-
-func TestTemplateFuncFileGlob(t *testing.T) {
-	var (
-		files []string
-		err   error
-	)
-	files, err = fileGlobFunc("../../../testdata")
-	assert.NoError(t, err)
-	assert.True(t, len(files) > 0)
-
-	files, err = fileGlobFunc("../../non-existent")
-	assert.NoError(t, err)
-	assert.Equal(t, 0, len(files))
 }
 
 func TestTemplateFuncRegexNamedExtract(t *testing.T) {

@@ -39,7 +39,6 @@ var defFuncs = template.FuncMap{
 	"domdiff":           domDiffFunc,
 	"urlParseQuery":     urlParseQuery,
 	"regexNamedExtract": regexNamedExtractFunc,
-	"fileGlob":          fileGlobFunc,
 	"diffTree":          diffTreeFunc,
 }
 
