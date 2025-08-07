@@ -115,6 +115,7 @@ func run(d *data) error {
 		return err
 	}
 	gd := dom.ContainerNode()
+	internal.ApplyVarsToDom(d.pp.Vars, "vars", gd)
 	internal.ApplyValues(gd, d.vals)
 	return ytp.New(
 		ytp.WithData(gd),

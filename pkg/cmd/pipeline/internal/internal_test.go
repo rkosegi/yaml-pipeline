@@ -35,6 +35,19 @@ func TestApplyValues(t *testing.T) {
 		AsLeaf().Value())
 }
 
+func TestApplyVarsToDom(t *testing.T) {
+	gd := dom.ContainerNode()
+	ApplyVarsToDom(map[string]interface{}{
+		"x": 1,
+		"y": "AAAA",
+	}, "myvars", gd)
+	assert.Equal(t, 1, gd.Child("myvars").AsContainer().Child("x").AsLeaf().Value())
+	assert.Equal(t, "AAAA", gd.Child("myvars").AsContainer().Child("y").AsLeaf().Value())
+
+	// should not panic due to nil for map
+	ApplyVarsToDom(nil, "anything", gd)
+}
+
 func TestGetLogTag(t *testing.T) {
 	var (
 		tag   string

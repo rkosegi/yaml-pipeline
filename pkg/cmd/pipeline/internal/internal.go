@@ -26,9 +26,25 @@ import (
 	"github.com/rkosegi/yaml-pipeline/schemas"
 	"github.com/rkosegi/yaml-toolkit/dom"
 	"github.com/rkosegi/yaml-toolkit/fluent"
+	"github.com/rkosegi/yaml-toolkit/path"
+	"github.com/rkosegi/yaml-toolkit/props"
 	"github.com/xlab/treeprint"
 )
 
+var pp = props.NewPathParser()
+
+// ApplyVarsToDom takes map of key-to-any and puts them into DOM container under given prefix, ie "vars".
+func ApplyVarsToDom(kvs map[string]interface{}, prefix string, gd dom.ContainerBuilder) {
+	if kvs == nil {
+		return
+	}
+	p := pp.MustParse(prefix)
+	for k, v := range kvs {
+		gd.Set(path.ChildOf(p, path.Simple(k)), dom.LeafNode(v))
+	}
+}
+
+// ApplyValues takes slice of k=v strings and put them into DOM container.
 func ApplyValues(gd dom.ContainerBuilder, vals []string) {
 	for _, val := range vals {
 		parts := strings.SplitAfterN(val, "=", 2)
@@ -37,7 +53,8 @@ func ApplyValues(gd dom.ContainerBuilder, vals []string) {
 		if len(parts) == 2 {
 			value = parts[1]
 		}
-		gd.AddValueAt(key, dom.LeafNode(value))
+		p := pp.MustParse(key)
+		gd.Set(p, dom.LeafNode(value))
 	}
 }
 
