@@ -14,3 +14,6 @@
 ---
 ignore:
   - pkg/cmd/**/*
+  - pkg/cli/*
+  - pkg/version/*
+  - pkg/utils/*

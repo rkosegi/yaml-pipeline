@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package internal
+package utils
 
 import (
 	"fmt"
@@ -58,6 +58,18 @@ func ApplyValues(gd dom.ContainerBuilder, vals []string) {
 	}
 }
 
+func GetLogTag(v ...interface{}) (string, bool) {
+	if len(v) < 2 {
+		return "", false
+	}
+	if tag, isString := v[0].(string); isString {
+		if strings.HasPrefix(tag, "tag::") {
+			return tag[5:], true
+		}
+	}
+	return "", false
+}
+
 func DumpSchemaEvalResultToTree(parent treeprint.Tree, details []*jsonschema.EvaluationResult) {
 	for _, d := range details {
 		x := parent.AddBranch(fmt.Sprintf("%s => %s",
@@ -95,16 +107,4 @@ func ValidateFileAgainstSchema(file string) (*jsonschema.EvaluationResult, error
 	}
 	res := schema.Validate(doc)
 	return res, nil
-}
-
-func GetLogTag(v ...interface{}) (string, bool) {
-	if len(v) < 2 {
-		return "", false
-	}
-	if tag, isString := v[0].(string); isString {
-		if strings.HasPrefix(tag, "tag::") {
-			return tag[5:], true
-		}
-	}
-	return "", false
 }

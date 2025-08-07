@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package main
+package cli
 
 import (
 	"errors"
@@ -23,16 +23,15 @@ import (
 	"os"
 	"strings"
 
-	"github.com/rkosegi/yaml-pipeline/pkg/cmd/pipeline/internal"
-	"github.com/rkosegi/yaml-pipeline/pkg/cmd/pipeline/version"
+	"github.com/gookit/color"
+	xlog "github.com/rkosegi/slog-config"
 	ytp "github.com/rkosegi/yaml-pipeline/pkg/pipeline"
+	"github.com/rkosegi/yaml-pipeline/pkg/utils"
+	"github.com/rkosegi/yaml-pipeline/pkg/version"
 	"github.com/rkosegi/yaml-toolkit/dom"
 	"github.com/spf13/cobra"
 	"github.com/xlab/treeprint"
 	"gopkg.in/yaml.v3"
-
-	"github.com/gookit/color"
-	xlog "github.com/rkosegi/slog-config"
 )
 
 type data struct {
@@ -75,7 +74,7 @@ func (s *simpleListener) OnAfter(ctx ytp.ActionContext, err error) {
 }
 
 func (s *simpleListener) OnLog(_ ytp.ActionContext, v ...interface{}) {
-	if tag, hasTag := internal.GetLogTag(v...); hasTag {
+	if tag, hasTag := utils.GetLogTag(v...); hasTag {
 		switch tag {
 		case "skip":
 			fmt.Fprint(os.Stderr, color.Gray.Render(fmt.Sprintf("[SKIP ] %s %v\n", s.indentStr(), v[1:])))
@@ -88,13 +87,13 @@ func (s *simpleListener) OnLog(_ ytp.ActionContext, v ...interface{}) {
 func preRun(d *data) error {
 	if d.validate {
 		fmt.Fprintln(os.Stderr, color.Blue.Render(fmt.Sprintf("[Schema] Validating document")))
-		res, err := internal.ValidateFileAgainstSchema(d.file)
+		res, err := utils.ValidateFileAgainstSchema(d.file)
 		if err != nil {
 			return err
 		}
 		if res != nil && !res.Valid {
 			tree := treeprint.New()
-			internal.DumpSchemaEvalResultToTree(tree, res.Details)
+			utils.DumpSchemaEvalResultToTree(tree, res.Details)
 			fmt.Fprintln(os.Stderr, tree.String())
 			return res
 		}
@@ -115,15 +114,15 @@ func run(d *data) error {
 		return err
 	}
 	gd := dom.ContainerNode()
-	internal.ApplyVarsToDom(d.pp.Vars, "vars", gd)
-	internal.ApplyValues(gd, d.vals)
+	utils.ApplyVarsToDom(d.pp.Vars, "vars", gd)
+	utils.ApplyValues(gd, d.vals)
 	return ytp.New(
 		ytp.WithData(gd),
 		ytp.WithListener(&simpleListener{l: d.logger}),
 	).Execute(d.pp.ActionSpec)
 }
 
-func runCmd() *cobra.Command {
+func New() *cobra.Command {
 	d := &data{
 		sc:       xlog.MustNew("info", xlog.LogFormatLogFmt),
 		validate: true,
@@ -148,10 +147,4 @@ func runCmd() *cobra.Command {
 	cmd.Flags().StringVar(&d.file, "file", "", "pipeline file to run")
 	cmd.Flags().StringArrayVar(&d.vals, "set", d.vals, "set value to data tree prior to run")
 	return cmd
-}
-
-func main() {
-	if err := runCmd().Execute(); err != nil {
-		panic(err)
-	}
 }
