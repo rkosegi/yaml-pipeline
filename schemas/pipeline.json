@@ -392,18 +392,56 @@
       "type": "object"
     },
     "pipelineSpec": {
-      "anyOf": [
+      "additionalProperties": false,
+      "allOf": [
         {
           "$ref": "#/$defs/actionSpec"
+        },
+        {
+          "anyOf": [
+            {
+              "required": [
+                "steps"
+              ]
+            },
+            {
+              "required": [
+                "log"
+              ]
+            }
+          ]
         }
       ],
       "description": "Pipeline operation specification",
       "properties": {
+        "import": {
+          "$ref": "#/$defs/importOpSpec",
+          "description": "Import operation to load initial data into data document"
+        },
+        "log": {
+          "$ref": "#/$defs/logOpSpec",
+          "description": "Log operation to log initial message"
+        },
+        "name": {
+          "description": "Name of the pipeline",
+          "type": "string"
+        },
         "services": {
           "additionalProperties": {
             "$ref": "#/$defs/serviceSpec"
           },
           "description": "Services declaration"
+        },
+        "set": {
+          "$ref": "#/$defs/setOpSpec",
+          "description": "Set operation to set initial data in data document"
+        },
+        "steps": {
+          "additionalProperties": {
+            "$ref": "#/$defs/actionSpec"
+          },
+          "description": "Steps to execute in this pipeline",
+          "type": "object"
         },
         "vars": {
           "additionalProperties": true,
