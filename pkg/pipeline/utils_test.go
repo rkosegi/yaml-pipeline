@@ -127,9 +127,9 @@ func TestSafeRenderStrPointerNil(t *testing.T) {
 
 func TestSafeRenderStrPointer(t *testing.T) {
 	s := "{{ .X }}"
-	d := b.FromMap(map[string]interface{}{
+	d := dom.DecodeAnyToNode(map[string]interface{}{
 		"X": "abc",
-	})
+	}).(dom.ContainerBuilder)
 	c := newMockActBuilder().data(d).build()
 	assert.Equal(t, "abc", *safeRenderStrPointer(&s, c.TemplateEngine(), c.Snapshot()))
 }

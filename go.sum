@@ -41,14 +41,12 @@ github.com/pelletier/go-toml/v2 v2.2.4/go.mod h1:2gIqNv+qfxSVS7cM2xJQKtLSTLUE9V8
 github.com/pkg/diff v0.0.0-20210226163009-20ebb0f2a09e/go.mod h1:pJLUxLENpZxwdsKMEsNbx1VGcRFpLqf3715MtcvvzbA=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
-github.com/rkosegi/yaml-toolkit v1.0.67-0.20250802061906-849881e3e95e h1:QODbDqDZzUAfOJZMBF9nuh20Uy3/+O4wlkZsPuN0I3I=
-github.com/rkosegi/yaml-toolkit v1.0.67-0.20250802061906-849881e3e95e/go.mod h1:qu8qDPKfsC+i1SfaRgy/1q7DvO5zizkZBjOCbFas/HU=
 github.com/prometheus/common v0.65.0 h1:QDwzd+G1twt//Kwj/Ww6E9FQq1iVMmODnILtW1t2VzE=
 github.com/prometheus/common v0.65.0/go.mod h1:0gZns+BLRQ3V6NdaerOhMbwwRbNh9hkGINtQAsP5GS8=
 github.com/rkosegi/slog-config v0.0.0-20250720232421-a7890a122727 h1:IUQppkCK2wtcMYlVkV2TyccG/AvTJPtFDLbqE0q388A=
 github.com/rkosegi/slog-config v0.0.0-20250720232421-a7890a122727/go.mod h1:xTuExV9uQT7qUjKiMer+PQbQ0ac7jxqLxFEvYd2q4ag=
-github.com/rkosegi/yaml-toolkit v1.0.67-0.20250802061906-849881e3e95e h1:QODbDqDZzUAfOJZMBF9nuh20Uy3/+O4wlkZsPuN0I3I=
-github.com/rkosegi/yaml-toolkit v1.0.67-0.20250802061906-849881e3e95e/go.mod h1:qu8qDPKfsC+i1SfaRgy/1q7DvO5zizkZBjOCbFas/HU=
+github.com/rkosegi/yaml-toolkit v1.0.67-0.20250808201420-56924b241fb7 h1:eQqdymUnYv3jjwLcX4E0nhRXC6rzBDGkucLUKx3F8x0=
+github.com/rkosegi/yaml-toolkit v1.0.67-0.20250808201420-56924b241fb7/go.mod h1:qu8qDPKfsC+i1SfaRgy/1q7DvO5zizkZBjOCbFas/HU=
 github.com/rogpeppe/go-internal v1.9.0/go.mod h1:WtVeX8xhTBvf0smdhujwtBcq4Qrzq/fJaraNFVN+nFs=
 github.com/rogpeppe/go-internal v1.10.0 h1:TMyTOH3F/DB16zRVcYyreMH6GnZZrwQVAoYjRBZyWFQ=
 github.com/rogpeppe/go-internal v1.10.0/go.mod h1:UQnix2H7Ngw/k4C5ijL5+65zddjncjaFoBhdsK/akog=

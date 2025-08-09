@@ -19,6 +19,7 @@ package pipeline
 import (
 	"testing"
 
+	"github.com/rkosegi/yaml-toolkit/dom"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -93,11 +94,11 @@ func TestOpSpecCloneWith(t *testing.T) {
 		},
 	}
 
-	a := o.CloneWith(newMockActBuilder().data(b.FromMap(map[string]interface{}{
+	a := o.CloneWith(newMockActBuilder().data(dom.DecodeAnyToNode(map[string]interface{}{
 		"Path":  "root.sub2",
 		"Path3": "/root/sub3",
 		"Shell": "/bin/bash",
-	})).build()).(OpSpec)
+	}).(dom.ContainerBuilder)).build()).(OpSpec)
 	t.Log(a.String())
 	assert.Equal(t, "root.sub2", a.Set.Path)
 	assert.Equal(t, "root.sub2", a.Import.Path)

@@ -32,8 +32,7 @@ type dataCtx struct {
 	ss    *map[string]interface{}
 }
 
-func (dc *dataCtx) Data() dom.ContainerBuilder    { return dc.d }
-func (dc *dataCtx) Factory() dom.ContainerFactory { return b }
+func (dc *dataCtx) Data() dom.ContainerBuilder { return dc.d }
 func (dc *dataCtx) Snapshot() map[string]interface{} {
 	if dc.dirty || dc.ss == nil {
 		dc.ss = ptr(dom.DefaultNodeEncoderFn(dc.Data()).(map[string]interface{}))

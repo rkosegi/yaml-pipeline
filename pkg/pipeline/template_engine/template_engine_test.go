@@ -27,8 +27,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var b = dom.Builder()
-
 func removeDirsLater(t *testing.T, dirs ...string) {
 	t.Cleanup(func() {
 		for _, f := range dirs {
@@ -304,7 +302,7 @@ func domToAnyAt(d dom.Container, p string) any {
 
 func TestTemplateFuncDomDiff(t *testing.T) {
 	pp := props.NewPathParser()
-	d := b.FromMap(map[string]interface{}{
+	d := dom.DecodeAnyToNode(map[string]interface{}{
 		"a": map[string]interface{}{
 			"b": map[string]interface{}{
 				"c": 1,
@@ -313,7 +311,7 @@ func TestTemplateFuncDomDiff(t *testing.T) {
 				"h": "hello",
 			},
 		},
-	})
+	}).AsContainer()
 	type testCase struct {
 		leftPath  string
 		rightPath string

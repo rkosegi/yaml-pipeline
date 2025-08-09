@@ -19,6 +19,7 @@ package pipeline
 import (
 	"testing"
 
+	"github.com/rkosegi/yaml-toolkit/dom"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -40,11 +41,11 @@ func TestSortActionNames(t *testing.T) {
 }
 
 func TestChildActionsCloneWith(t *testing.T) {
-	ac := newMockActBuilder().data(b.FromMap(map[string]interface{}{
+	ac := newMockActBuilder().data(dom.DecodeAnyToNode(map[string]interface{}{
 		"sub1": map[string]interface{}{
 			"leaf1": "root.sub2",
 		},
-	})).build()
+	}).(dom.ContainerBuilder)).build()
 	a := ChildActions{
 		"step1": ActionSpec{
 			Operations: OpSpec{

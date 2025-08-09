@@ -100,7 +100,7 @@ func mergeFilesFunc(files []string) (dom.Container, error) {
 
 func dom2str(c dom.Container, encFn dom.EncoderFunc) (string, error) {
 	var buf strings.Builder
-	err := c.Serialize(&buf, dom.DefaultNodeEncoderFn, encFn)
+	err := dom.EncodeToWriter(c, encFn, &buf)
 	return buf.String(), err
 }
 

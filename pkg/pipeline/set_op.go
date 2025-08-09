@@ -95,7 +95,7 @@ func (sa *SetOp) Do(ctx ActionContext) error {
 	if !exists {
 		return fmt.Errorf("SetOp: unknown SetStrategy %s", *sa.Strategy)
 	}
-	data := ctx.Factory().FromMap(sa.Data)
+	data := dom.DecodeAnyToNode(sa.Data).(dom.ContainerBuilder)
 	handler(sa.Path, gd, data)
 	ctx.InvalidateSnapshot()
 	return nil

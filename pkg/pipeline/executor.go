@@ -25,10 +25,6 @@ import (
 	"github.com/rkosegi/yaml-toolkit/fluent"
 )
 
-var (
-	b = dom.Builder()
-)
-
 type exec struct {
 	*runtimeCtx
 	*dataCtx
@@ -112,7 +108,7 @@ func (p *exec) Run(po *PipelineOp) error {
 	if err := p.initServices(po.Services); err != nil {
 		return err
 	}
-	p.d = p.d.Merge(b.FromMap(po.Vars))
+	p.d = p.d.Merge(dom.DecodeAnyToNode(po.Vars).AsContainer())
 	defer p.closeServices()
 	return p.Execute(po)
 }

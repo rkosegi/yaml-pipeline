@@ -101,8 +101,6 @@ type DataServices interface {
 	Snapshot() map[string]interface{}
 	// InvalidateSnapshot marks cached snapshot as dirty so next snapshot request will cause retrieval.
 	InvalidateSnapshot()
-	// Factory give access to factory to create new documents
-	Factory() dom.ContainerFactory
 }
 
 type RuntimeServices interface {

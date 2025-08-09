@@ -33,7 +33,6 @@ type (
 )
 
 var (
-	cf          = dom.Builder()
 	layoutFnMap = map[Html2DomLayout]LayoutFn{
 		Html2DomLayoutDefault: convertHtmlNode2Dom,
 	}

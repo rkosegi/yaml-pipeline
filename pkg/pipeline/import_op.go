@@ -65,11 +65,11 @@ func (pfm ParseFileMode) toValue(content []byte) (dom.Node, error) {
 	case ParseFileModeText:
 		return dom.LeafNode(string(content)), nil
 	case ParseFileModeYaml:
-		return b.FromReader(bytes.NewReader(content), dom.DefaultYamlDecoder)
+		return dom.DecodeReader(bytes.NewReader(content), dom.DefaultYamlDecoder)
 	case ParseFileModeJson:
-		return b.FromReader(bytes.NewReader(content), dom.DefaultJsonDecoder)
+		return dom.DecodeReader(bytes.NewReader(content), dom.DefaultJsonDecoder)
 	case ParseFileModeProperties:
-		return b.FromReader(bytes.NewReader(content), props.DecoderFn)
+		return dom.DecodeReader(bytes.NewReader(content), props.DecoderFn)
 	default:
 		return nil, fmt.Errorf("invalid ParseFileMode: %v", pfm)
 	}

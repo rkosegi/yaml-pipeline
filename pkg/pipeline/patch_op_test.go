@@ -82,7 +82,7 @@ func TestPatchOpAddValue(t *testing.T) {
 		Value: &AnyVal{v: dom.LeafNode(456)},
 	}
 	assert.NoError(t, New(WithData(gd)).Execute(&ps))
-	m := gd.AsMap()
+	m := gd.AsAny().(map[string]interface{})
 	assert.Equal(t, "123", m["root"].(map[string]interface{})["sub"].(map[string]interface{})["leaf1"].(string))
 	assert.Equal(t, 456, m["root"].(map[string]interface{})["sub"].(map[string]interface{})["leaf2"].(int))
 

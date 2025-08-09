@@ -109,13 +109,13 @@ func TestForeachQuery(t *testing.T) {
 		path       string
 		validateFn func(data dom.ContainerBuilder)
 	}
-	data := b.FromMap(map[string]interface{}{
+	data := dom.DecodeAnyToNode(map[string]interface{}{
 		"leaf": "X",
 		"sub": map[string]interface{}{
 			"leaf1": "Y",
 		},
 		"items": []interface{}{"a", "b", "c"},
-	})
+	}).(dom.ContainerBuilder)
 	for _, qry := range []string{
 		"leaf", "sub", "items",
 	} {
