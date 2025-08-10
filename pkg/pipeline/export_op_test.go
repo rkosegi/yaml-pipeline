@@ -26,7 +26,7 @@ import (
 
 func TestExportOpDo(t *testing.T) {
 	var (
-		eo  *ExportOp
+		eo  *ExportOpSpec
 		err error
 	)
 	f, err := os.CreateTemp("", "yt_export*.json")
@@ -36,7 +36,7 @@ func TestExportOpDo(t *testing.T) {
 	}
 	removeFilesLater(t, f)
 	t.Logf("created temporary file: %s", f.Name())
-	eo = &ExportOp{
+	eo = &ExportOpSpec{
 		File:   &ValOrRef{Val: f.Name()},
 		Path:   &ValOrRef{Val: "root.sub1"},
 		Format: OutputFormatJson,
@@ -50,7 +50,7 @@ func TestExportOpDo(t *testing.T) {
 	assert.NotNil(t, fi)
 	assert.NoError(t, err)
 
-	eo = &ExportOp{
+	eo = &ExportOpSpec{
 		File:   &ValOrRef{Val: f.Name()},
 		Path:   &ValOrRef{Val: "root.sub1.sub2"},
 		Format: OutputFormatText,
@@ -58,7 +58,7 @@ func TestExportOpDo(t *testing.T) {
 	err = eo.Do(newMockActBuilder().data(d).build())
 	assert.NoError(t, err)
 
-	eo = &ExportOp{
+	eo = &ExportOpSpec{
 		File:   &ValOrRef{Val: f.Name()},
 		Path:   &ValOrRef{Val: "root.sub1"},
 		Format: OutputFormatText,
@@ -68,7 +68,7 @@ func TestExportOpDo(t *testing.T) {
 }
 
 func TestExportOpDoInvalidDirectory(t *testing.T) {
-	eo := &ExportOp{
+	eo := &ExportOpSpec{
 		File:   &ValOrRef{Val: "/invalid/dir/file.yaml"},
 		Format: OutputFormatYaml,
 	}
@@ -76,7 +76,7 @@ func TestExportOpDoInvalidDirectory(t *testing.T) {
 }
 
 func TestExportOpDoInvalidOutFormat(t *testing.T) {
-	eo := &ExportOp{
+	eo := &ExportOpSpec{
 		Format: "invalid-format",
 	}
 	assert.Error(t, eo.Do(mockEmptyActCtx()))
@@ -89,7 +89,7 @@ func TestExportOpDoNonExistentPath(t *testing.T) {
 		return
 	}
 	removeFilesLater(t, f)
-	eo := &ExportOp{
+	eo := &ExportOpSpec{
 		File:   &ValOrRef{Val: f.Name()},
 		Path:   &ValOrRef{Val: "this.Path.does.not.exist"},
 		Format: OutputFormatProperties,
@@ -98,7 +98,7 @@ func TestExportOpDoNonExistentPath(t *testing.T) {
 }
 
 func TestExportOpCloneWith(t *testing.T) {
-	eo := &ExportOp{
+	eo := &ExportOpSpec{
 		File:   &ValOrRef{Val: "/tmp/out.{{ .Format }}"},
 		Path:   &ValOrRef{Val: "root.sub10.{{ .Sub }}"},
 		Format: "{{ .Format }}",
@@ -106,7 +106,7 @@ func TestExportOpCloneWith(t *testing.T) {
 	d := dom.ContainerNode()
 	d.AddValueAt("Format", dom.LeafNode("yaml"))
 	d.AddValueAt("Sub", dom.LeafNode("sub20"))
-	eo = eo.CloneWith(newMockActBuilder().data(d).build()).(*ExportOp)
+	eo = eo.CloneWith(newMockActBuilder().data(d).build()).(*ExportOpSpec)
 	assert.Equal(t, "root.sub10.sub20", eo.Path.Val)
 	assert.Equal(t, OutputFormatYaml, eo.Format)
 	assert.Equal(t, "/tmp/out.yaml", eo.File.Val)

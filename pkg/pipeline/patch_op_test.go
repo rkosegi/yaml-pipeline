@@ -26,19 +26,19 @@ import (
 
 func TestExecutePatchOp(t *testing.T) {
 	var (
-		ps PatchOp
+		ps PatchOpSpec
 		gd dom.ContainerBuilder
 	)
 
 	gd = dom.ContainerNode()
-	ps = PatchOp{
+	ps = PatchOpSpec{
 		Op:   patch.OpAdd,
 		Path: "@#$%^&",
 	}
 	assert.Error(t, New(WithData(gd)).Execute(&ps))
 
 	gd.AddValueAt("root.sub1.leaf2", dom.LeafNode("abcd"))
-	ps = PatchOp{
+	ps = PatchOpSpec{
 		Op:   patch.OpReplace,
 		Path: "/root/sub1",
 		Value: anyValFromMap(map[string]interface{}{
@@ -51,9 +51,9 @@ func TestExecutePatchOp(t *testing.T) {
 
 	gd = dom.ContainerNode()
 	gd.AddValueAt("root.sub1.leaf3", dom.LeafNode("abcd"))
-	ps = PatchOp{
+	ps = PatchOpSpec{
 		Op:   patch.OpMove,
-		From: "/root/sub1",
+		From: ptr("/root/sub1"),
 		Path: "/root/sub2",
 	}
 	assert.NoError(t, New(WithData(gd)).Execute(&ps))
@@ -61,9 +61,9 @@ func TestExecutePatchOp(t *testing.T) {
 
 	gd = dom.ContainerNode()
 	gd.AddValueAt("root.sub1.leaf3", dom.LeafNode("abcd"))
-	ps = PatchOp{
+	ps = PatchOpSpec{
 		Op:   patch.OpMove,
-		From: "%#$&^^*&",
+		From: ptr("%#$&^^*&"),
 		Path: "/root/sub2",
 	}
 	assert.Error(t, New(WithData(gd)).Execute(&ps))
@@ -71,12 +71,12 @@ func TestExecutePatchOp(t *testing.T) {
 
 func TestPatchOpAddValue(t *testing.T) {
 	var (
-		ps PatchOp
+		ps PatchOpSpec
 		gd dom.ContainerBuilder
 	)
 	gd = dom.ContainerNode()
 	gd.AddValueAt("root.sub.leaf1", dom.LeafNode("123"))
-	ps = PatchOp{
+	ps = PatchOpSpec{
 		Op:    patch.OpAdd,
 		Path:  "/root/sub/leaf2",
 		Value: &AnyVal{v: dom.LeafNode(456)},
@@ -89,7 +89,7 @@ func TestPatchOpAddValue(t *testing.T) {
 	gd = dom.ContainerNode()
 	gd.AddValueAt("root.sub.leaf3", dom.LeafNode("aaaa"))
 	gd.AddValue("mypath", dom.LeafNode("sub.leaf3"))
-	ps = PatchOp{
+	ps = PatchOpSpec{
 		Op:        patch.OpAdd,
 		Path:      "/root/sub/leaf2",
 		ValueFrom: ptr("root.{{ .mypath }}"),

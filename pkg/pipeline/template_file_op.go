@@ -23,22 +23,11 @@ import (
 	"github.com/rkosegi/yaml-toolkit/dom"
 )
 
-// TemplateFileOp can be used to render template from file and write result to output.
-type TemplateFileOp struct {
-	// File is path to file with template
-	File string `yaml:"file" clone:"template"`
-	// Output is path to output file
-	Output string `yaml:"output" clone:"template"`
-	// Path is path within the global data where data are read from (must be container).
-	// When omitted, then root of global data is assumed.
-	Path *string `yaml:"path,omitempty" clone:"template"`
-}
-
-func (tfo *TemplateFileOp) String() string {
+func (tfo *TemplateFileOpSpec) String() string {
 	return fmt.Sprintf("TemplateFile[File=%s,Output=%s]", tfo.File, tfo.Output)
 }
 
-func (tfo *TemplateFileOp) Do(ctx ActionContext) error {
+func (tfo *TemplateFileOpSpec) Do(ctx ActionContext) error {
 	if len(tfo.File) == 0 {
 		return ErrFileEmpty
 	}
@@ -73,9 +62,9 @@ func (tfo *TemplateFileOp) Do(ctx ActionContext) error {
 	return os.WriteFile(outFile, []byte(val), 0644)
 }
 
-func (tfo *TemplateFileOp) CloneWith(ctx ActionContext) Action {
+func (tfo *TemplateFileOpSpec) CloneWith(ctx ActionContext) Action {
 	ss := ctx.Snapshot()
-	return &TemplateFileOp{
+	return &TemplateFileOpSpec{
 		File:   ctx.TemplateEngine().RenderLenient(tfo.File, ss),
 		Output: ctx.TemplateEngine().RenderLenient(tfo.Output, ss),
 	}

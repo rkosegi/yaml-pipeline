@@ -19,7 +19,6 @@ package pipeline
 import (
 	"fmt"
 	"os"
-	"regexp"
 	"strings"
 
 	"github.com/rkosegi/yaml-toolkit/common"
@@ -31,25 +30,15 @@ var (
 	envGetter = os.Environ
 )
 
-// EnvOp is used to import OS environment variables into data
-type EnvOp struct {
-	// Optional regexp which defines what to include. Only item names matching this regexp are added into data document.
-	Include *regexp.Regexp `yaml:"include,omitempty"`
-
-	// Optional regexp which defines what to exclude. Only item names NOT matching this regexp are added into data document.
-	// Exclusion is considered after inclusion regexp is processed.
-	Exclude *regexp.Regexp `yaml:"exclude,omitempty"`
-
-	// Optional path within data tree under which "Env" container will be put.
-	// When omitted, then "Env" goes to root of data.
-	Path string `yaml:"path,omitempty" clone:"template"`
-}
-
-func (eo *EnvOp) Do(ctx ActionContext) error {
+func (eo *EnvOpSpec) Do(ctx ActionContext) error {
 	var (
 		inclFn common.StringPredicateFn
 		exclFn common.StringPredicateFn
 	)
+	p := ""
+	if eo.Path != nil {
+		p = *eo.Path
+	}
 	inclFn = common.MatchAny()
 	exclFn = common.MatchNone()
 	if eo.Include != nil {
@@ -61,7 +50,7 @@ func (eo *EnvOp) Do(ctx ActionContext) error {
 	for _, env := range envGetter() {
 		parts := strings.SplitN(env, "=", 2)
 		if inclFn(parts[0]) && !exclFn(parts[0]) {
-			k := common.ToPath(eo.Path, fmt.Sprintf("Env.%s", parts[0]))
+			k := common.ToPath(p, fmt.Sprintf("Env.%s", parts[0]))
 			ctx.Data().AddValueAt(k, dom.LeafNode(parts[1]))
 		}
 	}
@@ -69,15 +58,15 @@ func (eo *EnvOp) Do(ctx ActionContext) error {
 	return nil
 }
 
-func (eo *EnvOp) String() string {
-	return fmt.Sprintf("Env[Path=%s,incl=%s,excl=%s]", eo.Path,
+func (eo *EnvOpSpec) String() string {
+	return fmt.Sprintf("Env[Path=%s,incl=%s,excl=%s]", safeStrDeref(eo.Path),
 		safeRegexpDeref(eo.Include), safeRegexpDeref(eo.Exclude))
 }
 
-func (eo *EnvOp) CloneWith(ctx ActionContext) Action {
-	return &EnvOp{
+func (eo *EnvOpSpec) CloneWith(ctx ActionContext) Action {
+	return &EnvOpSpec{
 		Include: eo.Include,
 		Exclude: eo.Exclude,
-		Path:    ctx.TemplateEngine().RenderLenient(eo.Path, ctx.Snapshot()),
+		Path:    safeRenderStrPointer(eo.Path, ctx.TemplateEngine(), ctx.Snapshot()),
 	}
 }

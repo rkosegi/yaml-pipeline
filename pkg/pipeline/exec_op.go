@@ -28,30 +28,11 @@ import (
 	"github.com/rkosegi/yaml-toolkit/dom"
 )
 
-type ExecOp struct {
-	// Program to execute
-	Program string `yaml:"program,omitempty" clone:"template"`
-	// Optional arguments for program
-	Args *[]string `yaml:"args,omitempty"`
-	// Program's working directory
-	Dir string `yaml:"dir" clone:"template"`
-	// List of exit codes that are assumed to be valid
-	ValidExitCodes *[]int `yaml:"validExitCodes,omitempty"`
-	// Path to file where program's stdout will be written upon completion.
-	// Any error occurred during write will result in panic.
-	Stdout *string
-	// Path to file where program's stderr will be written upon completion
-	// Any error occurred during write will result in panic.
-	Stderr *string
-	// Path within the global data where to set exit code.
-	SaveExitCodeTo *string `yaml:"saveExitCodeTo,omitempty"`
+func (e *ExecOpSpec) String() string {
+	return fmt.Sprintf("Exec[Program=%s,Dir=%s,Args=%d]", e.Program, safeStrDeref(e.Dir), safeSize(e.Args))
 }
 
-func (e *ExecOp) String() string {
-	return fmt.Sprintf("Exec[Program=%s,Dir=%s,Args=%d]", e.Program, e.Dir, safeStrListSize(e.Args))
-}
-
-func (e *ExecOp) Do(ctx ActionContext) error {
+func (e *ExecOpSpec) Do(ctx ActionContext) error {
 	var closables []io.Closer
 	if e.ValidExitCodes == nil {
 		e.ValidExitCodes = &[]int{}
@@ -59,12 +40,15 @@ func (e *ExecOp) Do(ctx ActionContext) error {
 	if e.Args == nil {
 		e.Args = &[]string{}
 	}
+	if e.Dir == nil {
+		e.Dir = ptr("")
+	}
 	snapshot := ctx.Snapshot()
 	prog := ctx.TemplateEngine().RenderLenient(e.Program, snapshot)
 	args := *safeRenderStrSlice(e.Args, ctx.TemplateEngine(), snapshot)
-	dir := ctx.TemplateEngine().RenderLenient(e.Dir, snapshot)
+	dir := safeRenderStrPointer(e.Dir, ctx.TemplateEngine(), snapshot)
 	cmd := osx.Command(prog, args...)
-	cmd.Dir = dir
+	cmd.Dir = *dir
 	defer func() {
 		for _, closer := range closables {
 			_ = closer.Close()
@@ -95,7 +79,7 @@ func (e *ExecOp) Do(ctx ActionContext) error {
 			closables = append(closables, out)
 		}
 	}
-	ctx.Logger().Log(fmt.Sprintf("prog=%s,dir=%s,args=[%s]", prog, dir, strings.Join(args, " ")))
+	ctx.Logger().Log(fmt.Sprintf("prog=%s,dir=%s,args=[%s]", prog, safeStrDeref(dir), strings.Join(args, " ")))
 	err := cmd.Run()
 	var exitErr *osx.ExitError
 	if errors.As(err, &exitErr) {
@@ -112,12 +96,12 @@ func (e *ExecOp) Do(ctx ActionContext) error {
 	return nil
 }
 
-func (e *ExecOp) CloneWith(ctx ActionContext) Action {
+func (e *ExecOpSpec) CloneWith(ctx ActionContext) Action {
 	ss := ctx.Snapshot()
-	return &ExecOp{
+	return &ExecOpSpec{
 		Program:        ctx.TemplateEngine().RenderLenient(e.Program, ss),
 		Args:           safeRenderStrSlice(e.Args, ctx.TemplateEngine(), ss),
-		Dir:            ctx.TemplateEngine().RenderLenient(e.Dir, ss),
+		Dir:            safeRenderStrPointer(e.Dir, ctx.TemplateEngine(), ss),
 		Stdout:         safeRenderStrPointer(e.Stdout, ctx.TemplateEngine(), ss),
 		Stderr:         safeRenderStrPointer(e.Stderr, ctx.TemplateEngine(), ss),
 		ValidExitCodes: safeCopyIntSlice(e.ValidExitCodes),

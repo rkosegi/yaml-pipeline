@@ -21,42 +21,17 @@ import (
 	"strings"
 )
 
-type ErrorPropagationPolicy string
-
-const (
-	// ErrorPropagationPolicyIgnore error is ignored and not propagated to caller
-	ErrorPropagationPolicyIgnore ErrorPropagationPolicy = "ignore"
-)
-
-// ActionMeta holds action's metadata used by Executor
-type ActionMeta struct {
-	// Name of this step, should be unique within current scope
-	Name string `yaml:"name,omitempty"`
-
-	// Optional ordinal number that controls order of execution within parent step
-	Order int `yaml:"order,omitempty"`
-
-	// Optional expression to make execution of this action conditional.
-	// Execution of this step is skipped when this expression is evaluated to false.
-	// If value of this field is omitted, then this action is executed.
-	When *string `yaml:"when,omitempty"`
-
-	// ErrorPropagation configure behavior of error propagation. By default, error is propagated to caller.
-	// When set to ErrorPropagationPolicyIgnore, then error is silently ignored.
-	ErrorPropagation *ErrorPropagationPolicy `yaml:"errorPropagation,omitempty"`
-}
-
 func (am ActionMeta) String() string {
 	var (
 		sb    strings.Builder
 		parts []string
 	)
 	sb.WriteByte('[')
-	if len(am.Name) > 0 {
-		parts = append(parts, fmt.Sprintf("name=%s", am.Name))
+	if !strIsEmpty(am.Name) {
+		parts = append(parts, fmt.Sprintf("name=%s", *am.Name))
 	}
-	if am.Order != 0 {
-		parts = append(parts, fmt.Sprintf("order=%d", am.Order))
+	if am.Order != nil {
+		parts = append(parts, fmt.Sprintf("order=%d", *am.Order))
 	}
 	when := strings.TrimSpace(safeStrDeref(am.When))
 	if len(when) > 0 {

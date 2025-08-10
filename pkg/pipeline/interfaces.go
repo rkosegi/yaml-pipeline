@@ -25,10 +25,10 @@ import (
 	"github.com/rkosegi/yaml-toolkit/dom"
 )
 
-// Executor interface is used by external callers to execute arbitrary Action or run full PipelineOp.
+// Executor interface is used by external callers to execute arbitrary Action or run full PipelineSpec.
 type Executor interface {
 	// Run runs pipeline
-	Run(po *PipelineOp) error
+	Run(po *PipelineSpec) error
 
 	// Execute executes single Action
 	Execute(act Action) error

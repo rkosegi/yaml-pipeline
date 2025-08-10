@@ -26,30 +26,7 @@ import (
 	"github.com/rkosegi/yaml-toolkit/props"
 )
 
-type OutputFormat string
-
-const (
-	OutputFormatYaml       = OutputFormat("yaml")
-	OutputFormatJson       = OutputFormat("json")
-	OutputFormatProperties = OutputFormat("properties")
-	OutputFormatText       = OutputFormat("text")
-)
-
-// ExportOp allows to export data into file
-type ExportOp struct {
-	// File to export data onto
-	File *ValOrRef `clone:"template"`
-	// Path within data tree pointing to dom.Node to export. Empty path denotes whole document.
-	// If path does not resolve, then empty document will be exported.
-	// If output format is "text" then path must point to leaf.
-	// Any other output format must point to dom.Container.
-	// If neither of these conditions are met, then it is considered as if path does not resolve at all.
-	Path *ValOrRef `clone:"template"`
-	// Format of output file.
-	Format OutputFormat `clone:"template"`
-}
-
-func (e *ExportOp) String() string {
+func (e *ExportOpSpec) String() string {
 	var (
 		sb    strings.Builder
 		parts []string
@@ -67,7 +44,7 @@ func (e *ExportOp) String() string {
 	return sb.String()
 }
 
-func (e *ExportOp) Do(ctx ActionContext) (err error) {
+func (e *ExportOpSpec) Do(ctx ActionContext) (err error) {
 	var (
 		d      dom.Node
 		enc    dom.EncoderFunc
@@ -116,9 +93,9 @@ func (e *ExportOp) Do(ctx ActionContext) (err error) {
 	return enc(f, dom.DefaultNodeEncoderFn(d.AsContainer()))
 }
 
-func (e *ExportOp) CloneWith(ctx ActionContext) Action {
+func (e *ExportOpSpec) CloneWith(ctx ActionContext) Action {
 	ss := ctx.Snapshot()
-	return &ExportOp{
+	return &ExportOpSpec{
 		File:   safeCloneValOrRef(e.File, ctx),
 		Path:   safeCloneValOrRef(e.Path, ctx),
 		Format: OutputFormat(ctx.TemplateEngine().RenderLenient(string(e.Format), ss)),

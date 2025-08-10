@@ -24,19 +24,19 @@ import (
 )
 
 func TestAbortOpDo(t *testing.T) {
-	eo := &AbortOp{
+	eo := &AbortOpSpec{
 		Message: "conditions not met",
 	}
 	assert.Error(t, eo.Do(mockEmptyActCtx()))
 }
 
 func TestAbortOpCloneWith(t *testing.T) {
-	eo := &AbortOp{
+	eo := &AbortOpSpec{
 		Message: "Unsupported format: {{ .Format }}",
 	}
 	d := dom.ContainerNode()
 	d.AddValue("Format", dom.LeafNode("toml"))
-	eo = eo.CloneWith(newMockActBuilder().data(d).build()).(*AbortOp)
+	eo = eo.CloneWith(newMockActBuilder().data(d).build()).(*AbortOpSpec)
 	assert.Equal(t, "Unsupported format: toml", eo.Message)
 }
 
@@ -49,7 +49,7 @@ func TestAbortPipeline(t *testing.T) {
 			When: strPointer("{{ eq .ENV \"prod\"}}"),
 		},
 		Operations: OpSpec{
-			Abort: &AbortOp{
+			Abort: &AbortOpSpec{
 				Message: "Pipeline should not run in production",
 			},
 		},

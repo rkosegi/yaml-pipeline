@@ -18,36 +18,18 @@ package pipeline
 
 import "reflect"
 
-// LoopOp is similar to loop statement.
-type LoopOp struct {
-	// Init is called just before any loop execution takes place
-	Init *ActionSpec `yaml:"init,omitempty"`
-
-	// Test is condition that is tested before each iteration.
-	// When evaluated to true, execution will proceed with next iteration,
-	// false terminates loop immediately
-	Test string `yaml:"test,omitempty"`
-
-	// Action is action that is executed every loop iteration
-	Action ActionSpec `yaml:"action,omitempty"`
-
-	// PostAction is action that is executed after every loop iteration.
-	// This is right place to modify loop variables, such as incrementing counter
-	PostAction *ActionSpec `yaml:"postAction,omitempty"`
-}
-
-func (l *LoopOp) String() string {
+func (l *LoopOpSpec) String() string {
 	return "Loop[]"
 }
 
-func (l *LoopOp) doAction(ctx ActionContext, act Action) (err error) {
+func (l *LoopOpSpec) doAction(ctx ActionContext, act Action) (err error) {
 	if act != nil && !reflect.ValueOf(act).IsNil() {
 		return ctx.Executor().Execute(act)
 	}
 	return nil
 }
 
-func (l *LoopOp) Do(ctx ActionContext) (err error) {
+func (l *LoopOpSpec) Do(ctx ActionContext) (err error) {
 	if err = l.doAction(ctx, l.Init); err != nil {
 		return err
 	}
@@ -71,8 +53,8 @@ func (l *LoopOp) Do(ctx ActionContext) (err error) {
 	}
 }
 
-func (l *LoopOp) CloneWith(ctx ActionContext) Action {
-	lc := new(LoopOp)
+func (l *LoopOpSpec) CloneWith(ctx ActionContext) Action {
+	lc := new(LoopOpSpec)
 	lc.Test = l.Test
 	lc.Action = l.Action.CloneWith(ctx).(ActionSpec)
 	if l.Init != nil {

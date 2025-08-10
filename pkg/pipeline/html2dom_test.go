@@ -36,7 +36,7 @@ func TestHtml2Dom(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, doc1data)
 	ctx := newMockActBuilder().data(d).testLogger(t).build()
-	for _, ic := range []*Html2DomOp{
+	for _, ic := range []*Html2DomOpSpec{
 		{},
 		{
 			From: "from",
@@ -64,7 +64,7 @@ func TestHtml2Dom(t *testing.T) {
 		assert.Error(t, ctx.Executor().Execute(ic))
 	}
 
-	err = ctx.Executor().Execute(&Html2DomOp{
+	err = ctx.Executor().Execute(&Html2DomOpSpec{
 		From:  "html2",
 		To:    "Result.Out",
 		Query: &ValOrRef{Val: "//span[@class='panel1']"},
@@ -74,7 +74,7 @@ func TestHtml2Dom(t *testing.T) {
 	assert.Equal(t, "Click here", d.Lookup("Result.Out.span.span[2].a.Value").AsLeaf().Value())
 	assert.Equal(t, "http://localhost:8080/doc1", d.Lookup("Result.Out.span.span[2].a.Attrs.href").AsLeaf().Value())
 
-	err = ctx.Executor().Execute(&Html2DomOp{
+	err = ctx.Executor().Execute(&Html2DomOpSpec{
 		From: "html2",
 		To:   "Result.Out",
 	})
@@ -86,11 +86,11 @@ func TestHtml2DomCloneWith(t *testing.T) {
 	d.AddValueAt("Args.From", dom.LeafNode("from.here"))
 	d.AddValueAt("Args.To", dom.LeafNode("to.here"))
 	ctx := newMockActBuilder().data(d).testLogger(t).build()
-	orig := &Html2DomOp{
+	orig := &Html2DomOpSpec{
 		From: "{{ .Args.From }}",
 		To:   "{{ .Args.To }}",
 	}
 	clone := orig.CloneWith(ctx)
-	assert.Equal(t, "from.here", clone.(*Html2DomOp).From)
-	assert.Equal(t, "to.here", clone.(*Html2DomOp).To)
+	assert.Equal(t, "from.here", clone.(*Html2DomOpSpec).From)
+	assert.Equal(t, "to.here", clone.(*Html2DomOpSpec).To)
 }

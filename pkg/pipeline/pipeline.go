@@ -18,15 +18,15 @@ package pipeline
 
 import "fmt"
 
-type PipelineOp struct {
+type PipelineSpec struct {
 	// Initial variables
 	Vars       map[string]interface{}      `yaml:"vars"`
 	Services   map[string]ConfigurableSpec `yaml:"services"`
 	ActionSpec `yaml:",inline"`
 }
 
-func (p *PipelineOp) String() string {
-	return fmt.Sprintf("Pipeline[vars=%d]", len(p.Vars))
+func (p *PipelineSpec) String() string {
+	return fmt.Sprintf("Pipeline[vars=%d,services=%d]", len(p.Vars), len(p.Services))
 }
 
 type ConfigurableSpec struct {

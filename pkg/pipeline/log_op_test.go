@@ -24,17 +24,17 @@ import (
 )
 
 func TestLogOpDo(t *testing.T) {
-	eo := &LogOp{}
+	eo := &LogOpSpec{}
 	assert.NoError(t, eo.Do(mockEmptyActCtx()))
 }
 
 func TestLogOpCloneWith(t *testing.T) {
-	eo := &LogOp{
+	eo := &LogOpSpec{
 		Message: "Output format: {{ .Format }}",
 	}
 	assert.Contains(t, eo.String(), "Log[")
 	d := dom.ContainerNode()
 	d.AddValue("Format", dom.LeafNode("toml"))
-	eo = eo.CloneWith(newMockActBuilder().data(d).build()).(*LogOp)
+	eo = eo.CloneWith(newMockActBuilder().data(d).build()).(*LogOpSpec)
 	assert.Equal(t, "Output format: toml", eo.Message)
 }

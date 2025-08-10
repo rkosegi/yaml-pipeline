@@ -22,25 +22,11 @@ import (
 	"github.com/rkosegi/yaml-toolkit/dom"
 )
 
-type CallOp struct {
-	// Name is name of callable previously registered using DefineOp.
-	// Attempt to use name that was not registered will result in error
-	Name string
-	// ArgsPath is optional path within the global data where arguments are stored prior to execution.
-	// When omitted, then default value of "args" is assumed. Note that passing arguments to nested callable
-	// is only possible if path is different, otherwise inner's arguments will overwrite outer's one.
-	// Template is accepted as possible value.
-	ArgsPath *string `yaml:"argsPath,omitempty"`
-	// Arguments to be passed to callable.
-	// Leaf values are recursively templated just before call is executed.
-	Args map[string]interface{}
+func (c *CallOpSpec) String() string {
+	return fmt.Sprintf("Call[Name=%s, Args=%d]", c.Name, safeSize(c.Args))
 }
 
-func (c *CallOp) String() string {
-	return fmt.Sprintf("Call[Name=%s, Args=%d]", c.Name, len(c.Args))
-}
-
-func (c *CallOp) Do(ctx ActionContext) error {
+func (c *CallOpSpec) Do(ctx ActionContext) error {
 	snap := ctx.Snapshot()
 	ap := "args"
 	if c.ArgsPath != nil {
@@ -51,7 +37,7 @@ func (c *CallOp) Do(ctx ActionContext) error {
 		return fmt.Errorf("callable '%s' is not registered", c.Name)
 	} else {
 		ctx.Data().AddValueAt(ap, dom.DefaultNodeDecoderFn(
-			ctx.TemplateEngine().RenderMapLenient(c.Args, snap)),
+			ctx.TemplateEngine().RenderMapLenient(*c.Args, snap)),
 		)
 		ctx.InvalidateSnapshot()
 		defer func() {
@@ -62,8 +48,8 @@ func (c *CallOp) Do(ctx ActionContext) error {
 	}
 }
 
-func (c *CallOp) CloneWith(_ ActionContext) Action {
-	return &CallOp{
+func (c *CallOpSpec) CloneWith(_ ActionContext) Action {
+	return &CallOpSpec{
 		Name:     c.Name,
 		Args:     c.Args,
 		ArgsPath: c.ArgsPath,

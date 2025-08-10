@@ -31,23 +31,23 @@ func (n *noopOp) Do(_ ActionContext) error         { return nil }
 func (n *noopOp) CloneWith(_ ActionContext) Action { return &noopOp{} }
 
 func TestExtOpDo(t *testing.T) {
-	var ex *ExtOp
+	var ex *ExtOpSpec
 	d := dom.ContainerNode()
 	ctx := newMockActBuilder().ext(map[string]ActionFactory{
 		"dummyfn": &dummyActFactory{
-			act: &SetOp{
+			act: &SetOpSpec{
 				Data: map[string]interface{}{
 					"X": 123,
 				},
 			},
 		},
 	}).data(d).build()
-	ex = &ExtOp{
+	ex = &ExtOpSpec{
 		Function: "dummyfn",
 	}
 	assert.NoError(t, ex.Do(ctx))
 	assert.Equal(t, 123, d.Lookup("X").AsLeaf().Value())
-	ex = &ExtOp{
+	ex = &ExtOpSpec{
 		Function: "non-existent",
 	}
 	assert.Error(t, ex.Do(ctx))

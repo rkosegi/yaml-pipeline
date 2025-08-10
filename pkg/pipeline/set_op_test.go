@@ -25,11 +25,11 @@ import (
 
 func TestExecuteSetOp(t *testing.T) {
 	var (
-		ss  SetOp
+		ss  SetOpSpec
 		gd  dom.ContainerBuilder
 		err error
 	)
-	ss = SetOp{
+	ss = SetOpSpec{
 		Data: map[string]interface{}{
 			"sub1": 123,
 		},
@@ -38,25 +38,25 @@ func TestExecuteSetOp(t *testing.T) {
 	assert.NoError(t, New(WithData(gd)).Execute(&ss))
 	assert.Equal(t, 123, gd.Lookup("sub1").AsLeaf().Value())
 
-	ss = SetOp{
+	ss = SetOpSpec{
 		Data: map[string]interface{}{
 			"sub1": 123,
 		},
-		Path: "sub0",
+		Path: ptr("sub0"),
 	}
 	gd = dom.ContainerNode()
 	assert.NoError(t, New(WithData(gd)).Execute(&ss))
 	assert.Equal(t, 123, gd.Lookup("sub0.sub1").AsLeaf().Value())
 	assert.Contains(t, ss.String(), "sub0")
 
-	ss = SetOp{}
+	ss = SetOpSpec{}
 	err = New(WithData(gd)).Execute(&ss)
 	assert.Error(t, err)
 	assert.Equal(t, ErrNoDataToSet, err)
 }
 
 func TestSetOpInvalidSetStrategy(t *testing.T) {
-	assert.Error(t, New().Execute(&SetOp{
+	assert.Error(t, New().Execute(&SetOpSpec{
 		Data:     map[string]interface{}{},
 		Strategy: setStrategyPointer("unknown"),
 	}))
@@ -65,10 +65,10 @@ func TestSetOpInvalidSetStrategy(t *testing.T) {
 func TestSetOpMergeRoot(t *testing.T) {
 	var (
 		gd dom.ContainerBuilder
-		ss SetOp
+		ss SetOpSpec
 	)
 
-	ss = SetOp{
+	ss = SetOpSpec{
 		Data: map[string]interface{}{
 			"sub1": 123,
 		},
@@ -82,7 +82,7 @@ func TestSetOpMergeRoot(t *testing.T) {
 
 	gd = dom.ContainerNode()
 	gd.AddValueAt("sub2.sub3a", dom.LeafNode(2))
-	ss = SetOp{
+	ss = SetOpSpec{
 		Data: map[string]interface{}{
 			"sub2": map[string]interface{}{
 				"sub3b": 123,
@@ -99,15 +99,15 @@ func TestSetOpMergeRoot(t *testing.T) {
 func TestSetOpMergeSubPath(t *testing.T) {
 	var (
 		gd dom.ContainerBuilder
-		ss SetOp
+		ss SetOpSpec
 	)
 
-	ss = SetOp{
+	ss = SetOpSpec{
 		Data: map[string]interface{}{
 			"sub20": 123,
 		},
 		Strategy: setStrategyPointer(SetStrategyMerge),
-		Path:     "sub10",
+		Path:     ptr("sub10"),
 	}
 	gd = dom.ContainerNode()
 
@@ -116,13 +116,13 @@ func TestSetOpMergeSubPath(t *testing.T) {
 
 	gd = dom.ContainerNode()
 	gd.AddValueAt("sub10.sub20.sub30", dom.LeafNode(2))
-	ss = SetOp{
+	ss = SetOpSpec{
 		Data: map[string]interface{}{
 			"sub20": map[string]interface{}{
 				"sub3b": 123,
 			},
 		},
-		Path:     "sub10",
+		Path:     ptr("sub10"),
 		Strategy: setStrategyPointer(SetStrategyMerge),
 	}
 	assert.NoError(t, New(WithData(gd)).Execute(&ss))
