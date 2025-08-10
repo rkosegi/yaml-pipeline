@@ -24,34 +24,34 @@ import (
 )
 
 func TestLoopOpCloneWith(t *testing.T) {
-	op := &LoopOp{
+	op := &LoopOpSpec{
 		Init: &ActionSpec{
 			Operations: OpSpec{
-				Log: &LogOp{
+				Log: &LogOpSpec{
 					Message: "Ola",
 				},
 			},
 		},
 		PostAction: &ActionSpec{
 			Operations: OpSpec{
-				Abort: &AbortOp{
+				Abort: &AbortOpSpec{
 					Message: "Hi",
 				},
 			},
 		},
 		Test: "{{ false }}",
 	}
-	op = op.CloneWith(mockEmptyActCtx()).(*LoopOp)
+	op = op.CloneWith(mockEmptyActCtx()).(*LoopOpSpec)
 	assert.Equal(t, "{{ false }}", op.Test)
 	assert.Equal(t, "Ola", op.Init.Operations.Log.Message)
 	assert.Equal(t, "Hi", op.PostAction.Operations.Abort.Message)
 }
 
 func TestLoopOpSimple(t *testing.T) {
-	op := LoopOp{
+	op := LoopOpSpec{
 		Init: &ActionSpec{
 			Operations: OpSpec{
-				Set: &SetOp{
+				Set: &SetOpSpec{
 					Data: map[string]interface{}{
 						"i": 0,
 					},
@@ -60,7 +60,7 @@ func TestLoopOpSimple(t *testing.T) {
 		},
 		Action: ActionSpec{
 			Operations: OpSpec{
-				Log: &LogOp{
+				Log: &LogOpSpec{
 					Message: "Iteration {{ .i }}",
 				},
 			},
@@ -68,7 +68,7 @@ func TestLoopOpSimple(t *testing.T) {
 		Test: "{{ lt (.i | int) 10 }}",
 		PostAction: &ActionSpec{
 			Operations: OpSpec{
-				Template: &TemplateOp{
+				Template: &TemplateOpSpec{
 					Template: "{{ add .i  1 }}",
 					Path:     &ValOrRef{Val: "i"},
 				},
@@ -86,33 +86,33 @@ func TestLoopOpSimple(t *testing.T) {
 func TestLoopOpNegative(t *testing.T) {
 	var (
 		err error
-		op  *LoopOp
+		op  *LoopOpSpec
 	)
-	op = &LoopOp{
+	op = &LoopOpSpec{
 		Init: &ActionSpec{
 			Operations: OpSpec{
-				Abort: &AbortOp{},
+				Abort: &AbortOpSpec{},
 			},
 		},
 	}
 	err = op.Do(mockEmptyActCtx())
 	assert.Error(t, err)
 
-	op = &LoopOp{
+	op = &LoopOpSpec{
 		Test: "{{ true }}",
 		Action: ActionSpec{
 			Operations: OpSpec{
-				Abort: &AbortOp{},
+				Abort: &AbortOpSpec{},
 			},
 		},
 	}
 	err = op.Do(mockEmptyActCtx())
 	assert.Error(t, err)
 
-	op = &LoopOp{
+	op = &LoopOpSpec{
 		PostAction: &ActionSpec{
 			Operations: OpSpec{
-				Abort: &AbortOp{},
+				Abort: &AbortOpSpec{},
 			},
 		},
 		Test:   "{{ true }}",
@@ -121,7 +121,7 @@ func TestLoopOpNegative(t *testing.T) {
 	err = op.Do(mockEmptyActCtx())
 	assert.Error(t, err)
 
-	op = &LoopOp{
+	op = &LoopOpSpec{
 		Test:   "{{ NotAFunction }}",
 		Action: ActionSpec{},
 	}

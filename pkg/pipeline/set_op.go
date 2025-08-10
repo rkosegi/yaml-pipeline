@@ -18,11 +18,16 @@ package pipeline
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/rkosegi/yaml-toolkit/dom"
 )
 
-type setHandlerFn func(path string, orig, other dom.ContainerBuilder)
+func strIsEmpty(s *string) bool {
+	return s == nil || len(strings.TrimSpace(*s)) == 0
+}
+
+type setHandlerFn func(path *string, orig, other dom.ContainerBuilder)
 
 func setOpMergeIfContainersReplaceOtherwise(orig, other dom.ContainerBuilder) {
 	for k, v := range other.Children() {
@@ -36,21 +41,21 @@ func setOpMergeIfContainersReplaceOtherwise(orig, other dom.ContainerBuilder) {
 }
 
 var setHandlerFnMap = map[SetStrategy]setHandlerFn{
-	SetStrategyMerge: func(path string, orig, other dom.ContainerBuilder) {
-		if len(path) > 0 {
-			dest := orig.Lookup(path)
+	SetStrategyMerge: func(path *string, orig, other dom.ContainerBuilder) {
+		if !strIsEmpty(path) {
+			dest := orig.Lookup(*path)
 			if dest != nil && dest.IsContainer() {
-				orig.AddValueAt(path, dest.(dom.ContainerBuilder).Merge(other))
+				orig.AddValueAt(*path, dest.(dom.ContainerBuilder).Merge(other))
 			} else {
-				orig.AddValueAt(path, other)
+				orig.AddValueAt(*path, other)
 			}
 		} else {
 			setOpMergeIfContainersReplaceOtherwise(orig, other)
 		}
 	},
-	SetStrategyReplace: func(path string, orig, other dom.ContainerBuilder) {
-		if len(path) > 0 {
-			orig.AddValueAt(path, other)
+	SetStrategyReplace: func(path *string, orig, other dom.ContainerBuilder) {
+		if !strIsEmpty(path) {
+			orig.AddValueAt(*path, other)
 		} else {
 			for k, v := range other.Children() {
 				orig.AddValueAt(k, v)
@@ -59,31 +64,11 @@ var setHandlerFnMap = map[SetStrategy]setHandlerFn{
 	},
 }
 
-type SetStrategy string
-
-const (
-	SetStrategyReplace = SetStrategy("replace")
-	SetStrategyMerge   = SetStrategy("merge")
-)
-
-// SetOp sets data in global data document at given path.
-type SetOp struct {
-	// Arbitrary data to put into data tree
-	Data map[string]interface{} `yaml:"data"`
-
-	// Path at which to put data.
-	// If omitted, then data are merged into root of document
-	Path string `yaml:"path,omitempty" clone:"template"`
-
-	// Strategy defines how that are handled when conflict during set/add of data occur.
-	Strategy *SetStrategy `yaml:"strategy,omitempty"`
+func (sa *SetOpSpec) String() string {
+	return fmt.Sprintf("Set[Path=%s]", safeStrDeref(sa.Path))
 }
 
-func (sa *SetOp) String() string {
-	return fmt.Sprintf("Set[Path=%s]", sa.Path)
-}
-
-func (sa *SetOp) Do(ctx ActionContext) error {
+func (sa *SetOpSpec) Do(ctx ActionContext) error {
 	gd := ctx.Data()
 	if sa.Data == nil {
 		return ErrNoDataToSet
@@ -93,7 +78,7 @@ func (sa *SetOp) Do(ctx ActionContext) error {
 	}
 	handler, exists := setHandlerFnMap[*sa.Strategy]
 	if !exists {
-		return fmt.Errorf("SetOp: unknown SetStrategy %s", *sa.Strategy)
+		return fmt.Errorf("SetOpSpec: unknown SetStrategy %s", *sa.Strategy)
 	}
 	data := dom.DecodeAnyToNode(sa.Data).(dom.ContainerBuilder)
 	handler(sa.Path, gd, data)
@@ -101,10 +86,10 @@ func (sa *SetOp) Do(ctx ActionContext) error {
 	return nil
 }
 
-func (sa *SetOp) CloneWith(ctx ActionContext) Action {
-	return &SetOp{
+func (sa *SetOpSpec) CloneWith(ctx ActionContext) Action {
+	return &SetOpSpec{
 		Data:     sa.Data,
-		Path:     ctx.TemplateEngine().RenderLenient(sa.Path, ctx.Snapshot()),
+		Path:     safeRenderStrPointer(sa.Path, ctx.TemplateEngine(), ctx.Snapshot()),
 		Strategy: sa.Strategy,
 	}
 }

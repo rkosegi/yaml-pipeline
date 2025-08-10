@@ -70,7 +70,7 @@ set:
 `)
 	assert.NotNil(t, pl)
 	assert.Contains(t, pl.String(), "root step")
-	assert.Equal(t, "root step", pl.Name)
+	assert.Equal(t, "root step", *pl.Name)
 	assert.Equal(t, 123, pl.Operations.Set.Data["root"].(map[string]interface{})["sub1"].(map[string]interface{})["leaf1"])
 	assert.Equal(t, "list_item1", pl.Operations.Set.Data["root"].(map[string]interface{})["sub2"].([]interface{})[0])
 }
@@ -84,10 +84,10 @@ func TestExecute(t *testing.T) {
 	ex = newTestExec(gd)
 	assert.NoError(t, ex.Execute(&ActionSpec{
 		ActionMeta: ActionMeta{
-			Name: "root step",
+			Name: ptr("root step"),
 		},
 		Operations: OpSpec{
-			Set: &SetOp{
+			Set: &SetOpSpec{
 				Data: map[string]interface{}{
 					"leaf": "abcd",
 				},
@@ -96,8 +96,8 @@ func TestExecute(t *testing.T) {
 		Children: ChildActions{
 			"sub1": {
 				Operations: OpSpec{
-					Set: &SetOp{
-						Path: "sub1.sub2",
+					Set: &SetOpSpec{
+						Path: ptr("sub1.sub2"),
 						Data: map[string]interface{}{
 							"leaf": "abcd",
 						},
@@ -114,15 +114,15 @@ func TestExecute(t *testing.T) {
 	ex = newTestExec(gd)
 	assert.NoError(t, ex.Execute(&ActionSpec{
 		ActionMeta: ActionMeta{
-			Name: "root step",
+			Name: ptr("root step"),
 		},
 		Children: ChildActions{
 			"sub_step1": {
 				ActionMeta: ActionMeta{
-					Name: "sub_step1",
+					Name: ptr("sub_step1"),
 				},
 				Operations: OpSpec{
-					Template: &TemplateOp{
+					Template: &TemplateOpSpec{
 						Template: "{{ mul 1 2 3 4 5 6 }}",
 						Path:     &ValOrRef{Val: "Results.Factorial"},
 					},
@@ -143,10 +143,10 @@ func TestExecuteImport(t *testing.T) {
 	ex = newTestExec(gd)
 	assert.NoError(t, ex.Execute(&ActionSpec{
 		ActionMeta: ActionMeta{
-			Name: "root step",
+			Name: ptr("root step"),
 		},
 		Operations: OpSpec{
-			Import: &ImportOp{
+			Import: &ImportOpSpec{
 				File: "../../testdata/props1.properties",
 				Path: "wrapped",
 				Mode: ParseFileModeProperties,
@@ -165,10 +165,10 @@ func TestExecuteImportInvalid(t *testing.T) {
 	ex = newTestExec(gd)
 	assert.Error(t, ex.Execute(&ActionSpec{
 		ActionMeta: ActionMeta{
-			Name: "root step",
+			Name: ptr("root step"),
 		},
 		Operations: OpSpec{
-			Import: &ImportOp{},
+			Import: &ImportOpSpec{},
 		},
 	}))
 }
@@ -182,10 +182,10 @@ func TestExecutePatch(t *testing.T) {
 	ex = newTestExec(gd)
 	assert.NoError(t, ex.Execute(&ActionSpec{
 		ActionMeta: ActionMeta{
-			Name: "root step",
+			Name: ptr("root step"),
 		},
 		Operations: OpSpec{
-			Patch: &PatchOp{
+			Patch: &PatchOpSpec{
 				Op:    patch.OpAdd,
 				Path:  "/root",
 				Value: anyValFromMap(map[string]interface{}{"leaf": "abcd"}),
@@ -204,16 +204,16 @@ func TestExecuteInnerSteps(t *testing.T) {
 	ex = newTestExec(gd)
 	assert.NoError(t, ex.Execute(&ActionSpec{
 		ActionMeta: ActionMeta{
-			Name: "root step",
+			Name: ptr("root step"),
 		},
 		Children: ChildActions{
 			"step20": {
 				ActionMeta: ActionMeta{
-					Order: 20,
-					Name:  "step 20",
+					Order: ptr(20),
+					Name:  ptr("step 20"),
 				},
 				Operations: OpSpec{
-					Set: &SetOp{
+					Set: &SetOpSpec{
 						Data: map[string]interface{}{
 							"root.sub": 123,
 						},
@@ -223,11 +223,11 @@ func TestExecuteInnerSteps(t *testing.T) {
 			},
 			"step30": {
 				ActionMeta: ActionMeta{
-					Order: 30,
-					Name:  "step 30",
+					Order: ptr(30),
+					Name:  ptr("step 30"),
 				},
 				Operations: OpSpec{
-					Set: &SetOp{
+					Set: &SetOpSpec{
 						Data: map[string]interface{}{
 							"root.sub": 456,
 						},
@@ -243,16 +243,16 @@ func TestExecuteInnerSteps(t *testing.T) {
 func TestExecuteInnerStepsFail(t *testing.T) {
 	assert.Error(t, dummyExec.Execute(&ActionSpec{
 		ActionMeta: ActionMeta{
-			Name: "root step",
+			Name: ptr("root step"),
 		},
 		Children: ChildActions{
 			"step20": {
 				ActionMeta: ActionMeta{
-					Order: 20,
-					Name:  "step 20",
+					Order: ptr(20),
+					Name:  ptr("step 20"),
 				},
 				Operations: OpSpec{
-					Set: &SetOp{},
+					Set: &SetOpSpec{},
 				},
 			},
 		},
@@ -262,13 +262,13 @@ func TestExecuteInnerStepsFail(t *testing.T) {
 func TestExecuteInnerStepsSkipped(t *testing.T) {
 	assert.NoError(t, dummyExec.Execute(&ActionSpec{
 		ActionMeta: ActionMeta{
-			Name: "root step",
+			Name: ptr("root step"),
 		},
 		Children: ChildActions{
 			"step20": {
 				ActionMeta: ActionMeta{
 					When: strPointer("{{ .Data.Skip | default false }}"),
-					Name: "step 20",
+					Name: ptr("step 20"),
 				},
 			},
 		},
@@ -278,13 +278,13 @@ func TestExecuteInnerStepsSkipped(t *testing.T) {
 func TestExecuteInnerStepsWhenInvalid(t *testing.T) {
 	assert.Error(t, dummyExec.Execute(&ActionSpec{
 		ActionMeta: ActionMeta{
-			Name: "root step",
+			Name: ptr("root step"),
 		},
 		Children: ChildActions{
 			"step20": {
 				ActionMeta: ActionMeta{
 					When: strPointer("{{ .Data.Unknown.Field }}"),
-					Name: "step 20",
+					Name: ptr("step 20"),
 				},
 			},
 		},
@@ -298,16 +298,16 @@ func TestExecuteForEachFileGlob(t *testing.T) {
 	)
 	gd = dom.ContainerNode()
 	ex = newTestExec(gd)
-	fe := &ForEachOp{
+	fe := &ForEachOpSpec{
 		Glob: &ValOrRef{Val: "../../testdata/doc?.yaml"},
 		Action: ActionSpec{
 			Operations: OpSpec{
-				Import: &ImportOp{
+				Import: &ImportOpSpec{
 					File: "{{ .forEach }}",
 					Path: "import.files.{{ b64enc (osBase .forEach) }}",
 					Mode: ParseFileModeYaml,
 				},
-				Ext: &ExtOp{
+				Ext: &ExtOpSpec{
 					Function: "noop",
 				},
 			},
@@ -316,7 +316,7 @@ func TestExecuteForEachFileGlob(t *testing.T) {
 
 	ss := &ActionSpec{
 		ActionMeta: ActionMeta{
-			Name: "root step",
+			Name: ptr("root step"),
 		},
 		Operations: OpSpec{
 			ForEach: fe,

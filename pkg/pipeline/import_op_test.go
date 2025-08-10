@@ -25,11 +25,11 @@ import (
 
 func TestExecuteImportOp(t *testing.T) {
 	var (
-		is ImportOp
+		is ImportOpSpec
 		gd dom.ContainerBuilder
 	)
 	gd = dom.ContainerNode()
-	is = ImportOp{
+	is = ImportOpSpec{
 		File: "../../testdata/doc1.json",
 		Path: "step1.data",
 		Mode: ParseFileModeJson,
@@ -39,14 +39,14 @@ func TestExecuteImportOp(t *testing.T) {
 	assert.Equal(t, "c", gd.Lookup("step1.data.root.list1[2]").AsLeaf().Value())
 
 	// parsing YAML file as JSON should lead to error
-	is = ImportOp{
+	is = ImportOpSpec{
 		File: "../testdata/doc1.yaml",
 		Mode: ParseFileModeJson,
 	}
 	assert.Error(t, New(WithData(gd)).Execute(&is))
 
 	gd = dom.ContainerNode()
-	is = ImportOp{
+	is = ImportOpSpec{
 		File: "../../testdata/doc1.yaml",
 		Mode: ParseFileModeYaml,
 		Path: "step1.data",
@@ -55,7 +55,7 @@ func TestExecuteImportOp(t *testing.T) {
 	assert.Equal(t, 456, gd.Lookup("step1.data.level1.level2a.level3b").AsLeaf().Value())
 
 	gd = dom.ContainerNode()
-	is = ImportOp{
+	is = ImportOpSpec{
 		File: "../../testdata/doc1.yaml",
 		Mode: ParseFileModeText,
 		Path: "step3",
@@ -65,7 +65,7 @@ func TestExecuteImportOp(t *testing.T) {
 	assert.Contains(t, is.String(), "path=step3,mode=text")
 
 	gd = dom.ContainerNode()
-	is = ImportOp{
+	is = ImportOpSpec{
 		File: "../../testdata/doc1.yaml",
 		Mode: ParseFileModeBinary,
 		Path: "files.doc1",
@@ -74,20 +74,20 @@ func TestExecuteImportOp(t *testing.T) {
 	assert.NotEmpty(t, gd.Lookup("files.doc1").AsLeaf().Value())
 
 	gd = dom.ContainerNode()
-	is = ImportOp{
+	is = ImportOpSpec{
 		File: "../../testdata/doc1.json",
 		Path: "files.doc1_json",
 	}
 	assert.NoError(t, New(WithData(gd)).Execute(&is))
 	assert.Contains(t, is.String(), "path=files.doc1_json,mode=")
 
-	is = ImportOp{
+	is = ImportOpSpec{
 		File: "non-existent-file.ext",
 		Path: "something",
 	}
 	assert.Error(t, New(WithData(gd)).Execute(&is))
 
-	is = ImportOp{
+	is = ImportOpSpec{
 		File: "../../testdata/props1.properties",
 		Mode: ParseFileModeProperties,
 		Path: "props",
@@ -95,20 +95,20 @@ func TestExecuteImportOp(t *testing.T) {
 	assert.NoError(t, New(WithData(gd)).Execute(&is))
 
 	// no path provided and data is not a container - error
-	is = ImportOp{
+	is = ImportOpSpec{
 		File: "../../testdata/props1.properties",
 		Mode: ParseFileModeText,
 	}
 	assert.Error(t, New(WithData(gd)).Execute(&is))
 
 	// import directly to root (with no path)
-	is = ImportOp{
+	is = ImportOpSpec{
 		File: "../../testdata/doc1.json",
 		Mode: ParseFileModeJson,
 	}
 	assert.NoError(t, New(WithData(gd)).Execute(&is))
 
-	is = ImportOp{
+	is = ImportOpSpec{
 		File: "../../testdata/props1.properties",
 		Path: "something",
 		Mode: "invalid-mode",

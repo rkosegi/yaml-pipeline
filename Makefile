@@ -33,3 +33,12 @@ build-all:
 
 release:
 	goreleaser release --clean
+
+jsonschema-to-openapi:
+	test -d .private || mkdir .private
+	yq '.$$defs | {"components": {"schemas": . }}' schemas/pipeline.json -oyaml > .private/openapi-spec.yaml
+	yq eval-all '. as $$item ireduce ({}; . *+ $$item)' -i .private/openapi-spec.yaml schemas/generator.patch.yaml -oyaml
+	sed -i 's#/$$defs/#/components/schemas/#g' .private/openapi-spec.yaml
+
+generate: jsonschema-to-openapi
+	go tool oapi-codegen --config=schemas/.openapi-config.yaml .private/openapi-spec.yaml

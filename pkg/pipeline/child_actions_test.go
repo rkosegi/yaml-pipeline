@@ -26,13 +26,13 @@ import (
 func TestSortActionNames(t *testing.T) {
 	ca := ChildActions{
 		"a": ActionSpec{ActionMeta: ActionMeta{
-			Order: 90,
+			Order: ptr(90),
 		}},
 		"b": ActionSpec{ActionMeta: ActionMeta{
-			Order: 50,
+			Order: ptr(50),
 		}},
 		"c": ActionSpec{ActionMeta: ActionMeta{
-			Order: 10,
+			Order: ptr(10),
 		},
 		},
 	}
@@ -49,16 +49,16 @@ func TestChildActionsCloneWith(t *testing.T) {
 	a := ChildActions{
 		"step1": ActionSpec{
 			Operations: OpSpec{
-				Set: &SetOp{
+				Set: &SetOpSpec{
 					Data: map[string]interface{}{
 						"abcd": 123,
 					},
-					Path:     "{{ .sub1.leaf1 }}",
+					Path:     ptr("{{ .sub1.leaf1 }}"),
 					Strategy: setStrategyPointer(SetStrategyReplace),
 				},
 			},
 		},
 	}.CloneWith(ac)
 	assert.NotNil(t, a)
-	assert.Equal(t, "root.sub2", a.(ChildActions)["step1"].Operations.Set.Path)
+	assert.Equal(t, "root.sub2", *a.(ChildActions)["step1"].Operations.Set.Path)
 }

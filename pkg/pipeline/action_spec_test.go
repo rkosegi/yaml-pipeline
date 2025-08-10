@@ -44,7 +44,7 @@ func TestActionSpecShouldPropagateError(t *testing.T) {
 			ErrorPropagation: ptr(ErrorPropagationPolicyIgnore),
 		},
 		Operations: OpSpec{
-			Abort: &AbortOp{Message: "abort"},
+			Abort: &AbortOpSpec{Message: "abort"},
 		},
 	}
 	assert.NoError(t, as.Do(newMockActBuilder().build()))

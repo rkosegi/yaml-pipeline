@@ -22,24 +22,11 @@ import (
 	"github.com/rkosegi/yaml-toolkit/patch"
 )
 
-// PatchOp performs RFC6902-style patch on global data document.
-// Check patch package for more details
-type PatchOp struct {
-	Op   patch.Op `yaml:"op"`
-	From string   `yaml:"from,omitempty" clone:"template"`
-	Path string   `yaml:"path" clone:"template"`
-	// Value is value to be used for op. This takes precedence over ValueFrom.
-	Value *AnyVal `yaml:"value,omitempty"`
-	// ValueFrom allow value to be read from data tree at given path.
-	// Only considered when Value is nil.
-	ValueFrom *string `yaml:"valueFrom,omitempty" clone:"template"`
-}
-
-func (ps *PatchOp) String() string {
+func (ps *PatchOpSpec) String() string {
 	return fmt.Sprintf("Patch[Op=%s,Path=%s]", ps.Op, ps.Path)
 }
 
-func (ps *PatchOp) Do(ctx ActionContext) error {
+func (ps *PatchOpSpec) Do(ctx ActionContext) error {
 	ss := ctx.Snapshot()
 	oo := &patch.OpObj{
 		Op: ps.Op,
@@ -54,8 +41,8 @@ func (ps *PatchOp) Do(ctx ActionContext) error {
 	} else if ps.ValueFrom != nil {
 		oo.Value = ctx.Data().Lookup(ctx.TemplateEngine().RenderLenient(*ps.ValueFrom, ss))
 	}
-	if len(ps.From) > 0 {
-		from, err := patch.ParsePath(ps.From)
+	if !strIsEmpty(ps.From) {
+		from, err := patch.ParsePath(*ps.From)
 		if err != nil {
 			return err
 		}
@@ -66,13 +53,13 @@ func (ps *PatchOp) Do(ctx ActionContext) error {
 	return patch.Do(oo, ctx.Data())
 }
 
-func (ps *PatchOp) CloneWith(ctx ActionContext) Action {
+func (ps *PatchOpSpec) CloneWith(ctx ActionContext) Action {
 	ss := ctx.Snapshot()
-	return &PatchOp{
+	return &PatchOpSpec{
 		Op:        ps.Op,
 		Value:     ps.Value,
 		ValueFrom: safeRenderStrPointer(ps.ValueFrom, ctx.TemplateEngine(), ss),
-		From:      ctx.TemplateEngine().RenderLenient(ps.From, ss),
+		From:      safeRenderStrPointer(ps.From, ctx.TemplateEngine(), ss),
 		Path:      ctx.TemplateEngine().RenderLenient(ps.Path, ss),
 	}
 }

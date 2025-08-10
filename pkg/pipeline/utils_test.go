@@ -96,7 +96,7 @@ func removeFilesLater(t *testing.T, files ...*os.File) {
 
 func TestGetActionFromContext(t *testing.T) {
 	ac := mockEmptyActCtx().(*clientCtx)
-	ac.c = &ExportOp{}
+	ac.c = &ExportOpSpec{}
 	assert.NotNil(t, ac.Action())
 }
 
@@ -109,11 +109,6 @@ func TestNonEmpty(t *testing.T) {
 func TestSafeStrDeref(t *testing.T) {
 	assert.Equal(t, "", safeStrDeref(nil))
 	assert.Equal(t, "aa", safeStrDeref(strPointer("aa")))
-}
-
-func TestSafeStrListSize(t *testing.T) {
-	assert.Equal(t, 0, safeStrListSize(nil))
-	assert.Equal(t, 1, safeStrListSize(&([]string{"a"})))
 }
 
 func TestSafeRegexpDeref(t *testing.T) {
@@ -150,4 +145,24 @@ func TestSafeCopyIntSlice(t *testing.T) {
 func TestSafeBoolDeref(t *testing.T) {
 	assert.False(t, safeBoolDeref(nil))
 	assert.True(t, safeBoolDeref(ptr(true)))
+}
+
+func TestSafeSize(t *testing.T) {
+	t.Run("Size of nil should be 0", func(t *testing.T) {
+		assert.Equal(t, 0, safeSize(nil))
+	})
+	t.Run("Size of empty map should be 0", func(t *testing.T) {
+		assert.Equal(t, 0, safeSize(map[string]int{}))
+	})
+	t.Run("Size of map with 1 element should be 1", func(t *testing.T) {
+		assert.Equal(t, 1, safeSize(map[string]float64{
+			"a": 1,
+		}))
+	})
+	t.Run("Size of slice with 2 elements should be 2", func(t *testing.T) {
+		assert.Equal(t, 2, safeSize([]int{1, 2}))
+	})
+	t.Run("Size of array with 1 element should be 1", func(t *testing.T) {
+		assert.Equal(t, 1, safeSize([]int{1, 2}[1:]))
+	})
 }

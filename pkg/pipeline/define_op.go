@@ -18,18 +18,11 @@ package pipeline
 
 import "fmt"
 
-// DefineOp can be used to define the ActionSpec and later recall it by name via CallOp.
-// Attempt to define name that was defined before will result in an error.
-type DefineOp struct {
-	Name   string
-	Action ActionSpec
-}
-
-func (d *DefineOp) String() string {
+func (d *DefineOpSpec) String() string {
 	return fmt.Sprintf("Define[Name=%s, Action=%v]", d.Name, d.Action)
 }
 
-func (d *DefineOp) Do(ctx ActionContext) error {
+func (d *DefineOpSpec) Do(ctx ActionContext) error {
 	if _, exists := ctx.Ext().GetAction(d.Name); exists {
 		return fmt.Errorf("callable '%s' is already defined", d.Name)
 	}
@@ -37,8 +30,8 @@ func (d *DefineOp) Do(ctx ActionContext) error {
 	return nil
 }
 
-func (d *DefineOp) CloneWith(ctx ActionContext) Action {
-	return &DefineOp{
+func (d *DefineOpSpec) CloneWith(ctx ActionContext) Action {
+	return &DefineOpSpec{
 		Name:   d.Name,
 		Action: d.Action.CloneWith(ctx).(ActionSpec),
 	}

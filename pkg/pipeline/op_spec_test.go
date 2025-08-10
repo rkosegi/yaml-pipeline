@@ -25,71 +25,71 @@ import (
 
 func TestOpSpecCloneWith(t *testing.T) {
 	o := OpSpec{
-		Set: &SetOp{
+		Set: &SetOpSpec{
 			Data: map[string]interface{}{
 				"a": 1,
 			},
-			Path: "{{ .Path }}",
+			Path: ptr("{{ .Path }}"),
 		},
-		Patch: &PatchOp{
+		Patch: &PatchOpSpec{
 			Path: "{{ .Path3 }}",
 		},
-		ForEach: &ForEachOp{
+		ForEach: &ForEachOpSpec{
 			Item: &ValOrRefSlice{&ValOrRef{Val: "left"}, &ValOrRef{Val: "right"}},
 			Action: ActionSpec{
 				Operations: OpSpec{},
 			},
 		},
-		Template: &TemplateOp{
+		Template: &TemplateOpSpec{
 			Path: &ValOrRef{Val: "{{ .Path }}"},
 		},
-		TemplateFile: &TemplateFileOp{
+		TemplateFile: &TemplateFileOpSpec{
 			File:   "{{ .Path }}",
 			Output: "{{ .Path3 }}",
 		},
-		Import: &ImportOp{
+		Import: &ImportOpSpec{
 			Path: "{{ .Path }}",
 			Mode: ParseFileModeYaml,
 		},
-		Call: &CallOp{
+		Call: &CallOpSpec{
 			Name: "invalid",
 		},
-		Define: &DefineOp{
+		Define: &DefineOpSpec{
 			Name: "def1",
 			Action: ActionSpec{
 				Operations: OpSpec{
-					Log: &LogOp{
+					Log: &LogOpSpec{
 						Message: "hello",
 					},
 				},
 			},
 		},
-		Env: &EnvOp{
-			Path: "{{ .Path }}",
+		Env: &EnvOpSpec{
+			Path: ptr("{{ .Path }}"),
 		},
-		Exec: &ExecOp{
+		Exec: &ExecOpSpec{
 			Program: "{{ .Shell }}",
 		},
-		Ext: &ExtOp{
+		Ext: &ExtOpSpec{
 			Function: "noop",
 		},
-		Export: &ExportOp{
+		Export: &ExportOpSpec{
 			File:   &ValOrRef{Val: "/tmp/file.yaml"},
 			Path:   &ValOrRef{Val: "{{ .Path }}"},
 			Format: OutputFormatYaml,
 		},
-		Log: &LogOp{
+		Log: &LogOpSpec{
 			Message: "Path: {{ .Path }}",
 		},
-		Loop: &LoopOp{
+		Loop: &LoopOpSpec{
 			Test: "false",
 			Action: ActionSpec{
-				Operations: OpSpec{Log: &LogOp{
+				Operations: OpSpec{Log: &LogOpSpec{
 					Message: "Ola!",
 				}},
 			},
 		},
-		Abort: &AbortOp{
+		Abort: &AbortOpSpec{
 			Message: "abort",
 		},
 	}
@@ -100,12 +100,12 @@ func TestOpSpecCloneWith(t *testing.T) {
 		"Shell": "/bin/bash",
 	}).(dom.ContainerBuilder)).build()).(OpSpec)
 	t.Log(a.String())
-	assert.Equal(t, "root.sub2", a.Set.Path)
+	assert.Equal(t, "root.sub2", *a.Set.Path)
 	assert.Equal(t, "root.sub2", a.Import.Path)
 	assert.Equal(t, "/root/sub3", a.Patch.Path)
 	assert.Equal(t, "root.sub2", a.Template.Path.Val)
 	assert.Equal(t, "root.sub2", a.Export.Path.Val)
-	assert.Equal(t, "root.sub2", a.Env.Path)
+	assert.Equal(t, "root.sub2", *a.Env.Path)
 	assert.Equal(t, "/bin/bash", a.Exec.Program)
 	assert.Equal(t, "hello", a.Define.Action.Operations.Log.Message)
 	assert.Equal(t, "invalid", a.Call.Name)

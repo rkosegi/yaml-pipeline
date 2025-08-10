@@ -27,14 +27,14 @@ func TestForDefCall(t *testing.T) {
 		Children: ChildActions{
 			"init": ActionSpec{
 				ActionMeta: ActionMeta{
-					Order: 1,
+					Order: ptr(1),
 				},
 				Operations: OpSpec{
-					Define: &DefineOp{
+					Define: &DefineOpSpec{
 						Name: "dummy",
 						Action: ActionSpec{
 							Operations: OpSpec{
-								Log: &LogOp{
+								Log: &LogOpSpec{
 									Message: "{{ .myargs.msg }}",
 								},
 							},
@@ -44,16 +44,16 @@ func TestForDefCall(t *testing.T) {
 			},
 			"run": ActionSpec{
 				ActionMeta: ActionMeta{
-					Order: 2,
+					Order: ptr(2),
 				},
 				Operations: OpSpec{
-					ForEach: &ForEachOp{
+					ForEach: &ForEachOpSpec{
 						Item: &(ValOrRefSlice{&ValOrRef{Val: "a"}, &ValOrRef{Val: "b"}}),
 						Action: ActionSpec{
 							Operations: OpSpec{
-								Call: &CallOp{
+								Call: &CallOpSpec{
 									Name: "dummy",
-									Args: map[string]interface{}{
+									Args: &map[string]interface{}{
 										"msg": "{{ .forEach }}",
 									},
 									ArgsPath: ptr("myargs"),
@@ -73,11 +73,11 @@ func TestForDefCall(t *testing.T) {
 
 func TestDefineTwice(t *testing.T) {
 	ctx := mockEmptyActCtx()
-	assert.NoError(t, ctx.Executor().Execute(&DefineOp{
+	assert.NoError(t, ctx.Executor().Execute(&DefineOpSpec{
 		Name:   "op",
 		Action: ActionSpec{},
 	}))
-	assert.Error(t, ctx.Executor().Execute(&DefineOp{
+	assert.Error(t, ctx.Executor().Execute(&DefineOpSpec{
 		Name:   "op",
 		Action: ActionSpec{},
 	}))

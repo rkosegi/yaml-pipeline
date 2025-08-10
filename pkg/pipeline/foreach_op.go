@@ -24,27 +24,7 @@ import (
 	"github.com/rkosegi/yaml-toolkit/dom"
 )
 
-// ForEachOp can be used to repeat actions over list of items.
-// Those items could be
-//  1. files specified by globbing pattern
-//  2. result of query from data tree (list values)
-//  3. specified strings
-type ForEachOp struct {
-	// Glob is pattern that will be used to match files on file system.
-	// Matched files will be used as iteration items.
-	Glob *ValOrRef `yaml:"glob,omitempty"`
-	// Query is path within the data tree that will be attempted
-	Query *ValOrRef `yaml:"query,omitempty"`
-	// Item is list of specified strings to iterate over
-	Item *ValOrRefSlice `yaml:"item,omitempty"`
-	// Action to perform for every item
-	Action ActionSpec `yaml:"action"`
-	// Variable is name of variable to hold current iteration item.
-	// When omitted, default value of "forEach" will be used
-	Variable *string `yaml:"var,omitempty"`
-}
-
-func (fea *ForEachOp) Do(ctx ActionContext) error {
+func (fea *ForEachOpSpec) Do(ctx ActionContext) error {
 	if fea.Glob != nil {
 		if matches, err := filepath.Glob(fea.Glob.Resolve(ctx)); err != nil {
 			return err
@@ -87,7 +67,7 @@ func (fea *ForEachOp) Do(ctx ActionContext) error {
 	return nil
 }
 
-func (fea *ForEachOp) performWithItem(ctx ActionContext, item dom.Node) (err error) {
+func (fea *ForEachOpSpec) performWithItem(ctx ActionContext, item dom.Node) (err error) {
 	vp := "forEach"
 	if fea.Variable != nil {
 		vp = *fea.Variable
@@ -110,7 +90,7 @@ func (fea *ForEachOp) performWithItem(ctx ActionContext, item dom.Node) (err err
 	return ctx.Executor().Execute(fea.Action.Children)
 }
 
-func (fea *ForEachOp) String() string {
+func (fea *ForEachOpSpec) String() string {
 	var (
 		sb    strings.Builder
 		parts []string
@@ -130,8 +110,8 @@ func (fea *ForEachOp) String() string {
 	return sb.String()
 }
 
-func (fea *ForEachOp) CloneWith(ctx ActionContext) Action {
-	cp := new(ForEachOp)
+func (fea *ForEachOpSpec) CloneWith(ctx ActionContext) Action {
+	cp := new(ForEachOpSpec)
 	cp.Glob = fea.Glob
 	cp.Item = fea.Item
 	cp.Query = fea.Query

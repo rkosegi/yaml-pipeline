@@ -18,24 +18,20 @@ package pipeline
 
 import "fmt"
 
-type ExtOp struct {
-	// Function is name of function that was registered with Executor
-	Function string `yaml:"func"`
-	// Args holds arguments to be passed to function.
-	Args map[string]interface{} `yaml:"args"`
+func (e *ExtOpSpec) String() string {
+	return fmt.Sprintf("Ext[func=%s,args=%d]", e.Function, safeSize(e.Args))
 }
 
-func (e *ExtOp) String() string {
-	return fmt.Sprintf("Ext[func=%s]", e.Function)
-}
-
-func (e *ExtOp) Do(ctx ActionContext) error {
+func (e *ExtOpSpec) Do(ctx ActionContext) error {
+	if e.Args == nil {
+		e.Args = &map[string]interface{}{}
+	}
 	if fn := ctx.Ext().GetActionFactory(e.Function); fn != nil {
-		return ctx.Executor().Execute(fn.ForArgs(ctx, e.Args))
+		return ctx.Executor().Execute(fn.ForArgs(ctx, *e.Args))
 	}
 	return fmt.Errorf("no such function: %s", e.Function)
 }
 
-func (e *ExtOp) CloneWith(_ ActionContext) Action {
-	return &ExtOp{Function: e.Function}
+func (e *ExtOpSpec) CloneWith(_ ActionContext) Action {
+	return &ExtOpSpec{Function: e.Function}
 }

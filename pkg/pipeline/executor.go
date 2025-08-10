@@ -104,7 +104,7 @@ func (p *exec) closeServices() {
 	}
 }
 
-func (p *exec) Run(po *PipelineOp) error {
+func (p *exec) Run(po *PipelineSpec) error {
 	if err := p.initServices(po.Services); err != nil {
 		return err
 	}

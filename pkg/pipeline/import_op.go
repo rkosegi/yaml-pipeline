@@ -25,39 +25,6 @@ import (
 	"github.com/rkosegi/yaml-toolkit/props"
 )
 
-// ParseFileMode defines how the file is parsed before is put into data tree
-type ParseFileMode string
-
-const (
-	// ParseFileModeBinary File is read and encoded using base64 string into data tree
-	ParseFileModeBinary ParseFileMode = "binary"
-
-	// ParseFileModeText File is read as-is and is assumed it represents utf-8 encoded byte stream
-	ParseFileModeText ParseFileMode = "text"
-
-	// ParseFileModeYaml File is parsed as YAML document and put as child node into data tree
-	ParseFileModeYaml ParseFileMode = "yaml"
-
-	// ParseFileModeJson File is parsed as JSON document and put as child node into data tree
-	ParseFileModeJson ParseFileMode = "json"
-
-	// ParseFileModeProperties File is parsed as Java properties into map[string]interface{} and put as child node into data tree
-	ParseFileModeProperties ParseFileMode = "properties"
-)
-
-// ImportOp reads content of file into data tree at given path
-type ImportOp struct {
-	// File to read
-	File string `yaml:"file" clone:"template"`
-
-	// Path at which to import data.
-	// If omitted, then data are merged into root of document
-	Path string `yaml:"path" clone:"template"`
-
-	// How to parse file
-	Mode ParseFileMode `yaml:"mode,omitempty"`
-}
-
 func (pfm ParseFileMode) toValue(content []byte) (dom.Node, error) {
 	switch pfm {
 	case ParseFileModeBinary:
@@ -75,11 +42,11 @@ func (pfm ParseFileMode) toValue(content []byte) (dom.Node, error) {
 	}
 }
 
-func (ia *ImportOp) String() string {
+func (ia *ImportOpSpec) String() string {
 	return fmt.Sprintf("Import[file=%s,path=%s,mode=%s]", ia.File, ia.Path, ia.Mode)
 }
 
-func (ia *ImportOp) Do(ctx ActionContext) error {
+func (ia *ImportOpSpec) Do(ctx ActionContext) error {
 	file := ctx.TemplateEngine().RenderLenient(ia.File, ctx.Snapshot())
 	ctx.Logger().Log(fmt.Sprintf("Importing file %s using mode %s", file, ia.Mode))
 	val, err := parseFile(file, ia.Mode)
@@ -103,8 +70,8 @@ func (ia *ImportOp) Do(ctx ActionContext) error {
 	return nil
 }
 
-func (ia *ImportOp) CloneWith(ctx ActionContext) Action {
-	return &ImportOp{
+func (ia *ImportOpSpec) CloneWith(ctx ActionContext) Action {
+	return &ImportOpSpec{
 		Mode: ia.Mode,
 		Path: ctx.TemplateEngine().RenderLenient(ia.Path, ctx.Snapshot()),
 		File: ctx.TemplateEngine().RenderLenient(ia.File, ctx.Snapshot()),

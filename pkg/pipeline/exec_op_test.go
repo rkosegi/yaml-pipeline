@@ -25,13 +25,13 @@ import (
 )
 
 func TestExecOpDoEmptyCommand(t *testing.T) {
-	eo := &ExecOp{}
+	eo := &ExecOpSpec{}
 	assert.Error(t, eo.Do(mockEmptyActCtx()))
 }
 
 func TestExecOpDo(t *testing.T) {
 	var (
-		eo *ExecOp
+		eo *ExecOpSpec
 	)
 	fout, err := os.CreateTemp("", "yt.*.txt")
 	assert.NoError(t, err)
@@ -39,7 +39,7 @@ func TestExecOpDo(t *testing.T) {
 	assert.NoError(t, err)
 	removeFilesLater(t, fout, ferr)
 	assert.NoError(t, err)
-	eo = &ExecOp{
+	eo = &ExecOpSpec{
 		Program: "sh",
 		Args:    &[]string{"-c", "echo abcd"},
 		Stdout:  strPointer(fout.Name()),
@@ -47,14 +47,14 @@ func TestExecOpDo(t *testing.T) {
 	}
 	assert.NoError(t, eo.Do(mockEmptyActCtx()))
 
-	eo = &ExecOp{
+	eo = &ExecOpSpec{
 		Program: "sh",
 		Args:    &[]string{"-c", "echo abcd"},
 		Stdout:  strPointer("/"),
 	}
 	assert.Error(t, eo.Do(mockEmptyActCtx()))
 
-	eo = &ExecOp{
+	eo = &ExecOpSpec{
 		Program:        "sh",
 		Args:           &[]string{"-c", "exit 3"},
 		ValidExitCodes: &[]int{3},
@@ -64,7 +64,7 @@ func TestExecOpDo(t *testing.T) {
 	ctx := newMockActBuilder().data(d).build()
 	assert.NoError(t, eo.Do(ctx))
 	assert.Equal(t, 3, d.Lookup("Res").AsLeaf().Value())
-	eo = &ExecOp{
+	eo = &ExecOpSpec{
 		Program:        "sh",
 		Args:           &[]string{"-c", "exit 4"},
 		ValidExitCodes: &[]int{3},
@@ -75,11 +75,11 @@ func TestExecOpDo(t *testing.T) {
 }
 
 func TestExecOpCloneWith(t *testing.T) {
-	eo := &ExecOp{
+	eo := &ExecOpSpec{
 		Program: "{{ .Shell }}",
 	}
 	d := dom.ContainerNode()
 	d.AddValue("Shell", dom.LeafNode("/bin/bash"))
-	eo = eo.CloneWith(newMockActBuilder().data(d).build()).(*ExecOp)
+	eo = eo.CloneWith(newMockActBuilder().data(d).build()).(*ExecOpSpec)
 	assert.Equal(t, "/bin/bash", eo.Program)
 }

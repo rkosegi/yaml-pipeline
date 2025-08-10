@@ -39,7 +39,7 @@ type data struct {
 	file     string
 	validate bool
 	logger   *slog.Logger
-	pp       ytp.PipelineOp
+	pp       ytp.PipelineSpec
 	vals     []string
 }
 

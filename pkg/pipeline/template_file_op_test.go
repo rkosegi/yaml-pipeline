@@ -29,13 +29,13 @@ func TestTemplateFileOp(t *testing.T) {
 		err error
 		x   []byte
 		f   *os.File
-		tfo *TemplateFileOp
+		tfo *TemplateFileOpSpec
 	)
 	d := dom.ContainerNode()
 	ctx := newMockActBuilder().testLogger(t).data(d).build()
-	tfo = &TemplateFileOp{}
+	tfo = &TemplateFileOpSpec{}
 	assert.Error(t, tfo.Do(ctx))
-	tfo = &TemplateFileOp{File: "/tmp/in.tmpl"}
+	tfo = &TemplateFileOpSpec{File: "/tmp/in.tmpl"}
 	assert.Error(t, tfo.Do(ctx))
 
 	f, err = os.CreateTemp(t.TempDir(), "yt")
@@ -44,13 +44,13 @@ func TestTemplateFileOp(t *testing.T) {
 	})
 	assert.NoError(t, err)
 
-	tfo = &TemplateFileOp{
+	tfo = &TemplateFileOpSpec{
 		File:   "../../testdata/invalid.template",
 		Output: f.Name(),
 	}
 	assert.Error(t, tfo.Do(ctx))
 
-	tfo = &TemplateFileOp{
+	tfo = &TemplateFileOpSpec{
 		File:   "../../testdata/simple.template",
 		Output: f.Name(),
 		Path:   ptr("invalid-Path"),
@@ -58,7 +58,7 @@ func TestTemplateFileOp(t *testing.T) {
 	assert.Error(t, tfo.Do(ctx))
 
 	d.AddValueAt("tmpl1.name", dom.LeafNode("tester"))
-	tfo = &TemplateFileOp{
+	tfo = &TemplateFileOpSpec{
 		File:   "../../testdata/simple.template",
 		Output: f.Name(),
 		Path:   ptr("tmpl1"),
@@ -70,7 +70,7 @@ func TestTemplateFileOp(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Contains(t, string(x), "tester")
 
-	tfo = &TemplateFileOp{
+	tfo = &TemplateFileOpSpec{
 		File:   "non-existent-file",
 		Output: "whatever",
 	}

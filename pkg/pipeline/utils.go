@@ -18,6 +18,7 @@ package pipeline
 
 import (
 	"os"
+	"reflect"
 	"regexp"
 	"slices"
 	"strings"
@@ -73,15 +74,33 @@ func safeRegexpDeref(re *regexp.Regexp) string {
 	return re.String()
 }
 
-func safeStrListSize(in *[]string) int {
+func safeSizeReflect(rv reflect.Value) int {
+	if rv.Kind() == reflect.Ptr {
+		return safeSizeReflect(rv.Elem())
+	}
+	if rv.Kind() == reflect.Slice || rv.Kind() == reflect.Array || rv.Kind() == reflect.Map {
+		return rv.Len()
+	}
+	return 0
+}
+
+// checks for size of slice or map. Anything else is considered as size of 0.
+func safeSize(in any) int {
 	if in == nil {
 		return 0
 	}
-	return len(*in)
+	return safeSizeReflect(reflect.ValueOf(in))
 }
 
 func nonEmpty(in *string) bool {
 	return in != nil && len(*in) > 0
+}
+
+func actionSpecFix(as ActionSpec) ActionSpec {
+	if as.Order == nil {
+		as.Order = ptr(0)
+	}
+	return as
 }
 
 func sortActionNames(actions ChildActions) []string {
@@ -90,7 +109,7 @@ func sortActionNames(actions ChildActions) []string {
 		keys = append(keys, n)
 	}
 	slices.SortFunc(keys, func(a, b string) int {
-		return actions[a].Order - actions[b].Order
+		return *actionSpecFix(actions[a]).Order - *actionSpecFix(actions[b]).Order
 	})
 	return keys
 }

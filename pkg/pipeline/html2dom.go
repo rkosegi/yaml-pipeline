@@ -28,8 +28,7 @@ import (
 )
 
 type (
-	Html2DomLayout string
-	LayoutFn       func(dom.ContainerBuilder, *html.Node)
+	LayoutFn func(dom.ContainerBuilder, *html.Node)
 )
 
 var (
@@ -41,33 +40,13 @@ var (
 const (
 	AttributeNode = "Attrs"
 	ValueNode     = "Value"
-
-	// Html2DomLayoutDefault will produce "Value" leaf for every text node.
-	// Child elements are collected into the list, if their name appears multiple times within the parent,
-	// otherwise they are regular child node.
-	// Attributes of element are put into container node "Attrs".
-	// Namespaces are ignored.
-	Html2DomLayoutDefault = Html2DomLayout("default")
 )
 
-type Html2DomOp struct {
-	// From is path within the global data to the leaf node where XML source is stored as string.
-	From string `yaml:"from" clone:"template"`
-	// Query is optional xpath expression to use to extract subset from source XML document.
-	// Only first matching node is taken into account.
-	// When omitted, then whole document is used.
-	Query *ValOrRef `yaml:"query"`
-	// To is destination where to put converted document as dom.Container.
-	To string `yaml:"to" clone:"template"`
-	// Layout defines how HTML data are put into DOM
-	Layout *Html2DomLayout `yaml:"layout"`
-}
-
-func (x *Html2DomOp) String() string {
+func (x *Html2DomOpSpec) String() string {
 	return fmt.Sprintf("Html2Dom[from=%s,to=%s, query=%v]", x.From, x.To, x.Query)
 }
 
-func (x *Html2DomOp) Do(ctx ActionContext) error {
+func (x *Html2DomOpSpec) Do(ctx ActionContext) error {
 	ss := ctx.Snapshot()
 	from := ctx.TemplateEngine().RenderLenient(x.From, ss)
 	to := ctx.TemplateEngine().RenderLenient(x.To, ss)
@@ -152,9 +131,9 @@ func convertHtmlNode2Dom(cb dom.ContainerBuilder, node *html.Node) {
 	}
 }
 
-func (x *Html2DomOp) CloneWith(ctx ActionContext) Action {
+func (x *Html2DomOpSpec) CloneWith(ctx ActionContext) Action {
 	ss := ctx.Snapshot()
-	return &Html2DomOp{
+	return &Html2DomOpSpec{
 		From:   ctx.TemplateEngine().RenderLenient(x.From, ss),
 		Query:  x.Query,
 		To:     ctx.TemplateEngine().RenderLenient(x.To, ss),

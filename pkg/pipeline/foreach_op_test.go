@@ -24,48 +24,48 @@ import (
 )
 
 func TestForeachCloneWith(t *testing.T) {
-	op := ForEachOp{
+	op := ForEachOpSpec{
 		Item: &ValOrRefSlice{&ValOrRef{Val: "a"}, &ValOrRef{Val: "b"}, &ValOrRef{Val: "c"}},
 		Action: ActionSpec{
 			Operations: OpSpec{},
 		},
 	}
-	a := op.CloneWith(mockEmptyActCtx()).(*ForEachOp)
+	a := op.CloneWith(mockEmptyActCtx()).(*ForEachOpSpec)
 	assert.NotNil(t, a)
 	assert.Equal(t, 3, len(*a.Item))
 }
 
 func TestForeachStringItem(t *testing.T) {
-	op := ForEachOp{
+	op := ForEachOpSpec{
 		Item: &ValOrRefSlice{&ValOrRef{Val: "a"}, &ValOrRef{Val: "b"}, &ValOrRef{Val: "c"}},
 		Action: ActionSpec{
 			Operations: OpSpec{
-				Set: &SetOp{
-					Path: "{{ .forEach }}",
+				Set: &SetOpSpec{
+					Path: ptr("{{ .forEach }}"),
 					Data: map[string]interface{}{
 						"X": "abc",
 					},
 				},
-				Env: &EnvOp{},
-				Export: &ExportOp{
+				Env: &EnvOpSpec{},
+				Export: &ExportOpSpec{
 					File:   &ValOrRef{Val: "/tmp/a-{{ .forEach }}.yaml"},
 					Format: OutputFormatYaml,
 				},
-				Exec: &ExecOp{
+				Exec: &ExecOpSpec{
 					Program: "sh",
 					Args:    &[]string{"-c", "rm -f /tmp/a-{{ .forEach }}.yaml"},
 				},
-				Log: &LogOp{
+				Log: &LogOpSpec{
 					Message: "Hi {{ .forEach }}",
 				},
-				TemplateFile: &TemplateFileOp{
+				TemplateFile: &TemplateFileOpSpec{
 					File:   "../../testdata/simple.template",
 					Output: "/tmp/abc.out",
 				},
-				Loop: &LoopOp{
+				Loop: &LoopOpSpec{
 					Test: "false",
 					Action: ActionSpec{
-						Operations: OpSpec{Log: &LogOp{
+						Operations: OpSpec{Log: &LogOpSpec{
 							Message: "Ola!",
 						}},
 					},
@@ -82,12 +82,12 @@ func TestForeachStringItem(t *testing.T) {
 }
 
 func TestForeachStringItemChildError(t *testing.T) {
-	op := ForEachOp{
+	op := ForEachOpSpec{
 		Item: &ValOrRefSlice{&ValOrRef{Val: "a"}, &ValOrRef{Val: "b"}, &ValOrRef{Val: "c"}},
 		Action: ActionSpec{
 			Operations: OpSpec{
-				Set: &SetOp{
-					Path: "{{ .forEach }}",
+				Set: &SetOpSpec{
+					Path: ptr("{{ .forEach }}"),
 				},
 			},
 		},
@@ -119,11 +119,11 @@ func TestForeachQuery(t *testing.T) {
 	for _, qry := range []string{
 		"leaf", "sub", "items",
 	} {
-		op := &ForEachOp{
+		op := &ForEachOpSpec{
 			Query: &ValOrRef{Val: qry},
 			Action: ActionSpec{
 				Operations: OpSpec{
-					Abort: &AbortOp{},
+					Abort: &AbortOpSpec{},
 				},
 			},
 		}
@@ -158,12 +158,12 @@ func TestForeachQuery(t *testing.T) {
 			path:     "Result.{{ .XYZ }}",
 		},
 	} {
-		op := &ForEachOp{
+		op := &ForEachOpSpec{
 			Variable: ptr(tc.variable),
 			Query:    &ValOrRef{Val: tc.qry},
 			Action: ActionSpec{
 				Operations: OpSpec{
-					Template: &TemplateOp{
+					Template: &TemplateOpSpec{
 						Template: tc.tmpl,
 						Path:     &ValOrRef{Val: tc.path},
 					},
@@ -178,11 +178,11 @@ func TestForeachQuery(t *testing.T) {
 }
 
 func TestForeachGlob(t *testing.T) {
-	op := ForEachOp{
+	op := ForEachOpSpec{
 		Glob: &ValOrRef{Val: "../../testdata/doc?.yaml"},
 		Action: ActionSpec{
 			Operations: OpSpec{
-				Import: &ImportOp{
+				Import: &ImportOpSpec{
 					File: "{{ .forEach }}",
 					Path: "import.files.{{ b64enc (osBase .forEach) }}",
 					Mode: ParseFileModeYaml,
@@ -199,15 +199,15 @@ func TestForeachGlob(t *testing.T) {
 func TestForeachActionSpec(t *testing.T) {
 	var (
 		err error
-		op  *ForEachOp
+		op  *ForEachOpSpec
 	)
-	op = &ForEachOp{
+	op = &ForEachOpSpec{
 		Item: &ValOrRefSlice{&ValOrRef{Val: "a"}, &ValOrRef{Val: "b"}, &ValOrRef{Val: "c"}},
 		Action: ActionSpec{
 			Children: map[string]ActionSpec{
 				"sub": {
 					Operations: OpSpec{
-						Log: &LogOp{
+						Log: &LogOpSpec{
 							Message: "Hi {{ .forEach }}",
 						},
 					},
@@ -218,13 +218,13 @@ func TestForeachActionSpec(t *testing.T) {
 	err = op.Do(newMockActBuilder().testLogger(t).build())
 	assert.NoError(t, err)
 
-	op = &ForEachOp{
+	op = &ForEachOpSpec{
 		Item: &ValOrRefSlice{&ValOrRef{Val: "a"}, &ValOrRef{Val: "b"}, &ValOrRef{Val: "c"}},
 		Action: ActionSpec{
 			Children: map[string]ActionSpec{
 				"sub": {
 					Operations: OpSpec{
-						Template: &TemplateOp{
+						Template: &TemplateOpSpec{
 							Path:     &ValOrRef{Val: "X"},
 							Template: "{{ add .X 1 }}",
 						},
@@ -241,12 +241,12 @@ func TestForeachActionSpec(t *testing.T) {
 }
 
 func TestForeachGlobChildError(t *testing.T) {
-	op := ForEachOp{
+	op := ForEachOpSpec{
 		Glob: &ValOrRef{Val: "../../testdata/doc?.yaml"},
 		Action: ActionSpec{
 			Operations: OpSpec{
-				Set: &SetOp{
-					Path: "{{ .forEach }}",
+				Set: &SetOpSpec{
+					Path: ptr("{{ .forEach }}"),
 				},
 			},
 		},
@@ -256,11 +256,11 @@ func TestForeachGlobChildError(t *testing.T) {
 }
 
 func TestForeachGlobInvalid(t *testing.T) {
-	op := ForEachOp{
+	op := ForEachOpSpec{
 		Glob: &ValOrRef{Val: "[]]"},
 		Action: ActionSpec{
 			Operations: OpSpec{
-				Import: &ImportOp{
+				Import: &ImportOpSpec{
 					File: "{{ .forEach }}",
 					Path: "import.files.{{ b64enc (osBase .forEach) }}",
 					Mode: ParseFileModeYaml,

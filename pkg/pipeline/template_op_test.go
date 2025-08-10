@@ -26,13 +26,13 @@ import (
 func TestExecuteTemplateOp(t *testing.T) {
 	var (
 		err error
-		ts  TemplateOp
+		ts  TemplateOpSpec
 		gd  dom.ContainerBuilder
 	)
 
 	gd = dom.ContainerNode()
 	gd.AddValueAt("root.leaf1", dom.LeafNode(123456))
-	ts = TemplateOp{
+	ts = TemplateOpSpec{
 		Template: `{{ (mul .root.leaf1 2) | quote }}`,
 		Path:     &ValOrRef{Val: "result.x1"},
 		Trim:     ptr(true),
@@ -42,13 +42,13 @@ func TestExecuteTemplateOp(t *testing.T) {
 	assert.Contains(t, ts.String(), "result.x1")
 
 	// empty template error
-	ts = TemplateOp{}
+	ts = TemplateOpSpec{}
 	err = New(WithData(gd)).Execute(&ts)
 	assert.Error(t, err)
 	assert.Equal(t, ErrTemplateEmpty, err)
 
 	// empty path error
-	ts = TemplateOp{
+	ts = TemplateOpSpec{
 		Template: `TEST`,
 	}
 	err = New(WithData(gd)).Execute(&ts)
@@ -56,7 +56,7 @@ func TestExecuteTemplateOp(t *testing.T) {
 	assert.Equal(t, ErrPathEmpty, err)
 
 	// empty path error (other form)
-	ts = TemplateOp{
+	ts = TemplateOpSpec{
 		Template: `TEST`,
 		Path:     &ValOrRef{Ref: "a.b.c.d"},
 	}
@@ -64,13 +64,13 @@ func TestExecuteTemplateOp(t *testing.T) {
 	assert.Error(t, err)
 	assert.Equal(t, ErrPathEmpty, err)
 
-	ts = TemplateOp{
+	ts = TemplateOpSpec{
 		Template: `{{}}{{`,
 		Path:     &ValOrRef{Val: "result"},
 	}
 	assert.Error(t, New(WithData(gd)).Execute(&ts))
 
-	ts = TemplateOp{
+	ts = TemplateOpSpec{
 		Template: `{{ invalid_func }}`,
 		Path:     &ValOrRef{Val: "result"},
 	}
@@ -80,13 +80,13 @@ func TestExecuteTemplateOp(t *testing.T) {
 func TestExecuteTemplateOpAsYaml(t *testing.T) {
 	var (
 		err error
-		ts  TemplateOp
+		ts  TemplateOpSpec
 		gd  dom.ContainerBuilder
 	)
 
 	// 1, render yaml source manually
 	gd = dom.ContainerNode()
-	ts = TemplateOp{
+	ts = TemplateOpSpec{
 		Template: `
 items:
 {{- range (split "," "a,b,c") }}
@@ -101,7 +101,7 @@ items:
 
 	// 2, render using template function
 	gd = dom.ContainerNode()
-	ts = TemplateOp{
+	ts = TemplateOpSpec{
 		Template: `
 items:
 {{ (split "," "a,b,c") | list | toYaml }}
@@ -115,7 +115,7 @@ items:
 
 	// 3, render invalid
 	gd = dom.ContainerNode()
-	ts = TemplateOp{
+	ts = TemplateOpSpec{
 		Template: `*** this is not a YAML ***`,
 		Path:     &ValOrRef{Val: "Out"},
 		ParseAs:  ptr(ParseTextAsYaml),
@@ -125,7 +125,7 @@ items:
 }
 
 func TestExecuteTemplateOpAsInvalid(t *testing.T) {
-	assert.Error(t, New().Execute(&TemplateOp{
+	assert.Error(t, New().Execute(&TemplateOpSpec{
 		Template: `---\nOla: Hi`,
 		Path:     &ValOrRef{Val: "Out"},
 		ParseAs:  ptr(ParseTextAs("invalid")),
@@ -135,11 +135,11 @@ func TestExecuteTemplateOpAsInvalid(t *testing.T) {
 func TestExecuteTemplateOpAsFloat64(t *testing.T) {
 	var (
 		gd  dom.ContainerBuilder
-		ts  *TemplateOp
+		ts  *TemplateOpSpec
 		err error
 	)
 	gd = dom.ContainerNode()
-	ts = &TemplateOp{
+	ts = &TemplateOpSpec{
 		Template: `{{ maxf 1.5 3 4.5 }}`,
 		Path:     &ValOrRef{Val: "Out"},
 		ParseAs:  ptr(ParseTextAsFloat64),
@@ -149,7 +149,7 @@ func TestExecuteTemplateOpAsFloat64(t *testing.T) {
 	assert.Equal(t, 4.5, gd.Lookup("Out").AsLeaf().Value())
 
 	gd.AddValueAt("X", dom.LeafNode("Ou"))
-	ts = &TemplateOp{
+	ts = &TemplateOpSpec{
 		Template: `XYZ`,
 		Path:     &ValOrRef{Val: "Out"},
 		ParseAs:  ptr(ParseTextAsFloat64),
@@ -161,11 +161,11 @@ func TestExecuteTemplateOpAsFloat64(t *testing.T) {
 func TestExecuteTemplateOpAsInt64(t *testing.T) {
 	var (
 		gd  dom.ContainerBuilder
-		ts  *TemplateOp
+		ts  *TemplateOpSpec
 		err error
 	)
 	gd = dom.ContainerNode()
-	ts = &TemplateOp{
+	ts = &TemplateOpSpec{
 		Template: `{{ max 1 3 5 }}`,
 		Path:     &ValOrRef{Val: "Out"},
 		ParseAs:  ptr(ParseTextAsInt64),
@@ -175,7 +175,7 @@ func TestExecuteTemplateOpAsInt64(t *testing.T) {
 	assert.Equal(t, int64(5), gd.Lookup("Out").AsLeaf().Value())
 
 	gd.AddValueAt("X", dom.LeafNode("Ou"))
-	ts = &TemplateOp{
+	ts = &TemplateOpSpec{
 		Template: `XYZ`,
 		Path:     &ValOrRef{Val: "Out"},
 		ParseAs:  ptr(ParseTextAsInt64),

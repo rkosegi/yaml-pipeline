@@ -23,7 +23,7 @@ import (
 )
 
 func TestCallUnregistered(t *testing.T) {
-	assert.Error(t, mockEmptyActCtx().Executor().Execute(&CallOp{
+	assert.Error(t, mockEmptyActCtx().Executor().Execute(&CallOpSpec{
 		Name: "invalid",
 	}))
 }

@@ -22,57 +22,6 @@ import (
 	"strings"
 )
 
-// OpSpec is specification of operation.
-type OpSpec struct {
-	// Set sets data in data document.
-	Set *SetOp `yaml:"set,omitempty"`
-
-	// Patch performs RFC6902-style patch on data document.
-	Patch *PatchOp `yaml:"patch,omitempty"`
-
-	// Import loads content of file into data document.
-	Import *ImportOp `yaml:"import,omitempty"`
-
-	// Template allows to render value at runtime
-	Template *TemplateOp `yaml:"template,omitempty"`
-
-	// TemplateFile can be used to render template file
-	TemplateFile *TemplateFileOp `yaml:"templateFile,omitempty"`
-
-	// Call calls previously defined callable
-	Call *CallOp `yaml:"call,omitempty"`
-
-	// Define defines callable ActionSpec
-	Define *DefineOp `yaml:"define,omitempty"`
-
-	// Env adds OS environment variables into data document
-	Env *EnvOp `yaml:"env,omitempty"`
-
-	// Exec executes program
-	Exec *ExecOp `yaml:"exec,omitempty"`
-
-	// Export exports data document into file
-	Export *ExportOp `yaml:"export,omitempty"`
-
-	// Ext allows runtime-registered extension action to be executed
-	Ext *ExtOp `yaml:"ext,omitempty"`
-
-	// ForEach execute same operation in a loop for every configured item
-	ForEach *ForEachOp `yaml:"forEach,omitempty"`
-
-	// Log logs arbitrary message to logger
-	Log *LogOp `yaml:"log,omitempty"`
-
-	// Loop allows for execution to be done in a loop
-	Loop *LoopOp `yaml:"loop,omitempty"`
-
-	// Abort is able to signal error, so that pipeline can abort execution
-	Abort *AbortOp `yaml:"abort,omitempty"`
-
-	// Html2Dom can be used to process HTML source into DOM
-	Html2Dom *Html2DomOp `yaml:"html2dom,omitempty"`
-}
-
 func (as OpSpec) IsEmpty() bool {
 	return len(as.toList()) == 0
 }

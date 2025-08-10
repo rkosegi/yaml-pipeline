@@ -25,37 +25,11 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-type ParseTextAs string
-
-const (
-	// ParseTextAsNone do not parse, it's just a text (dom.Leaf)
-	ParseTextAsNone ParseTextAs = "none"
-	// ParseTextAsYaml parse text as a YAML source into dom.Node
-	ParseTextAsYaml ParseTextAs = "yaml"
-	// ParseTextAsFloat64 parse text as float64 number into dom.Leaf
-	ParseTextAsFloat64 ParseTextAs = "float64"
-	// ParseTextAsInt64 parse text as int64 number into dom.Leaf
-	ParseTextAsInt64 ParseTextAs = "int64"
-)
-
-// TemplateOp can be used to render value from data at runtime.
-type TemplateOp struct {
-	// template to render
-	Template string `yaml:"template"`
-	// path within global data tree where to set result at
-	Path *ValOrRef `yaml:"path" clone:"template"`
-	// How to treat rendered text after template engine completes successfully.
-	// It's responsibility of template to produce source that is parseable by chosen mode
-	ParseAs *ParseTextAs `yaml:"parseAs,omitempty" clone:"text"`
-	// Trim when true, whitespace is trimmed off the value
-	Trim *bool `yaml:"trim,omitempty"`
-}
-
-func (ts *TemplateOp) String() string {
+func (ts *TemplateOpSpec) String() string {
 	return fmt.Sprintf("Template[Path=%s]", ts.Path)
 }
 
-func (ts *TemplateOp) Do(ctx ActionContext) error {
+func (ts *TemplateOpSpec) Do(ctx ActionContext) error {
 	if len(ts.Template) == 0 {
 		return ErrTemplateEmpty
 	}
@@ -109,8 +83,8 @@ func (ts *TemplateOp) Do(ctx ActionContext) error {
 	return err
 }
 
-func (ts *TemplateOp) CloneWith(ctx ActionContext) Action {
-	return &TemplateOp{
+func (ts *TemplateOpSpec) CloneWith(ctx ActionContext) Action {
+	return &TemplateOpSpec{
 		Template: ts.Template,
 		Trim:     ts.Trim,
 		Path:     safeCloneValOrRef(ts.Path, ctx),

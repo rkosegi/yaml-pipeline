@@ -20,21 +20,17 @@ import (
 	"fmt"
 )
 
-type AbortOp struct {
-	Message string `yaml:"message" clone:"template"`
-}
-
-func (ao *AbortOp) Do(ctx ActionContext) error {
+func (ao *AbortOpSpec) Do(ctx ActionContext) error {
 	msg := ctx.TemplateEngine().RenderLenient(ao.Message, ctx.Snapshot())
 	return fmt.Errorf("abort: %s", msg)
 }
 
-func (ao *AbortOp) String() string {
+func (ao *AbortOpSpec) String() string {
 	return fmt.Sprintf("Abort[message=%s]", ao.Message)
 }
 
-func (ao *AbortOp) CloneWith(ctx ActionContext) Action {
-	return &AbortOp{
+func (ao *AbortOpSpec) CloneWith(ctx ActionContext) Action {
+	return &AbortOpSpec{
 		Message: ctx.TemplateEngine().RenderLenient(ao.Message, ctx.Snapshot()),
 	}
 }

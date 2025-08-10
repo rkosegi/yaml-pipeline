@@ -45,7 +45,7 @@ func (n *failingInitService) Init() error                                       
 
 func TestPipelineFull(t *testing.T) {
 	var (
-		pp   PipelineOp
+		pp   PipelineSpec
 		data []byte
 		err  error
 		ex   Executor
@@ -78,6 +78,6 @@ func TestPipelineFull(t *testing.T) {
 	assert.Error(t, err)
 
 	// ok, no service configured
-	err = New().Run(&PipelineOp{})
+	err = New().Run(&PipelineSpec{})
 	assert.NoError(t, err)
 }

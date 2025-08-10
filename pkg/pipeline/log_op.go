@@ -20,22 +20,17 @@ import (
 	"fmt"
 )
 
-// LogOp just logs message to logger
-type LogOp struct {
-	Message string `yaml:"message" clone:"template"`
-}
-
-func (lo *LogOp) Do(ctx ActionContext) error {
+func (lo *LogOpSpec) Do(ctx ActionContext) error {
 	ctx.Logger().Log(ctx.TemplateEngine().RenderLenient(lo.Message, ctx.Snapshot()))
 	return nil
 }
 
-func (lo *LogOp) String() string {
+func (lo *LogOpSpec) String() string {
 	return fmt.Sprintf("Log[message(%d)=%s]", len(lo.Message), strTruncIfNeeded(lo.Message, 25))
 }
 
-func (lo *LogOp) CloneWith(ctx ActionContext) Action {
-	return &LogOp{
+func (lo *LogOpSpec) CloneWith(ctx ActionContext) Action {
+	return &LogOpSpec{
 		Message: ctx.TemplateEngine().RenderLenient(lo.Message, ctx.Snapshot()),
 	}
 }
