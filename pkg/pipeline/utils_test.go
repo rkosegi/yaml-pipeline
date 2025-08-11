@@ -166,3 +166,26 @@ func TestSafeSize(t *testing.T) {
 		assert.Equal(t, 1, safeSize([]int{1, 2}[1:]))
 	})
 }
+
+func TestSortChildActions(t *testing.T) {
+	var names []string
+	t.Run("one non-nil and one nil", func(t *testing.T) {
+		names = sortActionNames(ChildActions{
+			"action1": ActionSpec{ActionMeta: ActionMeta{Order: ptr(1)}},
+			"action2": ActionSpec{},
+		})
+		assert.Len(t, names, 2)
+		assert.Equal(t, "action1", names[1])
+		assert.Equal(t, "action2", names[0])
+	})
+	t.Run("both non-nil", func(t *testing.T) {
+		names = sortActionNames(ChildActions{
+			"action1": ActionSpec{ActionMeta: ActionMeta{Order: ptr(10)}},
+			"action2": ActionSpec{ActionMeta: ActionMeta{Order: ptr(20)}},
+		})
+		assert.Len(t, names, 2)
+		assert.Equal(t, "action1", names[0])
+		assert.Equal(t, "action2", names[1])
+	})
+
+}
