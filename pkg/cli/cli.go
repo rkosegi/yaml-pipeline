@@ -128,8 +128,16 @@ func New() *cobra.Command {
 		validate: true,
 	}
 
+	short := "Runs a pipeline from a file"
 	cmd := &cobra.Command{
-		Short:   "Runs a pipeline from a file",
+		Use:   "pipeline",
+		Short: short,
+		Long: short + "\n" + `
+File is validated against JSON schema unless validation is explicitly disabled (--validate false).
+Initial values can be set using --set keyX=valueY.
+
+
+`,
 		Version: version.Get(),
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			d.logger = d.sc.Logger()
