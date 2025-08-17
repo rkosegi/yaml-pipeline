@@ -102,6 +102,13 @@ func preRun(d *data) error {
 	return nil
 }
 
+func setValues(d *data, gd dom.ContainerBuilder) {
+	fmt.Fprintln(os.Stderr, color.Blue.Render(fmt.Sprintf("[Values] Setting values")))
+	utils.ApplyVarsToDom(d.pp.Vars, "vars", gd)
+	utils.ApplyValues(gd, d.vals)
+	fmt.Fprintln(os.Stderr, color.Blue.Render(fmt.Sprintf("[Values] OK")))
+}
+
 func run(d *data) error {
 	var (
 		bytes []byte
@@ -114,8 +121,7 @@ func run(d *data) error {
 		return err
 	}
 	gd := dom.ContainerNode()
-	utils.ApplyVarsToDom(d.pp.Vars, "vars", gd)
-	utils.ApplyValues(gd, d.vals)
+	setValues(d, gd)
 	return ytp.New(
 		ytp.WithData(gd),
 		ytp.WithListener(&simpleListener{l: d.logger}),
