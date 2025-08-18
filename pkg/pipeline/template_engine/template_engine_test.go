@@ -195,6 +195,19 @@ func TestTemplateFuncFileExists(t *testing.T) {
 	assert.True(t, fileExistsFunc(f.Name()))
 }
 
+func TestTemplateFuncFileNonEmpty(t *testing.T) {
+	t.Run("non existent file should return false", func(t *testing.T) {
+		assert.False(t, fileNonEmptyFunc("/this/definitely/shouldn't exists"))
+	})
+	t.Run("existing empty file should return false", func(t *testing.T) {
+		assert.False(t, fileNonEmptyFunc("../../../testdata/empty.txt"))
+	})
+	t.Run("existing non-empty file should return true", func(t *testing.T) {
+		assert.True(t, fileNonEmptyFunc("../../../testdata/doc1.json"))
+		assert.True(t, fileNonEmptyFunc("../../../testdata/doc1.yaml"))
+	})
+}
+
 func TestTemplateFuncMergeFiles(t *testing.T) {
 	f1, err := os.CreateTemp("", "yt*.yaml")
 	assert.NoError(t, err)

@@ -69,11 +69,18 @@ func unflattenFunc(v map[string]interface{}) map[string]interface{} {
 	return common.Unflatten(v)
 }
 
-// fileExistsFunc checks if files exists.
+// fileExistsFunc checks if file exists.
 // Any error is swallowed and will cause function to return false, as if file does not exist.
 func fileExistsFunc(f string) bool {
 	_, err := os.Stat(f)
 	return err == nil
+}
+
+// fileNonEmptyFunc checks if file exists and has some content (size > 0).
+// Any error is swallowed and will cause function to return false, as if file does not exist.
+func fileNonEmptyFunc(f string) bool {
+	fi, err := os.Stat(f)
+	return err == nil && fi.Size() > 0
 }
 
 // isDirFunc checks if provided path points to directory.

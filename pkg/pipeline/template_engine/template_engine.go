@@ -30,6 +30,7 @@ var defFuncs = template.FuncMap{
 	"isEmpty":           isEmptyFunc,
 	"unflatten":         unflattenFunc,
 	"fileExists":        fileExistsFunc,
+	"fileNonEmpty":      fileNonEmptyFunc,
 	"mergeFiles":        mergeFilesFunc,
 	"isDir":             isDirFunc,
 	"glob":              globFunc,
