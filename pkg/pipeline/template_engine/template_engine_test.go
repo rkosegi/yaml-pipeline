@@ -21,7 +21,7 @@ import (
 	"os"
 	"testing"
 
-	sprig "github.com/go-task/slim-sprig/v3"
+	"github.com/Masterminds/sprig/v3"
 	"github.com/rkosegi/yaml-toolkit/dom"
 	"github.com/rkosegi/yaml-toolkit/props"
 	"github.com/stretchr/testify/assert"

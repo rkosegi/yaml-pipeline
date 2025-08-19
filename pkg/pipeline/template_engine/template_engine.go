@@ -22,7 +22,7 @@ import (
 	"strings"
 	"text/template"
 
-	sprig "github.com/go-task/slim-sprig/v3"
+	"github.com/Masterminds/sprig/v3"
 )
 
 var defFuncs = template.FuncMap{
