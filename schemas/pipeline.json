@@ -477,7 +477,7 @@
         },
         "vars": {
           "additionalProperties": true,
-          "description": "Initial variables",
+          "description": "Initial variables that will be set under .vars",
           "type": "object"
         }
       }

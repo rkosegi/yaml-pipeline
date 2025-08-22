@@ -8,3 +8,7 @@
 
 [This pipeline](find_latest_chart_version.yaml) fetches index.yaml from given Helm repository and
 find latest version of chart that matches provided regular expression.
+
+- ### Rename files in directory based on file content
+
+[This pipeline](rename_gpx_file_date_first_elem.yaml) list all GPX files in given directory and rename them according to `time` element within the first `trkpt` element.
