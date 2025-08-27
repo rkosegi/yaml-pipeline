@@ -25,7 +25,7 @@ require (
 	github.com/antchfx/htmlquery v1.3.4
 	github.com/gookit/color v1.5.4
 	github.com/kaptinlin/jsonschema v0.4.6
-	github.com/rkosegi/slog-config v0.0.0-20250720232421-a7890a122727
+	github.com/rkosegi/slog-config v0.0.0-20250820232402-93148a62e0e1
 	github.com/rkosegi/yaml-toolkit v1.0.67-0.20250827043247-b58b24e36c03
 	github.com/samber/lo v1.51.0
 	github.com/spf13/cobra v1.9.1
@@ -71,7 +71,7 @@ require (
 	github.com/speakeasy-api/jsonpath v0.6.0 // indirect
 	github.com/speakeasy-api/openapi-overlay v0.10.2 // indirect
 	github.com/spf13/cast v1.7.0 // indirect
-	github.com/spf13/pflag v1.0.6 // indirect
+	github.com/spf13/pflag v1.0.7 // indirect
 	github.com/vmware-labs/yaml-jsonpath v0.3.2 // indirect
 	github.com/xo/terminfo v0.0.0-20210125001918-ca9a967f8778 // indirect
 	golang.org/x/crypto v0.41.0 // indirect
