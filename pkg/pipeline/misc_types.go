@@ -69,6 +69,15 @@ func (pv *ValOrRef) CloneWith(ctx ActionContext) *ValOrRef {
 	}
 }
 
+func (pv *ValOrRef) MarshalYAML() (interface{}, error) {
+	if len(pv.Ref) > 0 {
+		return map[string]interface{}{
+			"ref": pv.Ref,
+		}, nil
+	}
+	return pv.Val, nil
+}
+
 func (pv *ValOrRef) UnmarshalYAML(node *yaml.Node) error {
 	switch node.Kind {
 	case yaml.MappingNode:
