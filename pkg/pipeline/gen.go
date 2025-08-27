@@ -33,6 +33,7 @@ const (
 	ParseFileModeJson       ParseFileMode = "json"
 	ParseFileModeProperties ParseFileMode = "properties"
 	ParseFileModeText       ParseFileMode = "text"
+	ParseFileModeXml        ParseFileMode = "xml"
 	ParseFileModeYaml       ParseFileMode = "yaml"
 )
 
@@ -48,6 +49,11 @@ const (
 const (
 	SetStrategyMerge   SetStrategy = "merge"
 	SetStrategyReplace SetStrategy = "replace"
+)
+
+// Defines values for XmlLayout.
+const (
+	XmlLayoutDefault XmlLayout = "default"
 )
 
 // AbortOpSpec AbortOp can be used to abort execution
@@ -195,7 +201,8 @@ type ForEachOpSpec struct {
 //     Namespaces are ignored.
 type Html2DomLayout string
 
-// Html2DomOpSpec defines model for html2DomOpSpec.
+// Html2DomOpSpec Allow for conversion of XML/HTML source DOM tree.
+// This is now deprecated and ImportOp with XML mode should be used instead.
 type Html2DomOpSpec struct {
 	// From path within the global data to the leaf node where XML source is stored as string
 	From string `json:"from" yaml:"from"`
@@ -223,12 +230,16 @@ type ImportOpSpec struct {
 	//  * binary - File is read and encoded using base64 string into data tree
 	//  * text - File is read as-is and is assumed it represents utf-8 encoded byte stream
 	//  * yaml - File is parsed as YAML document and put as child node into data tree
+	//  * xml - File is parsed as XML document and transformed using selected layout.
 	//  * json - File is parsed as JSON document and put as child node into data tree
 	//  * properties - File is parsed as Java properties into map[string]interface{} and put as child node into data tree
 	Mode ParseFileMode `json:"mode" yaml:"mode"`
 
 	// Path Path at which to import the data.
 	Path string `json:"path" yaml:"path"`
+
+	// Xml Configuration to customize XML loading. Only relevant for 'xml' mode
+	Xml *XmlImportOptions `json:"xml,omitempty" yaml:"xml,omitempty"`
 }
 
 // LogOpSpec LogOp just logs message to logger
@@ -269,7 +280,10 @@ type OpSpec struct {
 	//  * files specified by globbing pattern
 	//  * result of query from data tree (list values)
 	//  * specified strings
-	ForEach  *ForEachOpSpec  `json:"forEach,omitempty" yaml:"forEach,omitempty"`
+	ForEach *ForEachOpSpec `json:"forEach,omitempty" yaml:"forEach,omitempty"`
+
+	// Html2dom Allow for conversion of XML/HTML source DOM tree.
+	// This is now deprecated and ImportOp with XML mode should be used instead.
 	Html2dom *Html2DomOpSpec `json:"html2dom,omitempty" yaml:"html2dom,omitempty"`
 	Import   *ImportOpSpec   `json:"import,omitempty" yaml:"import,omitempty"`
 
@@ -297,6 +311,7 @@ type OutputFormat string
 //   - binary - File is read and encoded using base64 string into data tree
 //   - text - File is read as-is and is assumed it represents utf-8 encoded byte stream
 //   - yaml - File is parsed as YAML document and put as child node into data tree
+//   - xml - File is parsed as XML document and transformed using selected layout.
 //   - json - File is parsed as JSON document and put as child node into data tree
 //   - properties - File is parsed as Java properties into map[string]interface{} and put as child node into data tree
 type ParseFileMode string
@@ -377,3 +392,23 @@ type TemplateOpSpec struct {
 	// Trim When true, whitespace is trimmed off the value
 	Trim *bool `json:"trim,omitempty" yaml:"trim,omitempty"`
 }
+
+// XmlImportOptions Configuration to customize XML loading. Only relevant for 'xml' mode
+type XmlImportOptions struct {
+	// Layout Layout defines how XML-specific constructs are laid out into DOM tree.
+	//  * default - will produce "Value" leaf for each text node.
+	//  Child elements are collected into the list, if their name appears multiple times within the parent, otherwise they are regular child node.
+	//  Attributes of element are put into container node "Attrs".
+	//  Namespaces are ignored.
+	Layout *XmlLayout `json:"layout,omitempty" yaml:"layout,omitempty"`
+
+	// Query xpath expression to use to extract subset from source XML document. When omitted, then "/html" is assumed
+	Query *ValOrRef `json:"query,omitempty" yaml:"query,omitempty"`
+}
+
+// XmlLayout Layout defines how XML-specific constructs are laid out into DOM tree.
+//   - default - will produce "Value" leaf for each text node.
+//     Child elements are collected into the list, if their name appears multiple times within the parent, otherwise they are regular child node.
+//     Attributes of element are put into container node "Attrs".
+//     Namespaces are ignored.
+type XmlLayout string

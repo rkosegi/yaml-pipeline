@@ -84,7 +84,7 @@ func (x *Html2DomOpSpec) Do(ctx ActionContext) error {
 	// TODO: how can parse return an error?
 	srcNode, _ = htmlquery.Parse(&buff)
 	if len(qry) == 0 {
-		qry = "//html"
+		qry = "/html"
 	}
 	srcNode, err = htmlquery.Query(srcNode, qry)
 	if err != nil {

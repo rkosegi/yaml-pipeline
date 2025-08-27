@@ -38,6 +38,10 @@ components:
       properties:
         query:
           x-go-type: ValOrRef
+    xmlImportOptions:
+      properties:
+        query:
+          x-go-type: ValOrRef
     patchOpSpec:
       properties:
         value:
