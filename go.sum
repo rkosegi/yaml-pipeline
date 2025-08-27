@@ -125,8 +125,8 @@ github.com/prometheus/common v0.65.0 h1:QDwzd+G1twt//Kwj/Ww6E9FQq1iVMmODnILtW1t2
 github.com/prometheus/common v0.65.0/go.mod h1:0gZns+BLRQ3V6NdaerOhMbwwRbNh9hkGINtQAsP5GS8=
 github.com/rkosegi/slog-config v0.0.0-20250720232421-a7890a122727 h1:IUQppkCK2wtcMYlVkV2TyccG/AvTJPtFDLbqE0q388A=
 github.com/rkosegi/slog-config v0.0.0-20250720232421-a7890a122727/go.mod h1:xTuExV9uQT7qUjKiMer+PQbQ0ac7jxqLxFEvYd2q4ag=
-github.com/rkosegi/yaml-toolkit v1.0.67-0.20250808201420-56924b241fb7 h1:eQqdymUnYv3jjwLcX4E0nhRXC6rzBDGkucLUKx3F8x0=
-github.com/rkosegi/yaml-toolkit v1.0.67-0.20250808201420-56924b241fb7/go.mod h1:qu8qDPKfsC+i1SfaRgy/1q7DvO5zizkZBjOCbFas/HU=
+github.com/rkosegi/yaml-toolkit v1.0.67-0.20250825222828-a4a0d2e6cc63 h1:EglEI4UtROP4w9pMKN37b0gXlHlBHcQLaiHkyHxsFto=
+github.com/rkosegi/yaml-toolkit v1.0.67-0.20250825222828-a4a0d2e6cc63/go.mod h1:qu8qDPKfsC+i1SfaRgy/1q7DvO5zizkZBjOCbFas/HU=
 github.com/rogpeppe/go-internal v1.12.0 h1:exVL4IDcn6na9z1rAb56Vxr+CgyK3nn3O+epU5NdKM8=
 github.com/rogpeppe/go-internal v1.12.0/go.mod h1:E+RYuTGaKKdloAfM02xzb0FW3Paa99yedzYV+kq4uf4=
 github.com/russross/blackfriday/v2 v2.1.0/go.mod h1:+Rmxgy9KzJVeS9/2gXHxylqXiyQDYRxCVz55jmeOWTM=
