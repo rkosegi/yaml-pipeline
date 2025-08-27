@@ -21,8 +21,27 @@ import (
 	"encoding/base64"
 	"fmt"
 
+	"github.com/antchfx/htmlquery"
 	"github.com/rkosegi/yaml-toolkit/dom"
+	"github.com/rkosegi/yaml-toolkit/fluent"
 	"github.com/rkosegi/yaml-toolkit/props"
+	"golang.org/x/net/html"
+)
+
+const (
+	ImportOpXmlAttributeNode = "Attrs"
+	ImportOpXmlValueNode     = "Value"
+)
+
+type (
+	ImportOpXmlLayoutFn func(dom.ContainerBuilder, *html.Node)
+)
+
+var (
+	importOpXmlLayoutFnMap = map[XmlLayout]ImportOpXmlLayoutFn{
+		XmlLayoutDefault: convertHtmlNode2Dom,
+	}
+	importOpXmlDefOpts = &XmlImportOptions{Layout: ptr(XmlLayoutDefault), Query: &ValOrRef{Val: "/html"}}
 )
 
 func (pfm ParseFileMode) toValue(content []byte) (dom.Node, error) {
@@ -46,12 +65,60 @@ func (ia *ImportOpSpec) String() string {
 	return fmt.Sprintf("Import[file=%s,path=%s,mode=%s]", ia.File, ia.Path, ia.Mode)
 }
 
+func (ia *ImportOpSpec) loadXml(content string, ctx ActionContext) (dom.Container, error) {
+	var (
+		err      error
+		buff     bytes.Buffer
+		srcNode  *html.Node
+		layout   Html2DomLayout
+		layoutFn ImportOpXmlLayoutFn
+		ok       bool
+	)
+	opts := fluent.NewConfigHelper[XmlImportOptions]().
+		Add(importOpXmlDefOpts).
+		Add(ia.Xml).Result()
+
+	qry := opts.Query.Resolve(ctx)
+	if len(qry) == 0 {
+		qry = "/html"
+	}
+
+	if layoutFn, ok = importOpXmlLayoutFnMap[*opts.Layout]; !ok {
+		return nil, fmt.Errorf("unknown layout %s", layout)
+	}
+	_, _ = buff.WriteString(content)
+	srcNode, _ = htmlquery.Parse(&buff)
+	srcNode, err = htmlquery.Query(srcNode, qry)
+	if err != nil {
+		return nil, err
+	}
+	if srcNode == nil {
+		return nil, fmt.Errorf("cannot find node using %s", qry)
+	}
+	cb := dom.ContainerNode()
+	layoutFn(cb, srcNode)
+	return cb, err
+}
+
 func (ia *ImportOpSpec) Do(ctx ActionContext) error {
 	file := ctx.TemplateEngine().RenderLenient(ia.File, ctx.Snapshot())
 	ctx.Logger().Log(fmt.Sprintf("Importing file %s using mode %s", file, ia.Mode))
-	val, err := parseFile(file, ia.Mode)
+	var (
+		val dom.Node
+		err error
+	)
+	if ia.Mode == ParseFileModeXml {
+		val, err = parseFile(file, ParseFileModeText)
+	} else {
+		val, err = parseFile(file, ia.Mode)
+	}
 	if err != nil {
 		return err
+	}
+	if ia.Mode == ParseFileModeXml {
+		if val, err = ia.loadXml(val.AsLeaf().Value().(string), ctx); err != nil {
+			return err
+		}
 	}
 	p := ctx.TemplateEngine().RenderLenient(ia.Path, ctx.Snapshot())
 	if len(p) > 0 {

@@ -246,6 +246,7 @@
       "type": "string"
     },
     "html2DomOpSpec": {
+      "description": "Allow for conversion of XML/HTML source DOM tree.\nThis is now deprecated and ImportOp with XML mode should be used instead.",
       "properties": {
         "from": {
           "description": "path within the global data to the leaf node where XML source is stored as string",
@@ -282,6 +283,10 @@
         "path": {
           "description": "Path at which to import the data.",
           "type": "string"
+        },
+        "xml": {
+          "$ref": "#/$defs/xmlImportOptions",
+          "description": "XML/HTML loading options"
         }
       },
       "required": [
@@ -410,11 +415,12 @@
       "type": "string"
     },
     "parseFileMode": {
-      "description": "ParseFileMode defines how the file is parsed before is put into data tree\n * binary - File is read and encoded using base64 string into data tree\n * text - File is read as-is and is assumed it represents utf-8 encoded byte stream\n * yaml - File is parsed as YAML document and put as child node into data tree\n * json - File is parsed as JSON document and put as child node into data tree\n * properties - File is parsed as Java properties into map[string]interface{} and put as child node into data tree",
+      "description": "ParseFileMode defines how the file is parsed before is put into data tree\n * binary - File is read and encoded using base64 string into data tree\n * text - File is read as-is and is assumed it represents utf-8 encoded byte stream\n * yaml - File is parsed as YAML document and put as child node into data tree\n * xml - File is parsed as XML document and transformed using selected layout.\n * json - File is parsed as JSON document and put as child node into data tree\n * properties - File is parsed as Java properties into map[string]interface{} and put as child node into data tree",
       "enum": [
         "binary",
         "text",
         "yaml",
+        "xml",
         "json",
         "properties"
       ],
@@ -568,6 +574,26 @@
         "path"
       ],
       "type": "object"
+    },
+    "xmlImportOptions": {
+      "description": "Configuration to customize XML loading. Only relevant for 'xml' mode",
+      "properties": {
+        "layout": {
+          "$ref": "#/$defs/xmlLayout",
+          "description": "layout defines how XML/HTML data are put into DOM"
+        },
+        "query": {
+          "description": "xpath expression to use to extract subset from source XML document. When omitted, then \"/html\" is assumed",
+          "type": "string"
+        }
+      }
+    },
+    "xmlLayout": {
+      "description": "Layout defines how XML-specific constructs are laid out into DOM tree.\n * default - will produce \"Value\" leaf for each text node.\n Child elements are collected into the list, if their name appears multiple times within the parent, otherwise they are regular child node.\n Attributes of element are put into container node \"Attrs\".\n Namespaces are ignored.",
+      "enum": [
+        "default"
+      ],
+      "type": "string"
     }
   },
   "$id": "https://github.com/rkosegi/yaml-pipeline/schemas/pipeline",
