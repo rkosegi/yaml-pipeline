@@ -26,7 +26,7 @@ require (
 	github.com/gookit/color v1.5.4
 	github.com/kaptinlin/jsonschema v0.4.6
 	github.com/rkosegi/slog-config v0.0.0-20250720232421-a7890a122727
-	github.com/rkosegi/yaml-toolkit v1.0.67-0.20250825222828-a4a0d2e6cc63
+	github.com/rkosegi/yaml-toolkit v1.0.67-0.20250827043247-b58b24e36c03
 	github.com/samber/lo v1.51.0
 	github.com/spf13/cobra v1.9.1
 	github.com/stretchr/testify v1.11.0
