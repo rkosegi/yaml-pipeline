@@ -29,7 +29,7 @@ require (
 	github.com/rkosegi/yaml-toolkit v1.0.67-0.20250827164507-6c4b282bcc43
 	github.com/samber/lo v1.51.0
 	github.com/spf13/cobra v1.9.1
-	github.com/stretchr/testify v1.11.0
+	github.com/stretchr/testify v1.11.1
 	github.com/xlab/treeprint v1.2.0
 	golang.org/x/net v0.43.0
 	gopkg.in/yaml.v3 v3.0.1
