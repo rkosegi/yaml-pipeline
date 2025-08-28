@@ -90,7 +90,7 @@ func (e *ExportOpSpec) Do(ctx ActionContext) (err error) {
 		}
 		return enc(f, d.AsLeaf().Value())
 	}
-	return enc(f, dom.DefaultNodeEncoderFn(d.AsContainer()))
+	return enc(f, d.AsContainer().AsAny())
 }
 
 func (e *ExportOpSpec) CloneWith(ctx ActionContext) Action {

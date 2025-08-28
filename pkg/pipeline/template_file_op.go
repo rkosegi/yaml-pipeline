@@ -46,7 +46,7 @@ func (tfo *TemplateFileOpSpec) Do(ctx ActionContext) error {
 			return fmt.Errorf("path does not point to a container: %s", *tfo.Path)
 		}
 	}
-	ss = dom.DefaultNodeEncoderFn(data).(map[string]interface{})
+	ss = data.AsAny().(map[string]interface{})
 	inFile := ctx.TemplateEngine().RenderLenient(tfo.File, ss)
 	ctx.Logger().Log("reading template file", inFile)
 	tmpl, err := os.ReadFile(inFile)
