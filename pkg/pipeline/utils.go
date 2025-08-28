@@ -25,7 +25,10 @@ import (
 
 	te "github.com/rkosegi/yaml-pipeline/pkg/pipeline/template_engine"
 	"github.com/rkosegi/yaml-toolkit/dom"
+	"github.com/rkosegi/yaml-toolkit/props"
 )
+
+var pp = props.NewPathParser()
 
 func strTruncIfNeeded(in string, size int) string {
 	if len(in) <= size {
