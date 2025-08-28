@@ -78,7 +78,7 @@ func (ts *TemplateOpSpec) Do(ctx ActionContext) error {
 	default:
 		return fmt.Errorf("unknown ParseAs mode: %v", *ts.ParseAs)
 	}
-	ctx.Data().AddValueAt(p, node)
+	ctx.Data().Set(pp.MustParse(p), node)
 	ctx.InvalidateSnapshot()
 	return err
 }

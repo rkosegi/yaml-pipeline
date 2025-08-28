@@ -75,6 +75,15 @@ func TestExecuteTemplateOp(t *testing.T) {
 		Path:     &ValOrRef{Val: "result"},
 	}
 	assert.Error(t, New(WithData(gd)).Execute(&ts))
+
+	t.Run("render value to path with dot", func(t *testing.T) {
+		ts = TemplateOpSpec{
+			Template: `OK`,
+			Path:     &ValOrRef{Val: "sub.path\\.with\\.dot"},
+		}
+		assert.NoError(t, New(WithData(gd)).Execute(&ts))
+		assert.Equal(t, "OK", gd.Child("sub").AsContainer().Child("path.with.dot").AsLeaf().Value())
+	})
 }
 
 func TestExecuteTemplateOpAsYaml(t *testing.T) {

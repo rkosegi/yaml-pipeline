@@ -98,10 +98,6 @@ func TestForeachStringItemChildError(t *testing.T) {
 }
 
 func TestForeachQuery(t *testing.T) {
-	var (
-		err error
-	)
-
 	type testcase struct {
 		qry        string
 		tmpl       string
@@ -150,30 +146,31 @@ func TestForeachQuery(t *testing.T) {
 		},
 		{
 			validateFn: func(d dom.ContainerBuilder) {
-				assert.Equal(t, 3, len(d.Lookup("Result").AsContainer().Children()))
+				assert.Equal(t, "c", d.Lookup("Result").AsLeaf().Value())
 			},
 			qry:      "items",
 			tmpl:     "{{ .XYZ }}",
 			variable: "XYZ",
-			path:     "Result.{{ .XYZ }}",
+			path:     "Result",
 		},
 	} {
-		op := &ForEachOpSpec{
-			Variable: ptr(tc.variable),
-			Query:    &ValOrRef{Val: tc.qry},
-			Action: ActionSpec{
-				Operations: OpSpec{
-					Template: &TemplateOpSpec{
-						Template: tc.tmpl,
-						Path:     &ValOrRef{Val: tc.path},
+		t.Run(tc.qry, func(t *testing.T) {
+			op := &ForEachOpSpec{
+				Variable: ptr(tc.variable),
+				Query:    &ValOrRef{Val: tc.qry},
+				Action: ActionSpec{
+					Operations: OpSpec{
+						Template: &TemplateOpSpec{
+							Template: tc.tmpl,
+							Path:     &ValOrRef{Val: tc.path},
+						},
 					},
 				},
-			},
-		}
-		err = op.Do(newMockActBuilder().data(data).build())
-		assert.NoError(t, err)
-		assert.NotNil(t, op.String())
-		tc.validateFn(data)
+			}
+			assert.NoError(t, op.Do(newMockActBuilder().data(data).build()))
+			assert.NotNil(t, op.String())
+			tc.validateFn(data)
+		})
 	}
 }
 
