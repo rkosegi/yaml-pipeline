@@ -57,7 +57,7 @@ func TestTemplateFileOp(t *testing.T) {
 	}
 	assert.Error(t, tfo.Do(ctx))
 
-	d.AddValueAt("tmpl1.name", dom.LeafNode("tester"))
+	d.Set(pp.MustParse("tmpl1.name"), dom.LeafNode("tester"))
 	tfo = &TemplateFileOpSpec{
 		File:   "../../testdata/simple.template",
 		Output: f.Name(),

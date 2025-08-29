@@ -81,7 +81,7 @@ func TestSetOpMergeRoot(t *testing.T) {
 	assert.Equal(t, 2, len(gd.Children()))
 
 	gd = dom.ContainerNode()
-	gd.AddValueAt("sub2.sub3a", dom.LeafNode(2))
+	gd.Set(pp.MustParse("sub2.sub3a"), dom.LeafNode(2))
 	ss = SetOpSpec{
 		Data: map[string]interface{}{
 			"sub2": map[string]interface{}{
@@ -115,7 +115,7 @@ func TestSetOpMergeSubPath(t *testing.T) {
 	assert.Equal(t, 123, gd.Get(pp.MustParse("sub10.sub20")).AsLeaf().Value())
 
 	gd = dom.ContainerNode()
-	gd.AddValueAt("sub10.sub20.sub30", dom.LeafNode(2))
+	gd.Set(pp.MustParse("sub10.sub20.sub30"), dom.LeafNode(2))
 	ss = SetOpSpec{
 		Data: map[string]interface{}{
 			"sub20": map[string]interface{}{

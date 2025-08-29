@@ -45,9 +45,9 @@ var setHandlerFnMap = map[SetStrategy]setHandlerFn{
 		if !strIsEmpty(path) {
 			dest := orig.Get(pp.MustParse(*path))
 			if dest != nil && dest.IsContainer() {
-				orig.AddValueAt(*path, dest.(dom.ContainerBuilder).Merge(other))
+				orig.Set(pp.MustParse(*path), dest.(dom.ContainerBuilder).Merge(other))
 			} else {
-				orig.AddValueAt(*path, other)
+				orig.Set(pp.MustParse(*path), other)
 			}
 		} else {
 			setOpMergeIfContainersReplaceOtherwise(orig, other)
@@ -55,10 +55,10 @@ var setHandlerFnMap = map[SetStrategy]setHandlerFn{
 	},
 	SetStrategyReplace: func(path *string, orig, other dom.ContainerBuilder) {
 		if !strIsEmpty(path) {
-			orig.AddValueAt(*path, other)
+			orig.Set(pp.MustParse(*path), other)
 		} else {
 			for k, v := range other.Children() {
-				orig.AddValueAt(k, v)
+				orig.Set(pp.MustParse(k), v)
 			}
 		}
 	},

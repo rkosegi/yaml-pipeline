@@ -51,7 +51,7 @@ func (eo *EnvOpSpec) Do(ctx ActionContext) error {
 		parts := strings.SplitN(env, "=", 2)
 		if inclFn(parts[0]) && !exclFn(parts[0]) {
 			k := common.ToPath(p, fmt.Sprintf("Env.%s", parts[0]))
-			ctx.Data().AddValueAt(k, dom.LeafNode(parts[1]))
+			ctx.Data().Set(pp.MustParse(k), dom.LeafNode(parts[1]))
 		}
 	}
 	ctx.InvalidateSnapshot()

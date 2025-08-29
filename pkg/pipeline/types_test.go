@@ -68,7 +68,7 @@ v:
   ref: a.b.c
 `
 	d := dom.ContainerNode()
-	d.AddValueAt("a.b.c", dom.LeafNode("X"))
+	d.Set(pp.MustParse("a.b.c"), dom.LeafNode("X"))
 	ts.V.Val = ""
 	err = yaml.Unmarshal([]byte(d2), &ts)
 	assert.NoError(t, err)
@@ -93,7 +93,7 @@ v:
   ref: a.b.c
 `
 	d = dom.ContainerNode()
-	d.AddValueAt("a.b.c", dom.ListNode(dom.LeafNode("X")))
+	d.Set(pp.MustParse("a.b.c"), dom.ListNode(dom.LeafNode("X")))
 	ts.V.Val = ""
 	err = yaml.Unmarshal([]byte(d5), &ts)
 	assert.NoError(t, err)

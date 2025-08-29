@@ -95,7 +95,7 @@ func (x *Html2DomOpSpec) Do(ctx ActionContext) error {
 	}
 	cb := dom.ContainerNode()
 	layoutFn(cb, srcNode)
-	ctx.Data().AddValueAt(to, cb)
+	ctx.Data().Set(pp.MustParse(to), cb)
 	ctx.InvalidateSnapshot()
 	return nil
 }

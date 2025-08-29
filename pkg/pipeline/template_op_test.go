@@ -31,7 +31,7 @@ func TestExecuteTemplateOp(t *testing.T) {
 	)
 
 	gd = dom.ContainerNode()
-	gd.AddValueAt("root.leaf1", dom.LeafNode(123456))
+	gd.Set(pp.MustParse("root.leaf1"), dom.LeafNode(123456))
 	ts = TemplateOpSpec{
 		Template: `{{ (mul .root.leaf1 2) | quote }}`,
 		Path:     &ValOrRef{Val: "result.x1"},
@@ -157,7 +157,7 @@ func TestExecuteTemplateOpAsFloat64(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, 4.5, gd.Child("Out").AsLeaf().Value())
 
-	gd.AddValueAt("X", dom.LeafNode("Ou"))
+	gd.AddValue("X", dom.LeafNode("Ou"))
 	ts = &TemplateOpSpec{
 		Template: `XYZ`,
 		Path:     &ValOrRef{Val: "Out"},
@@ -183,7 +183,7 @@ func TestExecuteTemplateOpAsInt64(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, int64(5), gd.Child("Out").AsLeaf().Value())
 
-	gd.AddValueAt("X", dom.LeafNode("Ou"))
+	gd.AddValue("X", dom.LeafNode("Ou"))
 	ts = &TemplateOpSpec{
 		Template: `XYZ`,
 		Path:     &ValOrRef{Val: "Out"},

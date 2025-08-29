@@ -122,14 +122,14 @@ func (ia *ImportOpSpec) Do(ctx ActionContext) error {
 	}
 	p := ctx.TemplateEngine().RenderLenient(ia.Path, ctx.Snapshot())
 	if len(p) > 0 {
-		ctx.Data().AddValueAt(p, val)
+		ctx.Data().Set(pp.MustParse(p), val)
 		ctx.InvalidateSnapshot()
 	} else {
 		if !val.IsContainer() {
 			return ErrNotContainer
 		} else {
 			for k, v := range val.AsContainer().Children() {
-				ctx.Data().AddValueAt(k, v)
+				ctx.Data().Set(pp.MustParse(k), v)
 				ctx.InvalidateSnapshot()
 			}
 		}

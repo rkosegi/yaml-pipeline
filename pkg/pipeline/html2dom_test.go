@@ -84,8 +84,8 @@ func TestHtml2Dom(t *testing.T) {
 
 func TestHtml2DomCloneWith(t *testing.T) {
 	d := dom.ContainerNode()
-	d.AddValueAt("Args.From", dom.LeafNode("from.here"))
-	d.AddValueAt("Args.To", dom.LeafNode("to.here"))
+	d.Set(pp.MustParse("Args.From"), dom.LeafNode("from.here"))
+	d.Set(pp.MustParse("Args.To"), dom.LeafNode("to.here"))
 	ctx := newMockActBuilder().data(d).testLogger(t).build()
 	orig := &Html2DomOpSpec{
 		From: "{{ .Args.From }}",

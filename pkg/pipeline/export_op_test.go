@@ -43,7 +43,7 @@ func TestExportOpDo(t *testing.T) {
 	}
 	assert.Contains(t, eo.String(), f.Name())
 	d := dom.ContainerNode()
-	d.AddValueAt("root.sub1.sub2", dom.LeafNode(123))
+	d.Set(pp.MustParse("root.sub1.sub2"), dom.LeafNode(123))
 	err = eo.Do(newMockActBuilder().data(d).build())
 	assert.NoError(t, err)
 	fi, err := os.Stat(f.Name())
@@ -104,8 +104,8 @@ func TestExportOpCloneWith(t *testing.T) {
 		Format: "{{ .Format }}",
 	}
 	d := dom.ContainerNode()
-	d.AddValueAt("Format", dom.LeafNode("yaml"))
-	d.AddValueAt("Sub", dom.LeafNode("sub20"))
+	d.AddValue("Format", dom.LeafNode("yaml"))
+	d.AddValue("Sub", dom.LeafNode("sub20"))
 	eo = eo.CloneWith(newMockActBuilder().data(d).build()).(*ExportOpSpec)
 	assert.Equal(t, "root.sub10.sub20", eo.Path.Val)
 	assert.Equal(t, OutputFormatYaml, eo.Format)

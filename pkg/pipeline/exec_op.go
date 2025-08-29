@@ -84,7 +84,7 @@ func (e *ExecOpSpec) Do(ctx ActionContext) error {
 	var exitErr *osx.ExitError
 	if errors.As(err, &exitErr) {
 		if e.SaveExitCodeTo != nil {
-			ctx.Data().AddValueAt(*e.SaveExitCodeTo, dom.LeafNode(exitErr.ExitCode()))
+			ctx.Data().Set(pp.MustParse(*e.SaveExitCodeTo), dom.LeafNode(exitErr.ExitCode()))
 			ctx.InvalidateSnapshot()
 		}
 		if !slices.Contains(*e.ValidExitCodes, exitErr.ExitCode()) {

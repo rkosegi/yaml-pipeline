@@ -60,7 +60,7 @@ func (r *runtimeCtx) Ext() ExtInterface {
 func (r *runtimeCtx) DefineAction(name string, spec ActionSpec) {
 	// TODO restrict name to something sane, eg no "." or "/"
 	// TODO is re-define (defining same name again) allowed?
-	r.sys.AddValueAt(fmt.Sprintf("registry.action.define.%s", name), dom.LeafNode(spec))
+	r.sys.Set(pp.MustParse(fmt.Sprintf("registry.action.define.%s", name)), dom.LeafNode(spec))
 }
 
 func (r *runtimeCtx) GetAction(name string) (ActionSpec, bool) {
@@ -71,7 +71,7 @@ func (r *runtimeCtx) GetAction(name string) (ActionSpec, bool) {
 }
 
 func (r *runtimeCtx) RegisterActionFactory(name string, factory ActionFactory) {
-	r.sys.AddValueAt(fmt.Sprintf("registry.action.factory.%s", name), dom.LeafNode(factory))
+	r.sys.Set(pp.MustParse(fmt.Sprintf("registry.action.factory.%s", name)), dom.LeafNode(factory))
 }
 
 func (r *runtimeCtx) GetActionFactory(name string) ActionFactory {
@@ -82,7 +82,7 @@ func (r *runtimeCtx) GetActionFactory(name string) ActionFactory {
 }
 
 func (r *runtimeCtx) RegisterService(name string, impl Service) {
-	r.sys.AddValueAt(fmt.Sprintf("registry.service.impl.%s", name), dom.LeafNode(impl))
+	r.sys.Set(pp.MustParse(fmt.Sprintf("registry.service.impl.%s", name)), dom.LeafNode(impl))
 }
 
 func (r *runtimeCtx) GetService(name string) Service {

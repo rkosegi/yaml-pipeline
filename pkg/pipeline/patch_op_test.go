@@ -37,7 +37,7 @@ func TestExecutePatchOp(t *testing.T) {
 	}
 	assert.Error(t, New(WithData(gd)).Execute(&ps))
 
-	gd.AddValueAt("root.sub1.leaf2", dom.LeafNode("abcd"))
+	gd.Set(pp.MustParse("root.sub1.leaf2"), dom.LeafNode("abcd"))
 	ps = PatchOpSpec{
 		Op:   patch.OpReplace,
 		Path: "/root/sub1",
@@ -50,7 +50,7 @@ func TestExecutePatchOp(t *testing.T) {
 	assert.Contains(t, ps.String(), "Op=replace,Path=/root/sub1")
 
 	gd = dom.ContainerNode()
-	gd.AddValueAt("root.sub1.leaf3", dom.LeafNode("abcd"))
+	gd.Set(pp.MustParse("root.sub1.leaf3"), dom.LeafNode("abcd"))
 	ps = PatchOpSpec{
 		Op:   patch.OpMove,
 		From: ptr("/root/sub1"),
@@ -60,7 +60,7 @@ func TestExecutePatchOp(t *testing.T) {
 	assert.Equal(t, "abcd", gd.Get(pp.MustParse("root.sub2.leaf3")).AsLeaf().Value())
 
 	gd = dom.ContainerNode()
-	gd.AddValueAt("root.sub1.leaf3", dom.LeafNode("abcd"))
+	gd.Set(pp.MustParse("root.sub1.leaf3"), dom.LeafNode("abcd"))
 	ps = PatchOpSpec{
 		Op:   patch.OpMove,
 		From: ptr("%#$&^^*&"),
@@ -75,7 +75,7 @@ func TestPatchOpAddValue(t *testing.T) {
 		gd dom.ContainerBuilder
 	)
 	gd = dom.ContainerNode()
-	gd.AddValueAt("root.sub.leaf1", dom.LeafNode("123"))
+	gd.Set(pp.MustParse("root.sub.leaf1"), dom.LeafNode("123"))
 	ps = PatchOpSpec{
 		Op:    patch.OpAdd,
 		Path:  "/root/sub/leaf2",
@@ -87,7 +87,7 @@ func TestPatchOpAddValue(t *testing.T) {
 	assert.Equal(t, 456, m["root"].(map[string]interface{})["sub"].(map[string]interface{})["leaf2"].(int))
 
 	gd = dom.ContainerNode()
-	gd.AddValueAt("root.sub.leaf3", dom.LeafNode("aaaa"))
+	gd.Set(pp.MustParse("root.sub.leaf3"), dom.LeafNode("aaaa"))
 	gd.AddValue("mypath", dom.LeafNode("sub.leaf3"))
 	ps = PatchOpSpec{
 		Op:        patch.OpAdd,
