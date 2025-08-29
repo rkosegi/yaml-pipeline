@@ -43,7 +43,7 @@ func setOpMergeIfContainersReplaceOtherwise(orig, other dom.ContainerBuilder) {
 var setHandlerFnMap = map[SetStrategy]setHandlerFn{
 	SetStrategyMerge: func(path *string, orig, other dom.ContainerBuilder) {
 		if !strIsEmpty(path) {
-			dest := orig.Lookup(*path)
+			dest := orig.Get(pp.MustParse(*path))
 			if dest != nil && dest.IsContainer() {
 				orig.AddValueAt(*path, dest.(dom.ContainerBuilder).Merge(other))
 			} else {

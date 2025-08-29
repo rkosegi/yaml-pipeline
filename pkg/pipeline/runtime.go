@@ -93,7 +93,7 @@ func (r *runtimeCtx) GetService(name string) Service {
 }
 
 func (r *runtimeCtx) EnumServices() iter.Seq[Service] {
-	if c := r.sys.Lookup("registry.service.impl"); c != nil {
+	if c := r.sys.Get(pp.MustParse("registry.service.impl")); c != nil {
 		return slices.Values(
 			lo.Map(
 				lo.Values(c.AsContainer().Children()), func(item dom.Node, _ int) Service {
@@ -106,7 +106,7 @@ func (r *runtimeCtx) EnumServices() iter.Seq[Service] {
 }
 
 func (r *runtimeCtx) getRef(prefix string, name string) any {
-	if n := r.sys.Lookup(fmt.Sprintf("%s.%s", prefix, name)); n != nil {
+	if n := r.sys.Get(pp.MustParse(fmt.Sprintf("%s.%s", prefix, name))); n != nil {
 		if n.IsLeaf() && n.AsLeaf().Value() != nil {
 			return n.AsLeaf().Value()
 		}

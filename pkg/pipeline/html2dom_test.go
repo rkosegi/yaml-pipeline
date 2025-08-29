@@ -70,9 +70,10 @@ func TestHtml2Dom(t *testing.T) {
 		Query: &ValOrRef{Val: "//span[@class='panel1']"},
 	})
 	assert.NoError(t, err)
-	assert.Equal(t, "panel1", d.Lookup("Result.Out.span.Attrs.class").AsLeaf().Value())
-	assert.Equal(t, "Click here", d.Lookup("Result.Out.span.span[2].a.Value").AsLeaf().Value())
-	assert.Equal(t, "http://localhost:8080/doc1", d.Lookup("Result.Out.span.span[2].a.Attrs.href").AsLeaf().Value())
+	assert.Equal(t, "panel1", d.Get(pp.MustParse("Result.Out.span.Attrs.class")).AsLeaf().Value())
+	assert.Equal(t, "Click here", d.Get(pp.MustParse("Result.Out.span.span[2].a.Value")).AsLeaf().Value())
+	assert.Equal(t, "http://localhost:8080/doc1", d.Get(pp.MustParse("Result.Out.span.span[2].a.Attrs.href")).
+		AsLeaf().Value())
 
 	err = ctx.Executor().Execute(&Html2DomOpSpec{
 		From: "html2",

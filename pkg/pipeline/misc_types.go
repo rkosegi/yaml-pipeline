@@ -101,7 +101,7 @@ func (pv *ValOrRef) UnmarshalYAML(node *yaml.Node) error {
 func (pv *ValOrRef) Resolve(ctx ActionContext) string {
 	ss := ctx.Snapshot()
 	if pv.isRef {
-		if n := ctx.Data().Lookup(pv.Ref); n != nil && n.IsLeaf() {
+		if n := ctx.Data().Get(pp.MustParse(pv.Ref)); n != nil && n.IsLeaf() {
 			v := fmt.Sprintf("%v", n.AsLeaf().Value())
 			return ctx.TemplateEngine().RenderLenient(v, ss)
 		}

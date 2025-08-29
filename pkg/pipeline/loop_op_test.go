@@ -80,7 +80,7 @@ func TestLoopOpSimple(t *testing.T) {
 	ac := newMockActBuilder().data(d).build()
 	err := op.Do(ac)
 	assert.NoError(t, err)
-	assert.Equal(t, "10", d.Lookup("i").AsLeaf().Value())
+	assert.Equal(t, "10", d.Child("i").AsLeaf().Value())
 }
 
 func TestLoopOpNegative(t *testing.T) {

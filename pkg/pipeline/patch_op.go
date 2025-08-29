@@ -39,7 +39,7 @@ func (ps *PatchOpSpec) Do(ctx ActionContext) error {
 	if ps.Value != nil {
 		oo.Value = ps.Value.Value()
 	} else if ps.ValueFrom != nil {
-		oo.Value = ctx.Data().Lookup(ctx.TemplateEngine().RenderLenient(*ps.ValueFrom, ss))
+		oo.Value = ctx.Data().Get(pp.MustParse(ctx.TemplateEngine().RenderLenient(*ps.ValueFrom, ss)))
 	}
 	if !strIsEmpty(ps.From) {
 		from, err := patch.ParsePath(*ps.From)

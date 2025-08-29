@@ -40,7 +40,7 @@ func (tfo *TemplateFileOpSpec) Do(ctx ActionContext) error {
 	)
 	data = ctx.Data()
 	if tfo.Path != nil {
-		if n := ctx.Data().Lookup(*tfo.Path); n != nil && n.IsContainer() {
+		if n := ctx.Data().Get(pp.MustParse(*tfo.Path)); n != nil && n.IsContainer() {
 			data = n.AsContainer()
 		} else {
 			return fmt.Errorf("path does not point to a container: %s", *tfo.Path)

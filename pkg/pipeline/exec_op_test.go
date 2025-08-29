@@ -63,7 +63,7 @@ func TestExecOpDo(t *testing.T) {
 	d := dom.ContainerNode()
 	ctx := newMockActBuilder().data(d).build()
 	assert.NoError(t, eo.Do(ctx))
-	assert.Equal(t, 3, d.Lookup("Res").AsLeaf().Value())
+	assert.Equal(t, 3, d.Get(pp.MustParse("Res")).AsLeaf().Value())
 	eo = &ExecOpSpec{
 		Program:        "sh",
 		Args:           &[]string{"-c", "exit 4"},

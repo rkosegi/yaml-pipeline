@@ -76,9 +76,9 @@ func TestForeachStringItem(t *testing.T) {
 	d := dom.ContainerNode()
 	err := op.Do(newMockActBuilder().data(d).build())
 	assert.NoError(t, err)
-	assert.Equal(t, "abc", d.Lookup("a.X").AsLeaf().Value())
-	assert.Equal(t, "abc", d.Lookup("b.X").AsLeaf().Value())
-	assert.Equal(t, "abc", d.Lookup("c.X").AsLeaf().Value())
+	assert.Equal(t, "abc", d.Get(pp.MustParse("a.X")).AsLeaf().Value())
+	assert.Equal(t, "abc", d.Get(pp.MustParse("b.X")).AsLeaf().Value())
+	assert.Equal(t, "abc", d.Get(pp.MustParse("c.X")).AsLeaf().Value())
 }
 
 func TestForeachStringItemChildError(t *testing.T) {
@@ -132,12 +132,12 @@ func TestForeachQuery(t *testing.T) {
 			variable: "forEach",
 			path:     "Result",
 			validateFn: func(d dom.ContainerBuilder) {
-				assert.Equal(t, "X", d.Lookup("Result").AsLeaf().Value())
+				assert.Equal(t, "X", d.Child("Result").AsLeaf().Value())
 			},
 		},
 		{
 			validateFn: func(d dom.ContainerBuilder) {
-				assert.Equal(t, "Y", d.Lookup("Result").AsLeaf().Value())
+				assert.Equal(t, "Y", d.Child("Result").AsLeaf().Value())
 			},
 			qry:      "sub",
 			tmpl:     "{{ get .sub .forEach }}",
@@ -146,7 +146,7 @@ func TestForeachQuery(t *testing.T) {
 		},
 		{
 			validateFn: func(d dom.ContainerBuilder) {
-				assert.Equal(t, "c", d.Lookup("Result").AsLeaf().Value())
+				assert.Equal(t, "c", d.Child("Result").AsLeaf().Value())
 			},
 			qry:      "items",
 			tmpl:     "{{ .XYZ }}",
@@ -190,7 +190,7 @@ func TestForeachGlob(t *testing.T) {
 	d := dom.ContainerNode()
 	err := op.Do(newMockActBuilder().data(d).build())
 	assert.NoError(t, err)
-	assert.Equal(t, 2, len(d.Lookup("import.files").AsContainer().Children()))
+	assert.Equal(t, 2, len(d.Get(pp.MustParse("import.files")).AsContainer().Children()))
 }
 
 func TestForeachActionSpec(t *testing.T) {
@@ -234,7 +234,7 @@ func TestForeachActionSpec(t *testing.T) {
 	d.AddValue("X", dom.LeafNode(100))
 	err = op.Do(newMockActBuilder().data(d).build())
 	assert.NoError(t, err)
-	assert.Equal(t, "103", d.Lookup("X").AsLeaf().Value())
+	assert.Equal(t, "103", d.Child("X").AsLeaf().Value())
 }
 
 func TestForeachGlobChildError(t *testing.T) {

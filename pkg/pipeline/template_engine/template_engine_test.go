@@ -306,7 +306,7 @@ func TestTemplateFuncDom2Yaml(t *testing.T) {
 }
 
 func domToAnyAt(d dom.Container, p string) any {
-	if x := d.Lookup(p); x == nil {
+	if x := d.Get(pp.MustParse(p)); x == nil {
 		return nil
 	} else {
 		return x.AsAny()

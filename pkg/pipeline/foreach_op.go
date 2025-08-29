@@ -37,7 +37,7 @@ func (fea *ForEachOpSpec) Do(ctx ActionContext) error {
 			}
 		}
 	} else if fea.Query != nil {
-		if n := ctx.Data().Lookup(fea.Query.Resolve(ctx)); n != nil {
+		if n := ctx.Data().Get(pp.MustParse(fea.Query.Resolve(ctx))); n != nil {
 			if n.IsList() {
 				for _, item := range n.AsList().Items() {
 					if err := fea.performWithItem(ctx, item); err != nil {

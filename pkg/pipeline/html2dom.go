@@ -60,7 +60,7 @@ func (x *Html2DomOpSpec) Do(ctx ActionContext) error {
 	if len(to) == 0 {
 		return errors.New("'to' is empty")
 	}
-	fromNode := ctx.Data().Lookup(from)
+	fromNode := ctx.Data().Get(pp.MustParse(from))
 	if fromNode == nil || !fromNode.IsLeaf() {
 		return fmt.Errorf("cannot find leaf node at '%s'", from)
 	}

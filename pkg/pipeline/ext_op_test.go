@@ -46,7 +46,7 @@ func TestExtOpDo(t *testing.T) {
 		Function: "dummyfn",
 	}
 	assert.NoError(t, ex.Do(ctx))
-	assert.Equal(t, 123, d.Lookup("X").AsLeaf().Value())
+	assert.Equal(t, 123, d.Child("X").AsLeaf().Value())
 	ex = &ExtOpSpec{
 		Function: "non-existent",
 	}

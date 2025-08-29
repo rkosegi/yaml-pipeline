@@ -23,6 +23,7 @@ import (
 	"text/template"
 
 	"github.com/Masterminds/sprig/v3"
+	"github.com/rkosegi/yaml-toolkit/props"
 )
 
 var defFuncs = template.FuncMap{
@@ -42,6 +43,8 @@ var defFuncs = template.FuncMap{
 	"regexNamedExtract": regexNamedExtractFunc,
 	"diffTree":          diffTreeFunc,
 }
+
+var pp = props.NewPathParser()
 
 type templateEngine struct {
 	fm template.FuncMap

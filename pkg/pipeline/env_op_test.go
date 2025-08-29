@@ -46,8 +46,8 @@ func TestEnvOpDo(t *testing.T) {
 	d := dom.ContainerNode()
 	err := eo.Do(newMockActBuilder().data(d).build())
 	assert.NoError(t, err)
-	assert.Equal(t, "val1", d.Lookup("Sub.Env.MOCK1").AsLeaf().Value())
-	assert.Equal(t, "val2", d.Lookup("Sub.Env.MOCK2").AsLeaf().Value())
+	assert.Equal(t, "val1", d.Get(pp.MustParse("Sub.Env.MOCK1")).AsLeaf().Value())
+	assert.Equal(t, "val2", d.Get(pp.MustParse("Sub.Env.MOCK2")).AsLeaf().Value())
 	assert.Contains(t, eo.String(), "Sub")
 }
 

@@ -53,7 +53,7 @@ func (e *ExportOpSpec) Do(ctx ActionContext) (err error) {
 	defVal = dom.ContainerNode()
 	d = ctx.Data()
 	if e.Path != nil {
-		d = ctx.Data().Lookup(e.Path.Resolve(ctx))
+		d = ctx.Data().Get(pp.MustParse(e.Path.Resolve(ctx)))
 	}
 	switch e.Format {
 	case OutputFormatYaml:

@@ -37,7 +37,7 @@ func TestExecuteImportOp(t *testing.T) {
 		}
 
 		assert.NoError(t, New(WithData(gd)).Execute(&is))
-		assert.Equal(t, "c", gd.Lookup("step1.data.root.list1[2]").AsLeaf().Value())
+		assert.Equal(t, "c", gd.Get(pp.MustParse("step1.data.root.list1[2]")).AsLeaf().Value())
 	})
 
 	t.Run("parsing YAML file as JSON should lead to error", func(t *testing.T) {
@@ -56,7 +56,7 @@ func TestExecuteImportOp(t *testing.T) {
 			Path: "step1.data",
 		}
 		assert.NoError(t, New(WithData(gd)).Execute(&is))
-		assert.Equal(t, 456, gd.Lookup("step1.data.level1.level2a.level3b").AsLeaf().Value())
+		assert.Equal(t, 456, gd.Get(pp.MustParse("step1.data.level1.level2a.level3b")).AsLeaf().Value())
 	})
 
 	t.Run("import text file into specific path", func(t *testing.T) {
@@ -67,7 +67,7 @@ func TestExecuteImportOp(t *testing.T) {
 			Path: "step3",
 		}
 		assert.NoError(t, New(WithData(gd)).Execute(&is))
-		assert.NotEmpty(t, gd.Lookup("step3").AsLeaf().Value())
+		assert.NotEmpty(t, gd.Child("step3").AsLeaf().Value())
 		assert.Contains(t, is.String(), "path=step3,mode=text")
 	})
 
@@ -79,7 +79,7 @@ func TestExecuteImportOp(t *testing.T) {
 			Path: "files.doc1",
 		}
 		assert.NoError(t, New(WithData(gd)).Execute(&is))
-		assert.NotEmpty(t, gd.Lookup("files.doc1").AsLeaf().Value())
+		assert.NotEmpty(t, gd.Get(pp.MustParse("files.doc1")).AsLeaf().Value())
 	})
 
 	t.Run("import JSON document in default mode", func(t *testing.T) {

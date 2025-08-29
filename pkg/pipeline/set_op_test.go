@@ -36,7 +36,7 @@ func TestExecuteSetOp(t *testing.T) {
 	}
 	gd = dom.ContainerNode()
 	assert.NoError(t, New(WithData(gd)).Execute(&ss))
-	assert.Equal(t, 123, gd.Lookup("sub1").AsLeaf().Value())
+	assert.Equal(t, 123, gd.Child("sub1").AsLeaf().Value())
 
 	ss = SetOpSpec{
 		Data: map[string]interface{}{
@@ -46,7 +46,7 @@ func TestExecuteSetOp(t *testing.T) {
 	}
 	gd = dom.ContainerNode()
 	assert.NoError(t, New(WithData(gd)).Execute(&ss))
-	assert.Equal(t, 123, gd.Lookup("sub0.sub1").AsLeaf().Value())
+	assert.Equal(t, 123, gd.Get(pp.MustParse("sub0.sub1")).AsLeaf().Value())
 	assert.Contains(t, ss.String(), "sub0")
 
 	ss = SetOpSpec{}
@@ -77,7 +77,7 @@ func TestSetOpMergeRoot(t *testing.T) {
 	gd = dom.ContainerNode()
 	gd.AddValue("sub2", dom.LeafNode(1))
 	assert.NoError(t, New(WithData(gd)).Execute(&ss))
-	assert.Equal(t, 123, gd.Lookup("sub1").AsLeaf().Value())
+	assert.Equal(t, 123, gd.Child("sub1").AsLeaf().Value())
 	assert.Equal(t, 2, len(gd.Children()))
 
 	gd = dom.ContainerNode()
@@ -91,9 +91,9 @@ func TestSetOpMergeRoot(t *testing.T) {
 		Strategy: setStrategyPointer(SetStrategyMerge),
 	}
 	assert.NoError(t, New(WithData(gd)).Execute(&ss))
-	assert.Equal(t, 2, len(gd.Lookup("sub2").AsContainer().Children()))
-	assert.Equal(t, 2, gd.Lookup("sub2.sub3a").AsLeaf().Value())
-	assert.Equal(t, 123, gd.Lookup("sub2.sub3b").AsLeaf().Value())
+	assert.Equal(t, 2, len(gd.Child("sub2").AsContainer().Children()))
+	assert.Equal(t, 2, gd.Get(pp.MustParse("sub2.sub3a")).AsLeaf().Value())
+	assert.Equal(t, 123, gd.Get(pp.MustParse("sub2.sub3b")).AsLeaf().Value())
 }
 
 func TestSetOpMergeSubPath(t *testing.T) {
@@ -112,7 +112,7 @@ func TestSetOpMergeSubPath(t *testing.T) {
 	gd = dom.ContainerNode()
 
 	assert.NoError(t, New(WithData(gd)).Execute(&ss))
-	assert.Equal(t, 123, gd.Lookup("sub10.sub20").AsLeaf().Value())
+	assert.Equal(t, 123, gd.Get(pp.MustParse("sub10.sub20")).AsLeaf().Value())
 
 	gd = dom.ContainerNode()
 	gd.AddValueAt("sub10.sub20.sub30", dom.LeafNode(2))
@@ -126,7 +126,7 @@ func TestSetOpMergeSubPath(t *testing.T) {
 		Strategy: setStrategyPointer(SetStrategyMerge),
 	}
 	assert.NoError(t, New(WithData(gd)).Execute(&ss))
-	assert.Equal(t, 2, len(gd.Lookup("sub10.sub20").AsContainer().Children()))
-	assert.Equal(t, 2, gd.Lookup("sub10.sub20.sub30").AsLeaf().Value())
-	assert.Equal(t, 123, gd.Lookup("sub10.sub20.sub3b").AsLeaf().Value())
+	assert.Equal(t, 2, len(gd.Get(pp.MustParse("sub10.sub20")).AsContainer().Children()))
+	assert.Equal(t, 2, gd.Get(pp.MustParse("sub10.sub20.sub30")).AsLeaf().Value())
+	assert.Equal(t, 123, gd.Get(pp.MustParse("sub10.sub20.sub3b")).AsLeaf().Value())
 }
