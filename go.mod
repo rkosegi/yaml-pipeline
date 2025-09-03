@@ -24,7 +24,7 @@ require (
 	github.com/Masterminds/sprig/v3 v3.3.0
 	github.com/antchfx/htmlquery v1.3.4
 	github.com/gookit/color v1.6.0
-	github.com/kaptinlin/jsonschema v0.4.6
+	github.com/kaptinlin/jsonschema v0.4.9
 	github.com/rkosegi/slog-config v0.0.0-20250820232402-93148a62e0e1
 	github.com/rkosegi/yaml-toolkit v1.0.67-0.20250830081223-c408feee4208
 	github.com/samber/lo v1.51.0
@@ -43,6 +43,7 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dprotaso/go-yit v0.0.0-20220510233725-9ba8df137936 // indirect
 	github.com/getkin/kin-openapi v0.132.0 // indirect
+	github.com/go-json-experiment/json v0.0.0-20250813233538-9b1f9ea2e11b // indirect
 	github.com/go-openapi/jsonpointer v0.21.0 // indirect
 	github.com/go-openapi/swag v0.23.0 // indirect
 	github.com/goccy/go-json v0.10.5 // indirect
