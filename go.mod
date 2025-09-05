@@ -24,7 +24,7 @@ require (
 	github.com/Masterminds/sprig/v3 v3.3.0
 	github.com/antchfx/htmlquery v1.3.4
 	github.com/gookit/color v1.6.0
-	github.com/kaptinlin/jsonschema v0.4.9
+	github.com/kaptinlin/jsonschema v0.4.12
 	github.com/rkosegi/slog-config v0.0.0-20250820232402-93148a62e0e1
 	github.com/rkosegi/yaml-toolkit v1.0.67-0.20250905102113-b5a9975a887c
 	github.com/samber/lo v1.51.0

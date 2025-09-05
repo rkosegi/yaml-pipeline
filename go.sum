@@ -79,8 +79,8 @@ github.com/josharian/intern v1.0.0 h1:vlS4z54oSdjm0bgjRigI+G1HpF+tI+9rE5LLzOg8Hm
 github.com/josharian/intern v1.0.0/go.mod h1:5DoeVV0s6jJacbCEi61lwdGj/aVlrQvzHFFd8Hwg//Y=
 github.com/kaptinlin/go-i18n v0.1.4 h1:wCiwAn1LOcvymvWIVAM4m5dUAMiHunTdEubLDk4hTGs=
 github.com/kaptinlin/go-i18n v0.1.4/go.mod h1:g1fn1GvTgT4CiLE8/fFE1hboHWJ6erivrDpiDtCcFKg=
-github.com/kaptinlin/jsonschema v0.4.9 h1:sfdbYV7Ua9Ad2IsJoeqF4J2CJOcZDFKnV+90DWTOewE=
-github.com/kaptinlin/jsonschema v0.4.9/go.mod h1:zG+WOWvAxUaPUnh83QrV/a/fsfloI6L6d/YM4mtZCHw=
+github.com/kaptinlin/jsonschema v0.4.12 h1:10cy+j2b69jyOX+F+u9suLK2dw0k63UqzUNctpxiV3A=
+github.com/kaptinlin/jsonschema v0.4.12/go.mod h1:zG+WOWvAxUaPUnh83QrV/a/fsfloI6L6d/YM4mtZCHw=
 github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORNo=
 github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=
 github.com/kr/pretty v0.3.1/go.mod h1:hoEshYVHaxMs3cyo3Yncou5ZscifuDolrwPKZanG3xk=
