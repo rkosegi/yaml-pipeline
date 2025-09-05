@@ -36,7 +36,7 @@ func (c *CallOpSpec) Do(ctx ActionContext) error {
 	if spec, exists := ctx.Ext().GetAction(c.Name); !exists {
 		return fmt.Errorf("callable '%s' is not registered", c.Name)
 	} else {
-		ctx.Data().Set(pp.MustParse(ap), dom.DefaultNodeDecoderFn(
+		ctx.Data().Set(pp.MustParse(ap), dom.DecodeAnyToNode(
 			ctx.TemplateEngine().RenderMapLenient(*c.Args, snap)),
 		)
 		ctx.InvalidateSnapshot()
