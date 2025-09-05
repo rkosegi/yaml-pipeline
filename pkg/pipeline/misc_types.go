@@ -139,7 +139,7 @@ func (pv *ValOrRefSlice) String() string {
 }
 
 func anyValFromMap(m map[string]interface{}) *AnyVal {
-	return &AnyVal{v: dom.DefaultNodeDecoderFn(m)}
+	return &AnyVal{v: dom.DecodeAnyToNode(m)}
 }
 
 // ChildActions is map of named actions that are executed as a part of parent action
