@@ -17,9 +17,12 @@ project_name: yaml-pipeline
 changelog:
   use: github-native
 release:
+  extra_files:
+    - glob: schemas/pipeline.json
   github: {}
 before:
   hooks:
+    - rm -fr dist
     - go mod tidy
 builds:
   - id: yp
@@ -30,8 +33,6 @@ builds:
       - linux_arm64
       - darwin_amd64_v1
       - darwin_arm64
-      - windows_amd64_v1
-      - windows_arm64
     dir: pkg/cmd/cli
     main: main.go
     binary: yp
