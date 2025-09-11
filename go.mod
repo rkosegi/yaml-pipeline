@@ -24,7 +24,7 @@ require (
 	github.com/Masterminds/sprig/v3 v3.3.0
 	github.com/antchfx/htmlquery v1.3.4
 	github.com/gookit/color v1.6.0
-	github.com/kaptinlin/jsonschema v0.4.12
+	github.com/kaptinlin/jsonschema v0.4.13
 	github.com/rkosegi/slog-config v0.0.0-20250820232402-93148a62e0e1
 	github.com/rkosegi/yaml-toolkit v1.0.67-0.20250905102113-b5a9975a887c
 	github.com/samber/lo v1.51.0
@@ -51,12 +51,11 @@ require (
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/google/go-cmp v0.7.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
-	github.com/gotnospirit/makeplural v0.0.0-20180622080156-a5f48d94d976 // indirect
-	github.com/gotnospirit/messageformat v0.0.0-20221001023931-dfe49f1eb092 // indirect
 	github.com/huandu/xstrings v1.5.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
-	github.com/kaptinlin/go-i18n v0.1.4 // indirect
+	github.com/kaptinlin/go-i18n v0.1.6 // indirect
+	github.com/kaptinlin/messageformat-go v0.4.0 // indirect
 	github.com/magiconair/properties v1.8.10 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
