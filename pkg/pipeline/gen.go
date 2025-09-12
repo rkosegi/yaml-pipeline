@@ -4,6 +4,7 @@
 package pipeline
 
 import (
+	"os"
 	"regexp"
 
 	"github.com/rkosegi/yaml-toolkit/patch"
@@ -293,6 +294,9 @@ type OpSpec struct {
 	// Loop LoopOp is similar to ForEach, but it also has initial and post actions
 	Loop *LoopOpSpec `json:"loop,omitempty" yaml:"loop,omitempty"`
 
+	// Os OS operation spec
+	Os *OsOpSpec `json:"os,omitempty" yaml:"os,omitempty"`
+
 	// Patch PatchOp performs RFC6902-style patch on global data document.
 	Patch *PatchOpSpec `json:"patch,omitempty" yaml:"patch,omitempty"`
 	Set   *SetOpSpec   `json:"set,omitempty" yaml:"set,omitempty"`
@@ -302,6 +306,41 @@ type OpSpec struct {
 
 	// TemplateFile TemplateFileOp can be used to render template from file and write result to output.
 	TemplateFile *TemplateFileOpSpec `json:"templateFile,omitempty" yaml:"templateFile,omitempty"`
+}
+
+// OsFileMode File permission/mode
+type OsFileMode = os.FileMode
+
+// OsFilePath Arbitrary file path
+type OsFilePath = ValOrRef
+
+// OsOpChdirSpec Change working directory
+type OsOpChdirSpec struct {
+	Path ValOrRef `json:"path" yaml:"path"`
+}
+
+// OsOpChmodSpec Change file mode
+type OsOpChmodSpec struct {
+	Mode os.FileMode `json:"mode" yaml:"mode"`
+	Path ValOrRef    `json:"path" yaml:"path"`
+}
+
+// OsOpMkdirSpec Create directory
+type OsOpMkdirSpec struct {
+	Mode *os.FileMode `json:"mode,omitempty" yaml:"mode,omitempty"`
+	Path ValOrRef     `json:"path" yaml:"path"`
+}
+
+// OsOpSpec OS operation spec
+type OsOpSpec struct {
+	// Chdir Change working directory
+	Chdir *OsOpChdirSpec `json:"chdir,omitempty" yaml:"chdir,omitempty"`
+
+	// Chmod Change file mode
+	Chmod *OsOpChmodSpec `json:"chmod,omitempty" yaml:"chmod,omitempty"`
+
+	// Mkdir Create directory
+	Mkdir *OsOpMkdirSpec `json:"mkdir,omitempty" yaml:"mkdir,omitempty"`
 }
 
 // OutputFormat Format of output file

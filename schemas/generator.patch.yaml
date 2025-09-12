@@ -42,6 +42,10 @@ components:
       properties:
         query:
           x-go-type: ValOrRef
+    osFilePath:
+      x-go-type: ValOrRef
+    osFileMode:
+      x-go-type: os.FileMode
     patchOpSpec:
       properties:
         value:

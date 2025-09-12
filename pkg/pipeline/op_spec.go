@@ -17,9 +17,7 @@ limitations under the License.
 package pipeline
 
 import (
-	"fmt"
 	"reflect"
-	"strings"
 )
 
 func (as OpSpec) IsEmpty() bool {
@@ -50,37 +48,9 @@ func (as OpSpec) Do(ctx ActionContext) error {
 }
 
 func (as OpSpec) CloneWith(ctx ActionContext) Action {
-	ret := &OpSpec{}
-	opSpecType := reflect.TypeOf(as)
-	srcVal := reflect.ValueOf(as)
-	dstVal := reflect.ValueOf(ret)
-	fields := reflect.VisibleFields(opSpecType)
-	for _, field := range fields {
-		srcField := srcVal.FieldByIndex(field.Index)
-		if !reflect.ValueOf(srcField.Interface()).IsNil() {
-			cloned := srcField.Interface().(Action).CloneWith(ctx)
-			dstField := dstVal.Elem().FieldByName(field.Name)
-			dstField.Set(reflect.ValueOf(cloned))
-		}
-	}
-	return *ret
+	return cloneFieldsWith[OpSpec](as, ctx)
 }
 
 func (as OpSpec) String() string {
-	var sb strings.Builder
-	parts := make([]string, 0)
-	sb.WriteString("OpSpec[")
-
-	asv := reflect.ValueOf(as)
-	fields := reflect.VisibleFields(reflect.TypeOf(as))
-	for _, field := range fields {
-		x := asv.FieldByName(field.Name).Interface()
-		if !reflect.ValueOf(x).IsNil() {
-			parts = append(parts, fmt.Sprintf("%s=%v", field.Name, x.(fmt.Stringer).String()))
-		}
-	}
-
-	sb.WriteString(strings.Join(parts, ","))
-	sb.WriteString("]")
-	return sb.String()
+	return fieldStringer("OpSpec", &as)
 }
