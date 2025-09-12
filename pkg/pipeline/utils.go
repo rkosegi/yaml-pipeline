@@ -17,6 +17,7 @@ limitations under the License.
 package pipeline
 
 import (
+	"fmt"
 	"os"
 	"reflect"
 	"regexp"
@@ -158,4 +159,50 @@ func safeBoolDeref(in *bool) bool {
 
 func ptr[T any](v T) *T {
 	return &v
+}
+
+func fieldStringer(parent string, ptrVal any) string {
+	var sb strings.Builder
+	parts := make([]string, 0)
+	sb.WriteString(parent)
+	sb.WriteString("[")
+	ptrType := reflect.TypeOf(ptrVal)
+	asv := reflect.ValueOf(ptrVal)
+
+	if ptrType.Kind() == reflect.Ptr {
+		ptrType = ptrType.Elem()
+		asv = asv.Elem()
+	}
+	fields := reflect.VisibleFields(ptrType)
+
+	for _, field := range fields {
+		x := asv.FieldByName(field.Name).Interface()
+		if !reflect.ValueOf(x).IsNil() {
+			parts = append(parts, fmt.Sprintf("%s=%v", field.Name, x.(fmt.Stringer).String()))
+		}
+	}
+	sb.WriteString(strings.Join(parts, ","))
+	sb.WriteString("]")
+	return sb.String()
+}
+
+func cloneFieldsWith[T Action](as Action, ctx ActionContext) Action {
+	ret := new(T)
+	actType := reflect.TypeOf(as)
+	srcVal := reflect.ValueOf(as)
+	dstVal := reflect.ValueOf(ret)
+	fields := reflect.VisibleFields(actType)
+	for _, field := range fields {
+		srcField := srcVal.FieldByIndex(field.Index)
+		if !reflect.ValueOf(srcField.Interface()).IsNil() {
+			var out interface{}
+			out = srcField.Interface()
+			if cloneable, ok := out.(Cloneable); ok {
+				out = cloneable.CloneWith(ctx)
+			}
+			dstField := dstVal.Elem().FieldByName(field.Name)
+			dstField.Set(reflect.ValueOf(out))
+		}
+	}
+	return *ret
 }

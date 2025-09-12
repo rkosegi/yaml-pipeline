@@ -385,6 +385,10 @@
           "$ref": "#/$defs/loopOpSpec",
           "description": "Loop allows for execution to be done in a loop"
         },
+        "os": {
+          "$ref": "#/$defs/osOpSpec",
+          "description": "OS operations"
+        },
         "patch": {
           "$ref": "#/$defs/patchOpSpec",
           "description": "Patch performs RFC6902-style patch on data document."
@@ -403,6 +407,73 @@
         }
       },
       "type": "object"
+    },
+    "osFileMode": {
+      "description": "POSIX file mode/permission",
+      "type": "integer"
+    },
+    "osFilePath": {
+      "description": "Arbitrary file path",
+      "type": "string"
+    },
+    "osOpChdirSpec": {
+      "description": "Change working directory",
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/osFilePath",
+          "description": "Path to the directory to change into"
+        }
+      },
+      "required": [
+        "path"
+      ]
+    },
+    "osOpChmodSpec": {
+      "description": "Change file mode/permission",
+      "properties": {
+        "mode": {
+          "$ref": "#/$defs/osFileMode",
+          "description": "File mode to change to"
+        },
+        "path": {
+          "$ref": "#/$defs/osFilePath",
+          "description": "Path to the file that is subject to mode change"
+        }
+      },
+      "required": [
+        "path",
+        "mode"
+      ]
+    },
+    "osOpMkdirSpec": {
+      "description": "Create directory",
+      "properties": {
+        "mode": {
+          "$ref": "#/$defs/osFileMode",
+          "description": "File mode for newly created directory"
+        },
+        "path": {
+          "$ref": "#/$defs/osFilePath",
+          "description": "Path to directory to be created"
+        }
+      },
+      "required": [
+        "path"
+      ]
+    },
+    "osOpSpec": {
+      "description": "OS operation spec",
+      "properties": {
+        "chdir": {
+          "$ref": "#/$defs/osOpChdirSpec"
+        },
+        "chmod": {
+          "$ref": "#/$defs/osOpChmodSpec"
+        },
+        "mkdir": {
+          "$ref": "#/$defs/osOpMkdirSpec"
+        }
+      }
     },
     "outputFormat": {
       "description": "Format of output file",
