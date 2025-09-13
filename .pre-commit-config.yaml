@@ -44,6 +44,12 @@ repos:
     rev: v6.0.2
     hooks:
       - id: jsonschema-validate
+        name: Validate action.yaml and GitHub workflows against schema
+        files: action\.yaml|\.github/workflows/.*\.y?ml
+        args:
+          - https://www.schemastore.org/github-action.json
+      - id: jsonschema-validate
+        name: Validate pipeline files against schema
         files: testdata/pipeline.*\.yaml|docs/.*\.yaml
         args:
           - schemas/pipeline.json

@@ -136,7 +136,7 @@ func New() *cobra.Command {
 
 	short := "Runs a pipeline from a file"
 	cmd := &cobra.Command{
-		Use:   "pipeline",
+		Use:   "yp",
 		Short: short,
 		Long: short + "\n" + `
 File is validated against JSON schema unless validation is explicitly disabled (--validate false).
