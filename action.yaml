@@ -1,0 +1,77 @@
+# Copyright 2025 Richard Kosegi
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+---
+# yaml-language-server: $schema=https://www.schemastore.org/github-action.json?
+name: YAML Pipeline
+author: Richard Kosegi
+description: Runs YAML pipeline in the workspace
+inputs:
+  file:
+    required: true
+    description: Path to the pipeline definition. This file must exists in workspace.
+    default: pipeline.yaml
+  args:
+    description: |
+      Additional arguments to pass to binary, such as variable set.
+      Example: "--set myvar=1234567"
+    default: ""
+    required: false
+  version:
+    description: |
+      Version of binary used for execution in form of "vX.Y.Z".
+      When omitted, then latest released version is used.
+    required: false
+
+runs:
+  using: composite
+  steps:
+    - name: Check if pipeline file exists
+      run: |
+        if ! [ -f "${{ inputs.file }}" ]; then
+          echo "Pipeline file does not exist in workspace: ${{ inputs.file }}"
+          exit 1
+        fi
+      shell: bash
+
+    - name: Get YP download URL for specific release from API
+      run: |
+        url=$(curl -fsSL https://api.github.com/repos/rkosegi/yaml-pipeline/releases/tags/${{ inputs.version }} | \
+          yq '.assets[] | select(.name == "yaml-pipeline_*_linux_amd64.tar.gz").browser_download_url')
+        echo "Download URL: ${url}"
+        echo "YP_DOWNLOAD_URL=${url}" >> $GITHUB_ENV
+      shell: bash
+      if: inputs.version != ''
+
+    - name: Get YP download URL for latest release from API
+      run: |
+        url=$(curl -fsSL https://api.github.com/repos/rkosegi/yaml-pipeline/releases/latest | \
+          yq '.assets[] | select(.name == "yaml-pipeline_*_linux_amd64.tar.gz").browser_download_url')
+        echo "Download URL: ${url}"
+        echo "YP_DOWNLOAD_URL=${url}" >> $GITHUB_ENV
+      shell: bash
+      if: inputs.version == ''
+
+    - name: Download binary from YAML pipeline repo
+      run: |
+        curl -fsSL --retry 3 --url ${YP_DOWNLOAD_URL} | tar -C /usr/local/bin yp -xz -f-
+        yp --version
+      shell: bash
+
+    - name: Run pipeline
+      run: |
+       yp run --file ${{ inputs.file }} ${{ inputs.args }}
+      shell: bash
+branding:
+  icon: play-circle
+  color: white
