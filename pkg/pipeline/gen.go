@@ -308,7 +308,7 @@ type OpSpec struct {
 	TemplateFile *TemplateFileOpSpec `json:"templateFile,omitempty" yaml:"templateFile,omitempty"`
 }
 
-// OsFileMode File permission/mode
+// OsFileMode POSIX file mode/permission
 type OsFileMode = os.FileMode
 
 // OsFilePath Arbitrary file path
@@ -316,19 +316,80 @@ type OsFilePath = ValOrRef
 
 // OsOpChdirSpec Change working directory
 type OsOpChdirSpec struct {
-	Path ValOrRef `json:"path" yaml:"path"`
+	// Path Arbitrary file path
+	Path OsFilePath `json:"path" yaml:"path"`
 }
 
-// OsOpChmodSpec Change file mode
+// OsOpChmodSpec Change file mode/permission
 type OsOpChmodSpec struct {
-	Mode os.FileMode `json:"mode" yaml:"mode"`
-	Path ValOrRef    `json:"path" yaml:"path"`
+	// Mode POSIX file mode/permission
+	Mode OsFileMode `json:"mode" yaml:"mode"`
+
+	// Path Arbitrary file path
+	Path OsFilePath `json:"path" yaml:"path"`
+}
+
+// OsOpCopySpec Copy file(s) from source path to the destination
+type OsOpCopySpec struct {
+	// From Arbitrary file path
+	From OsFilePath `json:"from" yaml:"from"`
+
+	// To Arbitrary file path
+	To OsFilePath `json:"to" yaml:"to"`
+}
+
+// OsOpGetcwdSpec Gets current working directory
+type OsOpGetcwdSpec struct {
+	// StoreTo Path to location within the data, where result of operation is store upon success
+	StoreTo StoreResultTo `json:"storeTo" yaml:"storeTo"`
+}
+
+// OsOpHostnameSpec Gets system hostname
+type OsOpHostnameSpec struct {
+	// StoreTo Path to location within the data, where result of operation is store upon success
+	StoreTo StoreResultTo `json:"storeTo" yaml:"storeTo"`
+}
+
+// OsOpLinkSpec Create link from old file to new file
+type OsOpLinkSpec struct {
+	// NewName Arbitrary file path
+	NewName OsFilePath `json:"newName" yaml:"newName"`
+
+	// OldName Arbitrary file path
+	OldName OsFilePath `json:"oldName" yaml:"oldName"`
+
+	// Symbolic When true, link will be symbolic, otherwise it will be hardlink
+	Symbolic bool `json:"symbolic" yaml:"symbolic"`
 }
 
 // OsOpMkdirSpec Create directory
 type OsOpMkdirSpec struct {
-	Mode *os.FileMode `json:"mode,omitempty" yaml:"mode,omitempty"`
-	Path ValOrRef     `json:"path" yaml:"path"`
+	// Mode POSIX file mode/permission
+	Mode *OsFileMode `json:"mode,omitempty" yaml:"mode,omitempty"`
+
+	// Path Arbitrary file path
+	Path OsFilePath `json:"path" yaml:"path"`
+
+	// Recursive Whether to apply operation recursively
+	Recursive *RecursiveFlag `json:"recursive,omitempty" yaml:"recursive,omitempty"`
+}
+
+// OsOpReadDirSpec Read file entries in directory
+type OsOpReadDirSpec struct {
+	// Path Arbitrary file path
+	Path OsFilePath `json:"path" yaml:"path"`
+
+	// StoreTo Path to location within the data, where result of operation is store upon success
+	StoreTo StoreResultTo `json:"storeTo" yaml:"storeTo"`
+}
+
+// OsOpRemoveSpec Remove a file
+type OsOpRemoveSpec struct {
+	// Path Arbitrary file path
+	Path OsFilePath `json:"path" yaml:"path"`
+
+	// Recursive Whether to apply operation recursively
+	Recursive *RecursiveFlag `json:"recursive,omitempty" yaml:"recursive,omitempty"`
 }
 
 // OsOpSpec OS operation spec
@@ -336,11 +397,50 @@ type OsOpSpec struct {
 	// Chdir Change working directory
 	Chdir *OsOpChdirSpec `json:"chdir,omitempty" yaml:"chdir,omitempty"`
 
-	// Chmod Change file mode
+	// Chmod Change file mode/permission
 	Chmod *OsOpChmodSpec `json:"chmod,omitempty" yaml:"chmod,omitempty"`
+
+	// Copy Copy file(s) from source path to the destination
+	Copy *OsOpCopySpec `json:"copy,omitempty" yaml:"copy,omitempty"`
+
+	// Getcwd Gets current working directory
+	Getcwd *OsOpGetcwdSpec `json:"getcwd,omitempty" yaml:"getcwd,omitempty"`
+
+	// Hostname Gets system hostname
+	Hostname *OsOpHostnameSpec `json:"hostname,omitempty" yaml:"hostname,omitempty"`
+
+	// Link Create link from old file to new file
+	Link *OsOpLinkSpec `json:"link,omitempty" yaml:"link,omitempty"`
 
 	// Mkdir Create directory
 	Mkdir *OsOpMkdirSpec `json:"mkdir,omitempty" yaml:"mkdir,omitempty"`
+
+	// Readdir Read file entries in directory
+	Readdir *OsOpReadDirSpec `json:"readdir,omitempty" yaml:"readdir,omitempty"`
+
+	// Remove Remove a file
+	Remove *OsOpRemoveSpec `json:"remove,omitempty" yaml:"remove,omitempty"`
+
+	// Stat Gets a file info
+	Stat *OsOpStatSpec `json:"stat,omitempty" yaml:"stat,omitempty"`
+
+	// Userhome Gets users' home directory path
+	Userhome *OsOpUserHomeSpec `json:"userhome,omitempty" yaml:"userhome,omitempty"`
+}
+
+// OsOpStatSpec Gets a file info
+type OsOpStatSpec struct {
+	// Path Arbitrary file path
+	Path OsFilePath `json:"path" yaml:"path"`
+
+	// StoreTo Path to location within the data, where result of operation is store upon success
+	StoreTo StoreResultTo `json:"storeTo" yaml:"storeTo"`
+}
+
+// OsOpUserHomeSpec Gets users' home directory path
+type OsOpUserHomeSpec struct {
+	// StoreTo Path to location within the data, where result of operation is store upon success
+	StoreTo StoreResultTo `json:"storeTo" yaml:"storeTo"`
 }
 
 // OutputFormat Format of output file
@@ -381,6 +481,9 @@ type PatchOpSpec struct {
 	ValueFrom *string `json:"valueFrom,omitempty" yaml:"valueFrom,omitempty"`
 }
 
+// RecursiveFlag Whether to apply operation recursively
+type RecursiveFlag = bool
+
 // SetOpSpec defines model for setOpSpec.
 type SetOpSpec struct {
 	// Data Arbitrary data to put into data tree
@@ -400,6 +503,9 @@ type SetOpSpec struct {
 //   - replace - old value is replaced with new.
 //   - merge - merge is attempted by applying new value on top of old one.
 type SetStrategy string
+
+// StoreResultTo Path to location within the data, where result of operation is store upon success
+type StoreResultTo = ValOrRef
 
 // TemplateFileOpSpec TemplateFileOp can be used to render template from file and write result to output.
 type TemplateFileOpSpec struct {
