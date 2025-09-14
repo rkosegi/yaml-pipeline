@@ -445,6 +445,71 @@
         "mode"
       ]
     },
+    "osOpCopySpec": {
+      "description": "Copy file(s) from source path to the destination",
+      "properties": {
+        "from": {
+          "$ref": "#/$defs/osFilePath",
+          "description": "Source file(s) to copy"
+        },
+        "to": {
+          "$ref": "#/$defs/osFilePath",
+          "description": "Destination directory. Must exists."
+        }
+      },
+      "required": [
+        "from",
+        "to"
+      ],
+      "type": "object"
+    },
+    "osOpGetcwdSpec": {
+      "description": "Gets current working directory",
+      "properties": {
+        "storeTo": {
+          "$ref": "#/$defs/storeResultTo"
+        }
+      },
+      "required": [
+        "storeTo"
+      ],
+      "type": "object"
+    },
+    "osOpHostnameSpec": {
+      "description": "Gets system hostname",
+      "properties": {
+        "storeTo": {
+          "$ref": "#/$defs/storeResultTo"
+        }
+      },
+      "required": [
+        "storeTo"
+      ],
+      "type": "object"
+    },
+    "osOpLinkSpec": {
+      "description": "Create link from old file to new file",
+      "properties": {
+        "newName": {
+          "$ref": "#/$defs/osFilePath",
+          "description": "New file name that will point to old file"
+        },
+        "oldName": {
+          "$ref": "#/$defs/osFilePath",
+          "description": "File to which new link will be pointing to"
+        },
+        "symbolic": {
+          "description": "When true, link will be symbolic, otherwise it will be hardlink",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "newName",
+        "oldName",
+        "symbolic"
+      ],
+      "type": "object"
+    },
     "osOpMkdirSpec": {
       "description": "Create directory",
       "properties": {
@@ -455,13 +520,52 @@
         "path": {
           "$ref": "#/$defs/osFilePath",
           "description": "Path to directory to be created"
+        },
+        "recursive": {
+          "$ref": "#/$defs/recursiveFlag",
+          "description": "If true, then all parent directories are created as necessary"
         }
       },
       "required": [
         "path"
       ]
     },
+    "osOpReadDirSpec": {
+      "description": "Read file entries in directory",
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/osFilePath",
+          "description": "Path to be removed"
+        },
+        "storeTo": {
+          "$ref": "#/$defs/storeResultTo"
+        }
+      },
+      "required": [
+        "path",
+        "storeTo"
+      ],
+      "type": "object"
+    },
+    "osOpRemoveSpec": {
+      "description": "Remove a file",
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/osFilePath",
+          "description": "Path to be removed"
+        },
+        "recursive": {
+          "$ref": "#/$defs/recursiveFlag",
+          "description": "If true, then all child paths are removed first."
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "type": "object"
+    },
     "osOpSpec": {
+      "additionalProperties": false,
       "description": "OS operation spec",
       "properties": {
         "chdir": {
@@ -470,10 +574,62 @@
         "chmod": {
           "$ref": "#/$defs/osOpChmodSpec"
         },
+        "copy": {
+          "$ref": "#/$defs/osOpCopySpec"
+        },
+        "getcwd": {
+          "$ref": "#/$defs/osOpGetcwdSpec"
+        },
+        "hostname": {
+          "$ref": "#/$defs/osOpHostnameSpec"
+        },
+        "link": {
+          "$ref": "#/$defs/osOpLinkSpec"
+        },
         "mkdir": {
           "$ref": "#/$defs/osOpMkdirSpec"
+        },
+        "readdir": {
+          "$ref": "#/$defs/osOpReadDirSpec"
+        },
+        "remove": {
+          "$ref": "#/$defs/osOpRemoveSpec"
+        },
+        "stat": {
+          "$ref": "#/$defs/osOpStatSpec"
+        },
+        "userhome": {
+          "$ref": "#/$defs/osOpUserHomeSpec"
         }
       }
+    },
+    "osOpStatSpec": {
+      "description": "Gets a file info",
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/osFilePath",
+          "description": "Path to the file to get info for"
+        },
+        "storeTo": {
+          "$ref": "#/$defs/storeResultTo"
+        }
+      },
+      "required": [
+        "path",
+        "storeTo"
+      ],
+      "type": "object"
+    },
+    "osOpUserHomeSpec": {
+      "description": "Gets users' home directory path",
+      "properties": {
+        "storeTo": {
+          "$ref": "#/$defs/storeResultTo"
+        }
+      },
+      "required": [
+        "storeTo"
+      ]
     },
     "outputFormat": {
       "description": "Format of output file",
@@ -559,6 +715,10 @@
         }
       }
     },
+    "recursiveFlag": {
+      "description": "Whether to apply operation recursively",
+      "type": "boolean"
+    },
     "serviceSpec": {
       "description": "Service definition",
       "properties": {
@@ -595,6 +755,10 @@
         "replace",
         "merge"
       ],
+      "type": "string"
+    },
+    "storeResultTo": {
+      "description": "Path to location within the data, where result of operation is store upon success",
       "type": "string"
     },
     "templateFileOpSpec": {
