@@ -18,10 +18,11 @@ package pipeline
 
 import (
 	"fmt"
+	"strings"
 )
 
 func (lo *LogOpSpec) Do(ctx ActionContext) error {
-	ctx.Logger().Log(ctx.TemplateEngine().RenderLenient(lo.Message, ctx.Snapshot()))
+	ctx.Logger().Log(strings.TrimSpace(ctx.TemplateEngine().RenderLenient(lo.Message, ctx.Snapshot())))
 	return nil
 }
 
