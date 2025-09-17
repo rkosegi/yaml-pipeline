@@ -58,8 +58,7 @@ func (fea *ForEachOpSpec) Do(ctx ActionContext) error {
 		}
 	} else if fea.Item != nil {
 		for _, item := range *fea.Item {
-			err := fea.performWithItem(ctx, dom.LeafNode(item.Resolve(ctx)))
-			if err != nil {
+			if err := fea.performWithItem(ctx, dom.LeafNode(item.Resolve(ctx))); err != nil {
 				return err
 			}
 		}
@@ -82,9 +81,8 @@ func (fea *ForEachOpSpec) performWithItem(ctx ActionContext, item dom.Node) (err
 
 	for _, act := range fea.Action.Operations.toList() {
 		act = act.CloneWith(ctx)
-		err = ctx.Executor().Execute(act)
-		if err != nil {
-			return err
+		if err = ctx.Executor().Execute(act); err != nil {
+			return errWithInfo(err, "forEach/execute CloneWith")
 		}
 	}
 	return ctx.Executor().Execute(fea.Action.Children)

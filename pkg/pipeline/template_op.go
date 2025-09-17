@@ -43,7 +43,7 @@ func (ts *TemplateOpSpec) Do(ctx ActionContext) error {
 	ss := ctx.Snapshot()
 	val, err := ctx.TemplateEngine().Render(ts.Template, ss)
 	if err != nil {
-		return err
+		return errWithInfo(err, "template/template")
 	}
 	if safeBoolDeref(ts.Trim) {
 		val = strings.TrimSpace(val)
@@ -56,7 +56,7 @@ func (ts *TemplateOpSpec) Do(ctx ActionContext) error {
 	case ParseTextAsYaml:
 		var yn yaml.Node
 		if err = yaml.Unmarshal([]byte(val), &yn); err != nil {
-			return err
+			return errWithInfo(err, "template/ParseTextAsYaml")
 		}
 		node = dom.YamlNodeDecoder()(&yn)
 	case ParseTextAsNone:
@@ -64,14 +64,14 @@ func (ts *TemplateOpSpec) Do(ctx ActionContext) error {
 	case ParseTextAsFloat64:
 		var x float64
 		if x, err = strconv.ParseFloat(val, 64); err != nil {
-			return err
+			return errWithInfo(err, "template/ParseTextAsFloat64")
 		} else {
 			node = dom.LeafNode(x)
 		}
 	case ParseTextAsInt64:
 		var x int64
 		if x, err = strconv.ParseInt(val, 10, 64); err != nil {
-			return err
+			return errWithInfo(err, "template/ParseTextAsInt64")
 		} else {
 			node = dom.LeafNode(x)
 		}
@@ -80,7 +80,7 @@ func (ts *TemplateOpSpec) Do(ctx ActionContext) error {
 	}
 	ctx.Data().Set(pp.MustParse(p), node)
 	ctx.InvalidateSnapshot()
-	return err
+	return nil
 }
 
 func (ts *TemplateOpSpec) CloneWith(ctx ActionContext) Action {

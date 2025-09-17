@@ -27,13 +27,15 @@ func (ps *PatchOpSpec) String() string {
 }
 
 func (ps *PatchOpSpec) Do(ctx ActionContext) error {
+	var err error
 	ss := ctx.Snapshot()
 	oo := &patch.OpObj{
 		Op: ps.Op,
 	}
-	path, err := patch.ParsePath(ctx.TemplateEngine().RenderLenient(ps.Path, ss))
+	var path patch.Path
+	path, err = patch.ParsePath(ctx.TemplateEngine().RenderLenient(ps.Path, ss))
 	if err != nil {
-		return err
+		return errWithInfo(err, "patch.ParsePath (path)")
 	}
 	oo.Path = path
 	if ps.Value != nil {
@@ -42,9 +44,10 @@ func (ps *PatchOpSpec) Do(ctx ActionContext) error {
 		oo.Value = ctx.Data().Get(pp.MustParse(ctx.TemplateEngine().RenderLenient(*ps.ValueFrom, ss)))
 	}
 	if !strIsEmpty(ps.From) {
-		from, err := patch.ParsePath(*ps.From)
+		var from patch.Path
+		from, err = patch.ParsePath(*ps.From)
 		if err != nil {
-			return err
+			return errWithInfo(err, "patch.ParsePath (from)")
 		}
 		oo.From = &from
 	}

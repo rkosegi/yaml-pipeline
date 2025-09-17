@@ -113,11 +113,11 @@ func (ia *ImportOpSpec) Do(ctx ActionContext) error {
 		val, err = parseFile(file, ia.Mode)
 	}
 	if err != nil {
-		return err
+		return errWithInfo(err, "import/parseFile")
 	}
 	if ia.Mode == ParseFileModeXml {
 		if val, err = ia.loadXml(val.AsLeaf().Value().(string), ctx); err != nil {
-			return err
+			return errWithInfo(err, "import/loadXml")
 		}
 	}
 	p := ctx.TemplateEngine().RenderLenient(ia.Path, ctx.Snapshot())

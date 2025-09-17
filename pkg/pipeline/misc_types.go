@@ -35,6 +35,10 @@ var (
 	ErrNotContainer  = errors.New("data element must be container when no path is provided")
 )
 
+func errWithInfo(err error, info string) error {
+	return fmt.Errorf("%s: %w", info, err)
+}
+
 // AnyVal can represent any DOM value (leaf, list, container)
 type AnyVal struct {
 	v dom.Node

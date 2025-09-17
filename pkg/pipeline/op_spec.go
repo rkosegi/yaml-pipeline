@@ -39,8 +39,7 @@ func (as OpSpec) toList() []Action {
 
 func (as OpSpec) Do(ctx ActionContext) error {
 	for _, a := range as.toList() {
-		err := ctx.Executor().Execute(a)
-		if err != nil {
+		if err := ctx.Executor().Execute(a); err != nil {
 			return err
 		}
 	}
