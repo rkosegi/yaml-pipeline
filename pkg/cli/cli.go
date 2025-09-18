@@ -87,6 +87,7 @@ func applyColorUse(use string) {
 	case "always":
 		_ = os.Setenv("FORCE_COLOR", "true")
 	case "never":
+		color.Enable = false
 		_ = os.Unsetenv("FORCE_COLOR")
 	}
 }
