@@ -50,7 +50,7 @@ type simpleListener struct {
 func (g *gitlabListener) OnBefore(ctx ytp.ActionContext) {
 	if as, ok := ctx.Action().(ytp.ActionSpec); ok {
 		secId := uuid.New().String()
-		fmt.Fprintf(os.Stderr, "section_start:%d:action_spec_%s[collapsed=true]\\r\\e[0K%s\n", time.Now().Unix(),
+		fmt.Fprintf(os.Stderr, "\x1b[0Ksection_start:%d:action_spec_%s[collapsed=true]\r\x1b[0K%s\n", time.Now().Unix(),
 			secId, as.String())
 		g.sec.Push(secId)
 	} else {
@@ -61,7 +61,7 @@ func (g *gitlabListener) OnBefore(ctx ytp.ActionContext) {
 func (g *gitlabListener) OnAfter(ctx ytp.ActionContext, err error) {
 	if _, ok := ctx.Action().(ytp.ActionSpec); ok {
 		secId, _ := g.sec.Pop()
-		fmt.Fprintf(os.Stderr, "section_end:%d:action_spec_%s\\r\\e[0K\n", time.Now().Unix(), secId.(string))
+		fmt.Fprintf(os.Stderr, "\x1b[0Ksection_end:%d:action_spec_%s\r\x1b[0K\n", time.Now().Unix(), secId.(string))
 	} else {
 		g.simpleListener.OnAfter(ctx, err)
 	}
