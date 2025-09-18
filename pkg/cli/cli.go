@@ -19,7 +19,6 @@ package cli
 import (
 	"errors"
 	"fmt"
-	"log/slog"
 	"os"
 	"strings"
 
@@ -29,6 +28,7 @@ import (
 	"github.com/rkosegi/yaml-pipeline/pkg/utils"
 	"github.com/rkosegi/yaml-pipeline/pkg/version"
 	"github.com/rkosegi/yaml-toolkit/dom"
+	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	"github.com/xlab/treeprint"
 	"gopkg.in/yaml.v3"
@@ -38,9 +38,11 @@ type data struct {
 	sc       *xlog.SlogConfig
 	file     string
 	validate bool
-	logger   *slog.Logger
 	pp       ytp.PipelineSpec
 	vals     []string
+	output   string
+	sl       ytp.Listener
+	colorUse string
 }
 
 var (
@@ -49,42 +51,13 @@ var (
 	errStyle     = color.Style{color.FgRed, color.OpBold}
 )
 
-type simpleListener struct {
-	ind int
-	l   *slog.Logger
-}
-
-func (s *simpleListener) indentStr() string {
-	return strings.Repeat(" ", s.ind)
-}
-
-func (s *simpleListener) OnBefore(ctx ytp.ActionContext) {
-	fmt.Fprintf(os.Stderr, "%s %s %v\n", startOpStyle.Render("[Start]"), s.indentStr(), ctx.Action())
-	s.ind++
-}
-
-func (s *simpleListener) OnAfter(ctx ytp.ActionContext, err error) {
-	s.ind -= 1
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "%s %s %v\n", errStyle.Render("[Error]"), s.indentStr(), ctx.Action())
-		panic(err)
-	} else {
-		fmt.Fprintf(os.Stderr, "%s %s %v\n", endOpStyle.Render("[Done ]"), s.indentStr(), ctx.Action())
-	}
-}
-
-func (s *simpleListener) OnLog(_ ytp.ActionContext, v ...interface{}) {
-	if tag, hasTag := utils.GetLogTag(v...); hasTag {
-		switch tag {
-		case "skip":
-			fmt.Fprint(os.Stderr, color.Gray.Render(fmt.Sprintf("[SKIP ] %s %v\n", s.indentStr(), v[1:])))
-			return
-		}
-	}
-	fmt.Fprint(os.Stderr, color.Blue.Render(fmt.Sprintf("[Log  ] %s %v\n", s.indentStr(), v)))
-}
-
 func preRun(d *data) error {
+	applyColorUse(d.colorUse)
+	if l, ok := ol[d.output]; ok {
+		d.sl = l
+	} else {
+		return fmt.Errorf("no such output decoration: %s, known types : %v", d.output, strings.Join(lo.Keys(ol), ","))
+	}
 	if d.validate {
 		fmt.Fprintln(os.Stderr, color.Blue.Render(fmt.Sprintf("[Schema] Validating document")))
 		res, err := utils.ValidateFileAgainstSchema(d.file)
@@ -109,6 +82,15 @@ func setValues(d *data, gd dom.ContainerBuilder) {
 	fmt.Fprintln(os.Stderr, color.Blue.Render(fmt.Sprintf("[Values] OK")))
 }
 
+func applyColorUse(use string) {
+	switch use {
+	case "always":
+		_ = os.Setenv("FORCE_COLOR", "true")
+	case "never":
+		_ = os.Unsetenv("FORCE_COLOR")
+	}
+}
+
 func run(d *data) error {
 	var (
 		bytes []byte
@@ -124,14 +106,15 @@ func run(d *data) error {
 	setValues(d, gd)
 	return ytp.New(
 		ytp.WithData(gd),
-		ytp.WithListener(&simpleListener{l: d.logger}),
+		ytp.WithListener(d.sl),
 	).Execute(d.pp.ActionSpec)
 }
 
 func New() *cobra.Command {
 	d := &data{
-		sc:       xlog.MustNew("info", xlog.LogFormatLogFmt),
 		validate: true,
+		output:   "default",
+		colorUse: "always",
 	}
 
 	short := "Runs a pipeline from a file"
@@ -142,11 +125,9 @@ func New() *cobra.Command {
 File is validated against JSON schema unless validation is explicitly disabled (--validate false).
 Initial values can be set using --set keyX=valueY.
 
-
 `,
 		Version: version.Get(),
 		PreRunE: func(cmd *cobra.Command, args []string) error {
-			d.logger = d.sc.Logger()
 			if len(d.file) == 0 {
 				return errors.New("pipeline file is required (--file)")
 			}
@@ -156,6 +137,8 @@ Initial values can be set using --set keyX=valueY.
 			return run(d)
 		},
 	}
+	cmd.Flags().StringVar(&d.colorUse, "color", d.colorUse, "Color output (auto/always/never)")
+	cmd.Flags().StringVar(&d.output, "output", d.output, "Output decoration (default/gitlab)")
 	cmd.Flags().BoolVar(&d.validate, "validate", d.validate,
 		"Whether to validate pipeline file against current JSON schema")
 	cmd.Flags().StringVar(&d.file, "file", "", "pipeline file to run")
