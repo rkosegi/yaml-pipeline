@@ -23,6 +23,8 @@ tool github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen
 require (
 	github.com/Masterminds/sprig/v3 v3.3.0
 	github.com/antchfx/htmlquery v1.3.4
+	github.com/emirpasic/gods v1.18.1
+	github.com/google/uuid v1.6.0
 	github.com/gookit/color v1.6.0
 	github.com/kaptinlin/jsonschema v0.4.13
 	github.com/otiai10/copy v1.14.1
@@ -51,7 +53,6 @@ require (
 	github.com/goccy/go-yaml v1.18.0 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/google/go-cmp v0.7.0 // indirect
-	github.com/google/uuid v1.6.0 // indirect
 	github.com/huandu/xstrings v1.5.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
