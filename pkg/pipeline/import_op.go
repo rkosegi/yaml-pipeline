@@ -101,8 +101,9 @@ func (ia *ImportOpSpec) loadXml(content string, ctx ActionContext) (dom.Containe
 }
 
 func (ia *ImportOpSpec) Do(ctx ActionContext) error {
+	p := ctx.TemplateEngine().RenderLenient(ia.Path, ctx.Snapshot())
 	file := ctx.TemplateEngine().RenderLenient(ia.File, ctx.Snapshot())
-	ctx.Logger().Log(fmt.Sprintf("Importing file %s using mode %s", file, ia.Mode))
+	ctx.Logger().Log(fmt.Sprintf("Importing file %s using mode %s into %s", file, ia.Mode, ia.Path))
 	var (
 		val dom.Node
 		err error
@@ -120,7 +121,6 @@ func (ia *ImportOpSpec) Do(ctx ActionContext) error {
 			return errWithInfo(err, "import/loadXml")
 		}
 	}
-	p := ctx.TemplateEngine().RenderLenient(ia.Path, ctx.Snapshot())
 	if len(p) > 0 {
 		ctx.Data().Set(pp.MustParse(p), val)
 		ctx.InvalidateSnapshot()
