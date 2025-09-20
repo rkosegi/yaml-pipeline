@@ -19,6 +19,7 @@ package cli
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -35,40 +36,15 @@ var ol = map[string]ytp.Listener{
 		simpleListener: &simpleListener{},
 		sec:            arraystack.New(),
 	},
+	"github": &githubListener{simpleListener: &simpleListener{}},
 }
 
-// https://docs.gitlab.com/ci/jobs/job_logs/#use-a-script-to-improve-display-of-collapsible-sections
-type gitlabListener struct {
-	sec *arraystack.Stack
-	*simpleListener
+type configurableOutput interface {
+	SetOpts(opts map[string]string) error
 }
 
 type simpleListener struct {
 	ind int
-}
-
-func (g *gitlabListener) OnBefore(ctx ytp.ActionContext) {
-	if as, ok := ctx.Action().(ytp.ActionSpec); ok {
-		secId := uuid.New().String()
-		fmt.Fprintf(os.Stderr, "\x1b[0Ksection_start:%d:action_spec_%s[collapsed=true]\r\x1b[0K%s\n", time.Now().Unix(),
-			secId, as.String())
-		g.sec.Push(secId)
-	} else {
-		g.simpleListener.OnBefore(ctx)
-	}
-}
-
-func (g *gitlabListener) OnAfter(ctx ytp.ActionContext, err error) {
-	if _, ok := ctx.Action().(ytp.ActionSpec); ok {
-		secId, _ := g.sec.Pop()
-		fmt.Fprintf(os.Stderr, "\x1b[0Ksection_end:%d:action_spec_%s\r\x1b[0K\n", time.Now().Unix(), secId.(string))
-	} else {
-		g.simpleListener.OnAfter(ctx, err)
-	}
-}
-
-func (g *gitlabListener) OnLog(ctx ytp.ActionContext, v ...interface{}) {
-	g.simpleListener.OnLog(ctx, v...)
 }
 
 func (s *simpleListener) indentStr() string {
@@ -99,4 +75,92 @@ func (s *simpleListener) OnLog(_ ytp.ActionContext, v ...interface{}) {
 		}
 	}
 	fmt.Fprint(os.Stderr, color.Blue.Render(fmt.Sprintf("[Log  ] %s %v\n", s.indentStr(), v)))
+}
+
+// https://docs.gitlab.com/ci/jobs/job_logs/#use-a-script-to-improve-display-of-collapsible-sections
+type gitlabListener struct {
+	col bool
+	is  bool
+	sec *arraystack.Stack
+	*simpleListener
+}
+
+func (g *gitlabListener) SetOpts(opts map[string]string) (err error) {
+	if opt, ok := opts["collapse"]; ok {
+		if g.col, err = strconv.ParseBool(strings.TrimSpace(opt)); err != nil {
+			return fmt.Errorf("invalid bool for 'collapse' option: %w", err)
+		}
+	}
+	if opt, ok := opts["indent-section-title"]; ok {
+		if g.is, err = strconv.ParseBool(strings.TrimSpace(opt)); err != nil {
+			return fmt.Errorf("invalid bool for 'indent-section-title' option: %w", err)
+		}
+	}
+	return nil
+}
+
+func (g *gitlabListener) OnBefore(ctx ytp.ActionContext) {
+	if as, ok := ctx.Action().(ytp.ActionSpec); ok {
+		secId := uuid.New().String()
+		ind := ""
+		if g.is {
+			g.ind++
+			ind = g.indentStr()
+		}
+		fmt.Fprintf(os.Stderr, "\x1b[0Ksection_start:%d:action_spec_%s[collapsed=%v]\r\x1b[0K%s%s\n", time.Now().Unix(),
+			secId, g.col, ind, as.String())
+		g.sec.Push(secId)
+	} else {
+		g.simpleListener.OnBefore(ctx)
+	}
+}
+
+func (g *gitlabListener) OnAfter(ctx ytp.ActionContext, err error) {
+	if err != nil {
+		// this will panic
+		g.simpleListener.OnAfter(ctx, err)
+	}
+	if _, ok := ctx.Action().(ytp.ActionSpec); ok {
+		if g.is {
+			g.ind -= 1
+		}
+		secId, _ := g.sec.Pop()
+		fmt.Fprintf(os.Stderr, "\x1b[0Ksection_end:%d:action_spec_%s\r\x1b[0K\n", time.Now().Unix(), secId.(string))
+	} else {
+		g.simpleListener.OnAfter(ctx, err)
+	}
+}
+
+func (g *gitlabListener) OnLog(ctx ytp.ActionContext, v ...interface{}) {
+	g.simpleListener.OnLog(ctx, v...)
+}
+
+// https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands#grouping-log-lines
+type githubListener struct {
+	*simpleListener
+}
+
+func (g *githubListener) OnBefore(ctx ytp.ActionContext) {
+	if as, ok := ctx.Action().(ytp.ActionSpec); ok {
+		fmt.Fprintf(os.Stderr, "::group::%v\n", as)
+	} else {
+		g.simpleListener.OnBefore(ctx)
+	}
+}
+
+func (g *githubListener) OnAfter(ctx ytp.ActionContext, err error) {
+	if err != nil {
+		// https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands#setting-an-error-message
+		fmt.Fprintf(os.Stderr, "::error title=%v::%s\n", ctx.Action(), err.Error())
+		panic(err)
+	}
+	if _, ok := ctx.Action().(ytp.ActionSpec); ok {
+		fmt.Fprintf(os.Stderr, "::endgroup::\n")
+	} else {
+		g.simpleListener.OnAfter(ctx, err)
+	}
+}
+
+func (g *githubListener) OnLog(ctx ytp.ActionContext, v ...interface{}) {
+	fmt.Fprintf(os.Stderr, "::notice title=%v::%s\n", ctx.Action(), v)
 }

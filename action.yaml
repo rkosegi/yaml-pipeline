@@ -70,7 +70,7 @@ runs:
 
     - name: Run pipeline
       run: |
-       yp run --file ${{ inputs.file }} ${{ inputs.args }}
+       yp run --output github --file ${{ inputs.file }} ${{ inputs.args }}
       shell: bash
 branding:
   icon: play-circle

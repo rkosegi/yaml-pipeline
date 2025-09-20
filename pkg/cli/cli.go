@@ -35,14 +35,15 @@ import (
 )
 
 type data struct {
-	sc       *xlog.SlogConfig
-	file     string
-	validate bool
-	pp       ytp.PipelineSpec
-	vals     []string
-	output   string
-	sl       ytp.Listener
-	colorUse string
+	sc         *xlog.SlogConfig
+	file       string
+	validate   bool
+	pp         ytp.PipelineSpec
+	vals       []string
+	output     string
+	sl         ytp.Listener
+	colorUse   string
+	outputOpts []string
 }
 
 var (
@@ -58,8 +59,21 @@ func preRun(d *data) error {
 	} else {
 		return fmt.Errorf("no such output decoration: %s, known types : %v", d.output, strings.Join(lo.Keys(ol), ","))
 	}
+	if len(d.outputOpts) > 0 {
+		if si, ok := d.sl.(configurableOutput); ok {
+			if err := si.SetOpts(lo.Associate(d.outputOpts, func(opt string) (string, string) {
+				parts := strings.SplitN(opt, "=", 2)
+				if len(parts) == 1 {
+					return parts[0], ""
+				}
+				return parts[0], parts[1]
+			})); err != nil {
+				return fmt.Errorf("unable to configure output decoration '%s': %w", d.output, err)
+			}
+		}
+	}
 	if d.validate {
-		fmt.Fprintln(os.Stderr, color.Blue.Render(fmt.Sprintf("[Schema] Validating document")))
+		fmt.Fprintln(os.Stderr, color.Blue.Render("[Schema] Validating document"))
 		res, err := utils.ValidateFileAgainstSchema(d.file)
 		if err != nil {
 			return err
@@ -70,16 +84,16 @@ func preRun(d *data) error {
 			fmt.Fprintln(os.Stderr, tree.String())
 			return res
 		}
-		fmt.Fprintln(os.Stderr, color.Blue.Render(fmt.Sprintf("[Schema] OK")))
+		fmt.Fprintln(os.Stderr, color.Blue.Render("[Schema] OK"))
 	}
 	return nil
 }
 
 func setValues(d *data, gd dom.ContainerBuilder) {
-	fmt.Fprintln(os.Stderr, color.Blue.Render(fmt.Sprintf("[Values] Setting values")))
+	fmt.Fprintln(os.Stderr, color.Blue.Render("[Values] Setting values"))
 	utils.ApplyVarsToDom(d.pp.Vars, "vars", gd)
 	utils.ApplyValues(gd, d.vals)
-	fmt.Fprintln(os.Stderr, color.Blue.Render(fmt.Sprintf("[Values] OK")))
+	fmt.Fprintln(os.Stderr, color.Blue.Render("[Values] OK"))
 }
 
 func applyColorUse(use string) {
@@ -113,9 +127,10 @@ func run(d *data) error {
 
 func New() *cobra.Command {
 	d := &data{
-		validate: true,
-		output:   "default",
-		colorUse: "always",
+		validate:   true,
+		output:     "default",
+		outputOpts: []string{},
+		colorUse:   "always",
 	}
 
 	short := "Runs a pipeline from a file"
@@ -126,6 +141,21 @@ func New() *cobra.Command {
 File is validated against JSON schema unless validation is explicitly disabled (--validate false).
 Initial values can be set using --set keyX=valueY.
 
+Supported output decorations:
+.______________________________________________________________________.
+| Name    | Options                                                    |
+|---------|------------------------------------------------------------+
+| default | No options                                                 |
+|---------|------------------------------------------------------------+
+| github  | No options                                                 |
+|---------|------------------------------------------------------------+
+| gitlab  | * collapse - true/false - controls section collapse/expand |
+|         |------------------------------------------------------------+
+|         | * indent-section-title - true/false - controls whether to  |
+|         | indent title in section header                             |
++---------+------------------------------------------------------------+
+
+To set output option, use argument like this: --output-opt collapse=true
 `,
 		Version: version.Get(),
 		PreRunE: func(cmd *cobra.Command, args []string) error {
@@ -138,8 +168,9 @@ Initial values can be set using --set keyX=valueY.
 			return run(d)
 		},
 	}
+	cmd.Flags().StringSliceVar(&d.outputOpts, "output-opt", d.outputOpts, "Output options. These are decoration-specific")
 	cmd.Flags().StringVar(&d.colorUse, "color", d.colorUse, "Color output (auto/always/never)")
-	cmd.Flags().StringVar(&d.output, "output", d.output, "Output decoration (default/gitlab)")
+	cmd.Flags().StringVar(&d.output, "output", d.output, "Output decoration (default/gitlab/github)")
 	cmd.Flags().BoolVar(&d.validate, "validate", d.validate,
 		"Whether to validate pipeline file against current JSON schema")
 	cmd.Flags().StringVar(&d.file, "file", "", "pipeline file to run")
