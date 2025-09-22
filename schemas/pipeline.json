@@ -739,6 +739,10 @@
           "description": "Path at which to put data.\nIf omitted, then data are merged into root of document",
           "type": "string"
         },
+        "render": {
+          "description": "Flag indicating use of templating. When true, data are passed through template engine",
+          "type": "boolean"
+        },
         "strategy": {
           "$ref": "#/$defs/setStrategy",
           "description": "Strategy defines how that are handled when conflict during set/add of data occur."

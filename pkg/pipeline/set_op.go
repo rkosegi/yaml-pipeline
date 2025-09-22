@@ -80,7 +80,11 @@ func (sa *SetOpSpec) Do(ctx ActionContext) error {
 	if !exists {
 		return fmt.Errorf("SetOpSpec: unknown SetStrategy %s", *sa.Strategy)
 	}
-	data := dom.DecodeAnyToNode(sa.Data).(dom.ContainerBuilder)
+	indata := sa.Data
+	if safeBoolDeref(sa.Render) {
+		indata = ctx.TemplateEngine().RenderMapLenient(sa.Data, ctx.Snapshot())
+	}
+	data := dom.DecodeAnyToNode(indata).(dom.ContainerBuilder)
 	handler(sa.Path, gd, data)
 	ctx.InvalidateSnapshot()
 	return nil

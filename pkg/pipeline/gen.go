@@ -493,6 +493,9 @@ type SetOpSpec struct {
 	// If omitted, then data are merged into root of document
 	Path *string `json:"path,omitempty" yaml:"path,omitempty"`
 
+	// Render Flag indicating use of templating. When true, data are passed through template engine
+	Render *bool `json:"render,omitempty" yaml:"render,omitempty"`
+
 	// Strategy Defines how data are handled when conflict occurs during set.
 	//  * replace - old value is replaced with new.
 	//  * merge - merge is attempted by applying new value on top of old one.

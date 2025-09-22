@@ -53,6 +53,33 @@ func TestExecuteSetOp(t *testing.T) {
 	err = New(WithData(gd)).Execute(&ss)
 	assert.Error(t, err)
 	assert.Equal(t, ErrNoDataToSet, err)
+
+	t.Run("set with render", func(t *testing.T) {
+		gd = dom.ContainerNode()
+		gd.AddValue("env", dom.LeafNode("dev"))
+		ss = SetOpSpec{
+			Data: map[string]interface{}{
+				"url": "https://{{ .env }}.mydomain.tld",
+			},
+			Render: ptr(true),
+		}
+		assert.NoError(t, New(WithData(gd)).Execute(&ss))
+		assert.Equal(t, "https://dev.mydomain.tld", gd.Child("url").AsLeaf().Value())
+	})
+
+	t.Run("set template without render", func(t *testing.T) {
+		gd = dom.ContainerNode()
+		gd.AddValue("env", dom.LeafNode("dev"))
+		ss = SetOpSpec{
+			Data: map[string]interface{}{
+				"url": "https://{{ .env }}.mydomain.tld",
+			},
+			Render: ptr(false),
+		}
+		assert.NoError(t, New(WithData(gd)).Execute(&ss))
+		assert.Equal(t, "https://{{ .env }}.mydomain.tld", gd.Child("url").AsLeaf().Value())
+	})
+
 }
 
 func TestSetOpInvalidSetStrategy(t *testing.T) {
