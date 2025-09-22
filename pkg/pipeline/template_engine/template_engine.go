@@ -24,6 +24,7 @@ import (
 
 	"github.com/Masterminds/sprig/v3"
 	"github.com/rkosegi/yaml-toolkit/props"
+	"github.com/samber/lo"
 )
 
 var defFuncs = template.FuncMap{
@@ -99,18 +100,25 @@ func (te templateEngine) RenderSliceLenient(tmpls []string, data map[string]inte
 	return out
 }
 
+func (te templateEngine) RenderAny(in any, data map[string]interface{}) any {
+	if s, ok := in.(string); ok {
+		return te.RenderLenient(s, data)
+	}
+	if m, ok := in.(map[string]interface{}); ok {
+		return te.RenderMapLenient(m, data)
+	}
+	if l, ok := in.([]interface{}); ok {
+		return lo.Map(l, func(item interface{}, _ int) interface{} {
+			return te.RenderAny(item, data)
+		})
+	}
+	return in
+}
+
 func (te templateEngine) RenderMapLenient(input map[string]interface{}, data map[string]interface{}) map[string]interface{} {
 	ret := make(map[string]interface{})
 	for k, v := range input {
-		if s, ok := v.(string); ok {
-			ret[k] = te.RenderLenient(s, data)
-			continue
-		}
-		if m, ok := v.(map[string]interface{}); ok {
-			ret[k] = te.RenderMapLenient(m, data)
-			continue
-		}
-		ret[k] = v
+		ret[k] = te.RenderAny(v, data)
 	}
 	return ret
 }

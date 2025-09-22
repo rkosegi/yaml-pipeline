@@ -87,17 +87,37 @@ func TestRenderTemplate(t *testing.T) {
 
 func TestTemplateEngineRenderMapLenient(t *testing.T) {
 	te := &templateEngine{}
-	ret := te.RenderMapLenient(map[string]interface{}{
-		"sub": map[string]interface{}{
-			"leaf": "{{ .Y }}",
-		},
-		"int_leaf": 1,
-	}, map[string]interface{}{
-		"X": 123,
-		"Y": "abc",
+	t.Run("without slices", func(t *testing.T) {
+		ret := te.RenderMapLenient(map[string]interface{}{
+			"sub": map[string]interface{}{
+				"leaf": "{{ .Y }}",
+			},
+			"int_leaf": 1,
+		}, map[string]interface{}{
+			"X": 123,
+			"Y": "abc",
+		})
+		assert.Equal(t, "abc", ret["sub"].(map[string]interface{})["leaf"])
+		assert.Equal(t, 1, ret["int_leaf"])
 	})
-	assert.Equal(t, "abc", ret["sub"].(map[string]interface{})["leaf"])
-	assert.Equal(t, 1, ret["int_leaf"])
+	t.Run("with slices", func(t *testing.T) {
+		ret := te.RenderMapLenient(map[string]interface{}{
+			"sub": map[string]interface{}{
+				"list": []interface{}{
+					map[string]interface{}{
+						"file": "application.yaml",
+						"cm":   "{{ .Env.APP_NAME }}-config",
+					},
+				},
+			},
+			"int_leaf": 1,
+		}, map[string]interface{}{
+			"Env": map[string]string{
+				"APP_NAME": "myapp",
+			},
+		})
+		assert.Equal(t, "myapp-config", ret["sub"].(map[string]interface{})["list"].([]interface{})[0].(map[string]interface{})["cm"])
+	})
 }
 
 func TestTemplateEngineRenderSliceLenient(t *testing.T) {
