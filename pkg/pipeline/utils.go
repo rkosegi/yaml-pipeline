@@ -31,6 +31,17 @@ import (
 
 var pp = props.NewPathParser()
 
+func strDerefOr(in *string, alt string) string {
+	if in == nil {
+		return alt
+	}
+	return *in
+}
+
+func safeStrTrim(in *string) string {
+	return strings.TrimSpace(safeStrDeref(in))
+}
+
 func strTruncIfNeeded(in string, size int) string {
 	if len(in) <= size {
 		return in

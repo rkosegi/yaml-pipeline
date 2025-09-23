@@ -52,7 +52,8 @@ func (s ActionSpec) Do(ctx ActionContext) error {
 			if ok, err := ctx.TemplateEngine().EvalBool(*s.When, ctx.Snapshot()); err != nil {
 				return errWithInfo(err, "action/evalBool")
 			} else if !ok {
-				ctx.Logger().Log("tag::skip", "execution skipped due to When evaluated to false =>", *s.When)
+				ctx.Logger().Log("tag::skip", "execution skipped as condition evaluated to false =>",
+					safeStrTrim(s.When))
 				return nil
 			}
 		}

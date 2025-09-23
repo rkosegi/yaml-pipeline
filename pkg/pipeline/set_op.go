@@ -85,6 +85,8 @@ func (sa *SetOpSpec) Do(ctx ActionContext) error {
 		indata = ctx.TemplateEngine().RenderMapLenient(sa.Data, ctx.Snapshot())
 	}
 	data := dom.DecodeAnyToNode(indata).(dom.ContainerBuilder)
+	ctx.Logger().Log(fmt.Sprintf("Setting %d elements with startegy '%s' to %s",
+		len(data.Children()), *sa.Strategy, strDerefOr(sa.Path, "root")))
 	handler(sa.Path, gd, data)
 	ctx.InvalidateSnapshot()
 	return nil
