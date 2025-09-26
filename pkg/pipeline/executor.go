@@ -18,16 +18,20 @@ package pipeline
 
 import (
 	"fmt"
+	"slices"
 
+	"github.com/emirpasic/gods/stacks/arraystack"
 	te "github.com/rkosegi/yaml-pipeline/pkg/pipeline/template_engine"
 	"github.com/rkosegi/yaml-toolkit/common"
 	"github.com/rkosegi/yaml-toolkit/dom"
 	"github.com/rkosegi/yaml-toolkit/fluent"
+	"github.com/samber/lo"
 )
 
 type exec struct {
 	*runtimeCtx
 	*dataCtx
+	cs *arraystack.Stack
 
 	// settable by options
 	l Listener
@@ -69,13 +73,28 @@ func (p *exec) newServiceCtx() *clientCtx {
 	}
 }
 
+func getActLocalName(act Action) string {
+	return act.String()
+}
+
 func (p *exec) Execute(act Action) (err error) {
 	ctx := p.newActionCtx(act)
 	if emptyCheck, ok := act.(common.EmptyChecker); ok && emptyCheck.IsEmpty() {
 		return nil
 	}
 	p.l.OnBefore(ctx)
+	p.cs.Push(act)
+	names := p.cs.Values()
+	slices.Reverse(names)
+	sysNode := dom.ContainerNode().
+		AddValue("LocalPath", dom.LeafNode(getActLocalName(act))).
+		AddValue("AbsolutePath", dom.ListNode(lo.Map(names, func(item interface{}, _ int) dom.Node {
+			return dom.LeafNode(getActLocalName(item.(Action)))
+		})...))
+	ctx.Data().AddValue("$$_System", sysNode)
+	defer ctx.Data().Remove("$$_System")
 	err = act.Do(ctx)
+	p.cs.Pop()
 	p.l.OnAfter(ctx, err)
 	return err
 }
@@ -165,6 +184,7 @@ var defOpts = []Opt{
 
 func New(opts ...Opt) Executor {
 	p := &exec{
+		cs:         arraystack.New(),
 		dataCtx:    &dataCtx{},
 		runtimeCtx: newRuntimeCtx(),
 	}
