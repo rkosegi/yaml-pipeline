@@ -564,6 +564,24 @@
       ],
       "type": "object"
     },
+    "osOpRenameSpec": {
+      "additionalProperties": false,
+      "description": "Rename/move a file. For details, such as semantics etc, see man rename(2)",
+      "properties": {
+        "newPath": {
+          "$ref": "#/$defs/osFilePath",
+          "description": "New path to move to"
+        },
+        "oldPath": {
+          "$ref": "#/$defs/osFilePath",
+          "description": "Old path to move from"
+        }
+      },
+      "required": [
+        "newPath",
+        "oldPath"
+      ]
+    },
     "osOpSpec": {
       "additionalProperties": false,
       "description": "OS operation spec",
@@ -595,8 +613,14 @@
         "remove": {
           "$ref": "#/$defs/osOpRemoveSpec"
         },
+        "rename": {
+          "$ref": "#/$defs/osOpRenameSpec"
+        },
         "stat": {
           "$ref": "#/$defs/osOpStatSpec"
+        },
+        "touch": {
+          "$ref": "#/$defs/osOpTouchSpec"
         },
         "userhome": {
           "$ref": "#/$defs/osOpUserHomeSpec"
@@ -619,6 +643,19 @@
         "storeTo"
       ],
       "type": "object"
+    },
+    "osOpTouchSpec": {
+      "additionalProperties": false,
+      "description": "Update the access and modification times of the file",
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/osFilePath",
+          "description": "Path to the file to update"
+        }
+      },
+      "required": [
+        "path"
+      ]
     },
     "osOpUserHomeSpec": {
       "description": "Gets users' home directory path",
