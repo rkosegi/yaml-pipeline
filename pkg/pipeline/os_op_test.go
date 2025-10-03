@@ -21,6 +21,7 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+	"time"
 
 	"github.com/rkosegi/yaml-toolkit/dom"
 	"github.com/stretchr/testify/assert"
@@ -174,6 +175,55 @@ func TestOsOp(t *testing.T) {
 			assert.Error(t, oo.Do(mockEmptyActCtx()))
 		})
 	})
+	t.Run("rename", func(t *testing.T) {
+		t.Run("should rename file", func(t *testing.T) {
+			f, err := os.CreateTemp("", "somefile")
+			defer func(f *os.File) {
+				_ = os.Remove(f.Name())
+			}(f)
+			assert.NoError(t, err)
+			oo := OsOpSpec{
+				Rename: &OsOpRenameSpec{
+					NewPath: ValOrRef{Val: fmt.Sprintf("%s/%s", t.TempDir(), "newname.txt")},
+					OldPath: ValOrRef{Val: f.Name()},
+				},
+			}
+			assert.NoError(t, oo.Do(newMockActBuilder().testLogger(t).build()))
+		})
+		t.Run("should fail on non-existing file", func(t *testing.T) {
+			oo := OsOpSpec{
+				Rename: &OsOpRenameSpec{
+					NewPath: ValOrRef{Val: "/////"},
+					OldPath: ValOrRef{Val: "?????"},
+				},
+			}
+			assert.Error(t, oo.Do(newMockActBuilder().testLogger(t).build()))
+		})
+	})
+	t.Run("touch", func(t *testing.T) {
+		t.Run("should update mtime of a file", func(t *testing.T) {
+			d := t.TempDir()
+			fi1, err := os.Stat(d)
+			assert.NoError(t, err)
+			assert.NotNil(t, fi1)
+			time.Sleep(time.Millisecond * 10)
+			oo := OsOpSpec{Touch: &OsOpTouchSpec{
+				Path: ValOrRef{Val: d},
+			}}
+			assert.NoError(t, oo.Do(newMockActBuilder().testLogger(t).build()))
+			fi2, err := os.Stat(d)
+			assert.NoError(t, err)
+			assert.NotNil(t, fi2)
+			assert.Greater(t, fi2.ModTime().UnixNano(), fi1.ModTime().UnixNano())
+		})
+		t.Run("should fail on invalid path", func(t *testing.T) {
+			oo := OsOpSpec{Touch: &OsOpTouchSpec{
+				Path: ValOrRef{Val: "????////"},
+			}}
+			assert.Error(t, oo.Do(newMockActBuilder().testLogger(t).build()))
+		})
+	})
+
 	t.Run("remove", func(t *testing.T) {
 		for _, rec := range []bool{true, false} {
 			t.Run(fmt.Sprintf("remove of temp dir should pass rec=%v", rec), func(t *testing.T) {

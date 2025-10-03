@@ -19,6 +19,7 @@ package pipeline
 import (
 	"fmt"
 	"os"
+	"time"
 
 	cp "github.com/otiai10/copy"
 
@@ -147,6 +148,22 @@ func (o OsOpSpec) Do(ctx ActionContext) error {
 		p := o.Remove.Path.Resolve(ctx)
 		ctx.Logger().Log(fmt.Sprintf("remove: removing path %s", p))
 		if err = fn(o.Remove.Path.Resolve(ctx)); err != nil {
+			return err
+		}
+	}
+	if o.Rename != nil {
+		op := o.Rename.OldPath.Resolve(ctx)
+		np := o.Rename.NewPath.Resolve(ctx)
+		ctx.Logger().Log(fmt.Sprintf("rename: renaming %s => %s", op, np))
+		if err = os.Rename(op, np); err != nil {
+			return err
+		}
+	}
+	if o.Touch != nil {
+		p := o.Touch.Path.Resolve(ctx)
+		now := time.Now()
+		ctx.Logger().Log(fmt.Sprintf("touch: updating atime/mtime of %s to %s", p, now.String()))
+		if err = os.Chtimes(p, now, now); err != nil {
 			return err
 		}
 	}

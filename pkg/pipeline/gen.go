@@ -392,6 +392,15 @@ type OsOpRemoveSpec struct {
 	Recursive *RecursiveFlag `json:"recursive,omitempty" yaml:"recursive,omitempty"`
 }
 
+// OsOpRenameSpec Rename/move a file. For details, such as semantics etc, see man rename(2)
+type OsOpRenameSpec struct {
+	// NewPath Arbitrary file path
+	NewPath OsFilePath `json:"newPath" yaml:"newPath"`
+
+	// OldPath Arbitrary file path
+	OldPath OsFilePath `json:"oldPath" yaml:"oldPath"`
+}
+
 // OsOpSpec OS operation spec
 type OsOpSpec struct {
 	// Chdir Change working directory
@@ -421,8 +430,14 @@ type OsOpSpec struct {
 	// Remove Remove a file
 	Remove *OsOpRemoveSpec `json:"remove,omitempty" yaml:"remove,omitempty"`
 
+	// Rename Rename/move a file. For details, such as semantics etc, see man rename(2)
+	Rename *OsOpRenameSpec `json:"rename,omitempty" yaml:"rename,omitempty"`
+
 	// Stat Gets a file info
 	Stat *OsOpStatSpec `json:"stat,omitempty" yaml:"stat,omitempty"`
+
+	// Touch Update the access and modification times of the file
+	Touch *OsOpTouchSpec `json:"touch,omitempty" yaml:"touch,omitempty"`
 
 	// Userhome Gets users' home directory path
 	Userhome *OsOpUserHomeSpec `json:"userhome,omitempty" yaml:"userhome,omitempty"`
@@ -435,6 +450,12 @@ type OsOpStatSpec struct {
 
 	// StoreTo Path to location within the data, where result of operation is store upon success
 	StoreTo StoreResultTo `json:"storeTo" yaml:"storeTo"`
+}
+
+// OsOpTouchSpec Update the access and modification times of the file
+type OsOpTouchSpec struct {
+	// Path Arbitrary file path
+	Path OsFilePath `json:"path" yaml:"path"`
 }
 
 // OsOpUserHomeSpec Gets users' home directory path
