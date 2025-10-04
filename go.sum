@@ -135,8 +135,8 @@ github.com/rkosegi/go-korek v1.0.0-rc1.0.20251003141511-7c8a34d4a5f5 h1:ZmF0YEUV
 github.com/rkosegi/go-korek v1.0.0-rc1.0.20251003141511-7c8a34d4a5f5/go.mod h1:UgdsNXqxC66LtaR2qEOpXMRYxIT/cu+DrTowSwITPPM=
 github.com/rkosegi/slog-config v0.0.0-20250820232402-93148a62e0e1 h1:N4z0fzz3dpUX9XmNw58Jn2AYsV/e26IurW30cTH37Jc=
 github.com/rkosegi/slog-config v0.0.0-20250820232402-93148a62e0e1/go.mod h1:x1/yi2ph+vCqUgWII3kuCdSuXSVwe1IMzOmAd5Ib0is=
-github.com/rkosegi/yaml-toolkit v1.0.67-0.20251004073609-3c4bac4fc113 h1:gkScAa88a/oeQeGDpEFRNn6HVhsZShFYmb9jn+5Anck=
-github.com/rkosegi/yaml-toolkit v1.0.67-0.20251004073609-3c4bac4fc113/go.mod h1:89EAnTqPQuNmEV7sFkDE2rXjlpKvdO/HFqCXnWoI0ag=
+github.com/rkosegi/yaml-toolkit v1.0.67 h1:vAKjDEjx04qZ7xuCuBj/Jf9wyc2Qflc87JczG5cwCaA=
+github.com/rkosegi/yaml-toolkit v1.0.67/go.mod h1:89EAnTqPQuNmEV7sFkDE2rXjlpKvdO/HFqCXnWoI0ag=
 github.com/rogpeppe/go-internal v1.12.0 h1:exVL4IDcn6na9z1rAb56Vxr+CgyK3nn3O+epU5NdKM8=
 github.com/rogpeppe/go-internal v1.12.0/go.mod h1:E+RYuTGaKKdloAfM02xzb0FW3Paa99yedzYV+kq4uf4=
 github.com/russross/blackfriday/v2 v2.1.0/go.mod h1:+Rmxgy9KzJVeS9/2gXHxylqXiyQDYRxCVz55jmeOWTM=
