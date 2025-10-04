@@ -397,6 +397,10 @@
           "$ref": "#/$defs/setOpSpec",
           "description": "Set sets data in data document."
         },
+        "switch": {
+          "$ref": "#/$defs/switchOpSpec",
+          "description": "Switch can be used to control execution path using switch/case-like construct"
+        },
         "template": {
           "$ref": "#/$defs/templateOpSpec",
           "description": "Template allows to render value at runtime"
@@ -801,6 +805,29 @@
     "storeResultTo": {
       "description": "Path to location within the data, where result of operation is store upon success",
       "type": "string"
+    },
+    "switchOpSpec": {
+      "description": "SwitchOp allows to choose control path based on expression value",
+      "properties": {
+        "cases": {
+          "additionalProperties": {
+            "$ref": "#/$defs/actionSpec"
+          },
+          "description": "Case values to match against expression.\nEach value is rendered through template engine before comparison.\nFirst matching value terminates loop."
+        },
+        "default": {
+          "$ref": "#/$defs/actionSpec",
+          "description": "Default action to perform when none of cases matched expression"
+        },
+        "expr": {
+          "description": "Expression to switch on",
+          "type": "string"
+        }
+      },
+      "required": [
+        "expr",
+        "cases"
+      ]
     },
     "templateFileOpSpec": {
       "description": "TemplateFileOp can be used to render template from file and write result to output.",

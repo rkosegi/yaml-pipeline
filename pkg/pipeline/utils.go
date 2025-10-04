@@ -71,6 +71,14 @@ func safeCloneValOrRef(v *ValOrRef, ctx ActionContext) *ValOrRef {
 	return v.CloneWith(ctx)
 }
 
+func safeCloneActionSpec(as *ActionSpec, ctx ActionContext) *ActionSpec {
+	if as == nil {
+		return nil
+	}
+	x := as.CloneWith(ctx).CloneWith(ctx).(ActionSpec)
+	return &x
+}
+
 func safeStrDeref(in *string) string {
 	if in == nil {
 		return ""

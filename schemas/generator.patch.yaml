@@ -58,3 +58,9 @@ components:
       properties:
         path:
           x-go-type: '*ValOrRef'
+    switchOpSpec:
+      properties:
+        expr:
+          x-go-type: ValOrRef
+        cases:
+          x-go-type: ChildActions
