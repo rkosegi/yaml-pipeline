@@ -29,7 +29,7 @@ require (
 	github.com/kaptinlin/jsonschema v0.4.15
 	github.com/otiai10/copy v1.14.1
 	github.com/rkosegi/slog-config v0.0.0-20250820232402-93148a62e0e1
-	github.com/rkosegi/yaml-toolkit v1.0.67-0.20250905102113-b5a9975a887c
+	github.com/rkosegi/yaml-toolkit v1.0.67-0.20251004073609-3c4bac4fc113
 	github.com/samber/lo v1.51.0
 	github.com/spf13/cobra v1.10.1
 	github.com/stretchr/testify v1.11.1

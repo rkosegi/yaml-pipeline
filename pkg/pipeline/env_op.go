@@ -50,12 +50,16 @@ func (eo *EnvOpSpec) Do(ctx ActionContext) error {
 	for _, env := range envGetter() {
 		parts := strings.SplitN(env, "=", 2)
 		if inclFn(parts[0]) && !exclFn(parts[0]) {
-			k := common.ToPath(p, fmt.Sprintf("Env.%s", parts[0]))
+			k := prefixPath(p, fmt.Sprintf("Env.%s", parts[0]))
 			ctx.Data().Set(pp.MustParse(k), dom.LeafNode(parts[1]))
 		}
 	}
 	ctx.InvalidateSnapshot()
 	return nil
+}
+
+func prefixPath(parent string, key string) string {
+	return strings.TrimPrefix(parent+"."+key, ".")
 }
 
 func (eo *EnvOpSpec) String() string {
