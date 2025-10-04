@@ -301,6 +301,9 @@ type OpSpec struct {
 	Patch *PatchOpSpec `json:"patch,omitempty" yaml:"patch,omitempty"`
 	Set   *SetOpSpec   `json:"set,omitempty" yaml:"set,omitempty"`
 
+	// Switch SwitchOp allows to choose control path based on expression value
+	Switch *SwitchOpSpec `json:"switch,omitempty" yaml:"switch,omitempty"`
+
 	// Template TemplateOp can be used to render value from data at runtime
 	Template *TemplateOpSpec `json:"template,omitempty" yaml:"template,omitempty"`
 
@@ -530,6 +533,18 @@ type SetStrategy string
 
 // StoreResultTo Path to location within the data, where result of operation is store upon success
 type StoreResultTo = ValOrRef
+
+// SwitchOpSpec SwitchOp allows to choose control path based on expression value
+type SwitchOpSpec struct {
+	// Cases Case values to match against expression.
+	// Each value is rendered through template engine before comparison.
+	// First matching value terminates loop.
+	Cases   ChildActions `json:"cases" yaml:"cases"`
+	Default *ActionSpec  `json:"default,omitempty" yaml:"default,omitempty"`
+
+	// Expr Expression to switch on
+	Expr ValOrRef `json:"expr" yaml:"expr"`
+}
 
 // TemplateFileOpSpec TemplateFileOp can be used to render template from file and write result to output.
 type TemplateFileOpSpec struct {

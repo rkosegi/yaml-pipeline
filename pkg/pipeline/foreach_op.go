@@ -113,6 +113,6 @@ func (fea *ForEachOpSpec) CloneWith(ctx ActionContext) Action {
 	cp.Glob = fea.Glob
 	cp.Item = fea.Item
 	cp.Query = fea.Query
-	cp.Action = ActionSpec{}.CloneWith(ctx).(ActionSpec)
+	cp.Action = fea.Action.CloneWith(ctx).(ActionSpec)
 	return cp
 }
