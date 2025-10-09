@@ -157,6 +157,10 @@ func globFunc(pattern string) ([]string, error) {
 	return filepath.Glob(pattern)
 }
 
+func strIndexFunc(str, substr string) int {
+	return strings.Index(str, substr)
+}
+
 func regexNamedExtractFunc(pattern string, str string) (map[string]string, error) {
 	var (
 		re      *regexp.Regexp

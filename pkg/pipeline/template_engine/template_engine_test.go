@@ -412,6 +412,11 @@ func TestTemplateFuncRegexNamedExtract(t *testing.T) {
 
 }
 
+func TestStrIndexFunc(t *testing.T) {
+	assert.Equal(t, -1, strIndexFunc("a", "b"))
+	assert.Equal(t, 6, strIndexFunc("Hello World!", "World"))
+}
+
 func TestBoolExpressionEval(t *testing.T) {
 	var (
 		val bool

@@ -43,6 +43,7 @@ var defFuncs = template.FuncMap{
 	"urlParseQuery":     urlParseQuery,
 	"regexNamedExtract": regexNamedExtractFunc,
 	"diffTree":          diffTreeFunc,
+	"strIndex":          strIndexFunc,
 }
 
 var pp = props.NewPathParser()
