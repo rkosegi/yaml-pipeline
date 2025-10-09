@@ -19,6 +19,12 @@ YP_BIN="${YP_BIN:-yp}"
 
 pipeline="pipeline.yaml"
 
+if [[ "${1:-}" == "--file" ]]; then
+  shift
+  pipeline="${1}"
+  shift
+fi
+
 [ "${1:-}" = "--file" ] && ( shift; pipeline="${1}"; shift )
 
 ${YP_BIN} --file "${pipeline}"
