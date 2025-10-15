@@ -44,6 +44,9 @@ var defFuncs = template.FuncMap{
 	"regexNamedExtract": regexNamedExtractFunc,
 	"diffTree":          diffTreeFunc,
 	"strIndex":          strIndexFunc,
+	"sizeStr":           sizeStrFunc,
+	"sizeStrFmt":        sizeStrFmtFunc,
+	"sizeStrFmtLong":    sizeStrFmtLongFunc,
 }
 
 var pp = props.NewPathParser()

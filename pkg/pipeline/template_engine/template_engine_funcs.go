@@ -24,6 +24,7 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/inhies/go-bytesize"
 	"github.com/rkosegi/yaml-toolkit/analytics"
 	"github.com/rkosegi/yaml-toolkit/common"
 	"github.com/rkosegi/yaml-toolkit/diff"
@@ -159,6 +160,18 @@ func globFunc(pattern string) ([]string, error) {
 
 func strIndexFunc(str, substr string) int {
 	return strings.Index(str, substr)
+}
+
+func sizeStrFunc(size float64) string {
+	return sizeStrFmtFunc(bytesize.Format, "", size)
+}
+
+func sizeStrFmtFunc(format string, unit string, size float64) string {
+	return bytesize.New(size).Format(format, unit, false)
+}
+
+func sizeStrFmtLongFunc(format string, unit string, size float64) string {
+	return bytesize.New(size).Format(format, unit, true)
 }
 
 func regexNamedExtractFunc(pattern string, str string) (map[string]string, error) {

@@ -22,6 +22,7 @@ import (
 	"testing"
 
 	"github.com/Masterminds/sprig/v3"
+	"github.com/inhies/go-bytesize"
 	"github.com/rkosegi/yaml-toolkit/dom"
 	"github.com/rkosegi/yaml-toolkit/props"
 	"github.com/stretchr/testify/assert"
@@ -415,6 +416,41 @@ func TestTemplateFuncRegexNamedExtract(t *testing.T) {
 func TestStrIndexFunc(t *testing.T) {
 	assert.Equal(t, -1, strIndexFunc("a", "b"))
 	assert.Equal(t, 6, strIndexFunc("Hello World!", "World"))
+}
+
+func TestSizeStrFunc(t *testing.T) {
+	type testCase struct {
+		size float64
+		exp1 string
+		exp2 string
+		exp3 string
+		unit string
+		fmt  string
+	}
+
+	for _, tc := range []testCase{
+		{
+			size: 200,
+			exp1: "200.00B",
+			exp2: "200.0B",
+			exp3: "200.0bytes",
+			fmt:  "%.1f",
+			unit: "B",
+		},
+		{
+			size: 8462842,
+			exp1: "8.07MB",
+			exp2: "8.07MB",
+			exp3: "8.07megabytes",
+			fmt:  bytesize.Format,
+			unit: "MB",
+		},
+	} {
+		assert.Equal(t, tc.exp1, sizeStrFunc(tc.size))
+		assert.Equal(t, tc.exp2, sizeStrFmtFunc(tc.fmt, tc.unit, tc.size))
+		assert.Equal(t, tc.exp3, sizeStrFmtLongFunc(tc.fmt, tc.unit, tc.size))
+	}
+
 }
 
 func TestBoolExpressionEval(t *testing.T) {
