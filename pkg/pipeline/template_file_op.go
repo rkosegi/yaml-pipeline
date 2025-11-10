@@ -19,8 +19,6 @@ package pipeline
 import (
 	"fmt"
 	"os"
-
-	"github.com/rkosegi/yaml-toolkit/dom"
 )
 
 func (tfo *TemplateFileOpSpec) String() string {
@@ -34,26 +32,23 @@ func (tfo *TemplateFileOpSpec) Do(ctx ActionContext) error {
 	if len(tfo.Output) == 0 {
 		return ErrOutputEmpty
 	}
-	var (
-		data dom.Container
-		ss   map[string]interface{}
-	)
-	data = ctx.Data()
+	ss := ctx.Snapshot()
+	data := ctx.Data().AsContainer()
 	if tfo.Path != nil {
-		if n := ctx.Data().Get(pp.MustParse(*tfo.Path)); n != nil && n.IsContainer() {
+		p := ctx.TemplateEngine().RenderLenient(*tfo.Path, ss)
+		if n := ctx.Data().Get(pp.MustParse(p)); n != nil && n.IsContainer() {
 			data = n.AsContainer()
 		} else {
 			return fmt.Errorf("path does not point to a container: %s", *tfo.Path)
 		}
 	}
-	ss = data.AsAny().(map[string]interface{})
 	inFile := ctx.TemplateEngine().RenderLenient(tfo.File, ss)
 	ctx.Logger().Log("reading template file", inFile)
 	tmpl, err := os.ReadFile(inFile)
 	if err != nil {
 		return err
 	}
-	val, err := ctx.TemplateEngine().Render(string(tmpl), ss)
+	val, err := ctx.TemplateEngine().Render(string(tmpl), data.AsAny().(map[string]interface{}))
 	if err != nil {
 		return err
 	}
