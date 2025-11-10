@@ -34,8 +34,9 @@ func (tfo *TemplateFileOpSpec) Do(ctx ActionContext) error {
 	}
 	ss := ctx.Snapshot()
 	data := ctx.Data().AsContainer()
+	p := "root"
 	if tfo.Path != nil {
-		p := ctx.TemplateEngine().RenderLenient(*tfo.Path, ss)
+		p = ctx.TemplateEngine().RenderLenient(*tfo.Path, ss)
 		if n := ctx.Data().Get(pp.MustParse(p)); n != nil && n.IsContainer() {
 			data = n.AsContainer()
 		} else {
@@ -43,7 +44,7 @@ func (tfo *TemplateFileOpSpec) Do(ctx ActionContext) error {
 		}
 	}
 	inFile := ctx.TemplateEngine().RenderLenient(tfo.File, ss)
-	ctx.Logger().Log("reading template file", inFile)
+	ctx.Logger().Log(fmt.Sprintf("reading template file '%s' with data from %s", inFile, p))
 	tmpl, err := os.ReadFile(inFile)
 	if err != nil {
 		return err
@@ -53,7 +54,7 @@ func (tfo *TemplateFileOpSpec) Do(ctx ActionContext) error {
 		return err
 	}
 	outFile := ctx.TemplateEngine().RenderLenient(tfo.Output, ss)
-	ctx.Logger().Log("writing rendered template", outFile)
+	ctx.Logger().Log(fmt.Sprintf("writing rendered template to '%s'", outFile))
 	return os.WriteFile(outFile, []byte(val), 0644)
 }
 
