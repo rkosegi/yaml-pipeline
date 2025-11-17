@@ -27,7 +27,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/gookit/color v1.6.0
 	github.com/inhies/go-bytesize v0.0.0-20220417184213-4913239db9cf
-	github.com/kaptinlin/jsonschema v0.5.2
+	github.com/kaptinlin/jsonschema v0.6.1
 	github.com/otiai10/copy v1.14.1
 	github.com/rkosegi/slog-config v0.0.1
 	github.com/rkosegi/yaml-toolkit v1.0.67
@@ -47,7 +47,7 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dprotaso/go-yit v0.0.0-20220510233725-9ba8df137936 // indirect
 	github.com/getkin/kin-openapi v0.132.0 // indirect
-	github.com/go-json-experiment/json v0.0.0-20250910080747-cc2cfa0554c3 // indirect
+	github.com/go-json-experiment/json v0.0.0-20251027170946-4849db3c2f7e // indirect
 	github.com/go-openapi/jsonpointer v0.21.0 // indirect
 	github.com/go-openapi/swag v0.23.0 // indirect
 	github.com/goccy/go-yaml v1.18.0 // indirect
@@ -57,7 +57,8 @@ require (
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/kaptinlin/go-i18n v0.2.0 // indirect
-	github.com/kaptinlin/messageformat-go v0.4.5 // indirect
+	github.com/kaptinlin/jsonpointer v0.4.6 // indirect
+	github.com/kaptinlin/messageformat-go v0.4.6 // indirect
 	github.com/magiconair/properties v1.8.10 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
