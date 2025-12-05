@@ -38,8 +38,8 @@ github.com/go-openapi/swag v0.23.0/go.mod h1:esZ8ITTYEsH1V2trKHjAN8Ai7xHb8RV+YSZ
 github.com/go-task/slim-sprig v0.0.0-20210107165309-348f09dbbbc0/go.mod h1:fyg7847qk6SyHyPtNmDHnmrv/HOrqktSC+C9fM+CJOE=
 github.com/go-test/deep v1.0.8 h1:TDsG77qcSprGbC6vTN8OuXp5g+J+b5Pcguhf7Zt61VM=
 github.com/go-test/deep v1.0.8/go.mod h1:5C2ZWiW0ErCdrYzpqxLbTX7MG14M9iiw8DgHncVwcsE=
-github.com/goccy/go-yaml v1.18.0 h1:8W7wMFS12Pcas7KU+VVkaiCng+kG8QiFeFwzFb+rwuw=
-github.com/goccy/go-yaml v1.18.0/go.mod h1:XBurs7gK8ATbW4ZPGKgcbrY1Br56PdM69F7LkFRi1kA=
+github.com/goccy/go-yaml v1.19.0 h1:EmkZ9RIsX+Uq4DYFowegAuJo8+xdX3T/2dwNPXbxEYE=
+github.com/goccy/go-yaml v1.19.0/go.mod h1:XBurs7gK8ATbW4ZPGKgcbrY1Br56PdM69F7LkFRi1kA=
 github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da h1:oI5xCqsCo564l8iNU+DwB5epxmsaqB+rhGL0m5jtYqE=
 github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da/go.mod h1:cIg4eruTrX1D+g88fzRXU5OdNfaM+9IcxsU14FzY7Hc=
 github.com/golang/protobuf v1.2.0/go.mod h1:6lQm79b+lXiMfvg/cZm0SGofjICqVBUtrP5yJMmIC1U=
@@ -79,8 +79,8 @@ github.com/kaptinlin/go-i18n v0.2.0 h1:8iwjAERQbCVF78c3HxC4MxUDxDRFvQVQlMDvlsO43
 github.com/kaptinlin/go-i18n v0.2.0/go.mod h1:gRHEMrTHtQLsAFwulPbJG71TwHjXxkagn88O8FI8FuA=
 github.com/kaptinlin/jsonpointer v0.4.6 h1:hAett1YROLwxAOKZS08hsJueXr1w0fTMSvWq2x1IoUA=
 github.com/kaptinlin/jsonpointer v0.4.6/go.mod h1:5pHXLIYd2FgV0rUEsChp6xTOvcC2OFk7kF/cjhHzL4g=
-github.com/kaptinlin/jsonschema v0.6.1 h1:RNUQ11ZCHTtM80YcVwRm033H5OJS+MpO06d9x7Yk25o=
-github.com/kaptinlin/jsonschema v0.6.1/go.mod h1:T8SNWNTRLDS1w+ogMZpGYqIfUXn/8DK9r06mf8XbNLE=
+github.com/kaptinlin/jsonschema v0.6.2 h1:+c9W6I2k/8+yMrwYb9fZCQGAROJTMGM9ZSqLducrBlg=
+github.com/kaptinlin/jsonschema v0.6.2/go.mod h1:N7rMNv64BLaLPa7IA6ul5FqVlwzeIn6dSm5cqVpNCmM=
 github.com/kaptinlin/messageformat-go v0.4.6 h1:57DUC9en40mGZR7MvqOS+5EYogAl465fjo+loAA1KPg=
 github.com/kaptinlin/messageformat-go v0.4.6/go.mod h1:r0PH7FsxJX8jS/n6LAYZon5w3X+yfCLUrquqYd2H7ks=
 github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORNo=
