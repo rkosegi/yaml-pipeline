@@ -149,7 +149,7 @@ func diffTreeFunc(v1, v2 interface{}) ([]diff.Modification, error) {
 }
 
 // urlParseQuery just delegates call to url.ParseQuery
-func urlParseQuery(qry string) (url.Values, error) {
+func urlParseQueryFunc(qry string) (url.Values, error) {
 	return url.ParseQuery(qry)
 }
 

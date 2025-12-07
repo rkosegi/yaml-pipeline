@@ -384,10 +384,10 @@ func TestTemplateFuncUrlParseQuery(t *testing.T) {
 		err error
 		uv  url.Values
 	)
-	uv, err = urlParseQuery("a=1&b[]=W&b[]=X")
+	uv, err = urlParseQueryFunc("a=1&b[]=W&b[]=X")
 	assert.NoError(t, err)
 	assert.Equal(t, 2, len(uv["b[]"]))
-	_, err = urlParseQuery(":invalid;./,/<>")
+	_, err = urlParseQueryFunc(":invalid;./,/<>")
 	assert.Error(t, err)
 }
 

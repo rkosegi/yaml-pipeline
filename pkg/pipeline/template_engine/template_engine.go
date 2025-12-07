@@ -40,7 +40,7 @@ var defFuncs = template.FuncMap{
 	"dom2json":          dom2jsonFunc,
 	"dom2properties":    dom2propertiesFunc,
 	"domdiff":           domDiffFunc,
-	"urlParseQuery":     urlParseQuery,
+	"urlParseQuery":     urlParseQueryFunc,
 	"regexNamedExtract": regexNamedExtractFunc,
 	"diffTree":          diffTreeFunc,
 	"strIndex":          strIndexFunc,
