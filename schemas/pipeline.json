@@ -56,6 +56,7 @@
       "type": "object"
     },
     "callOpSpec": {
+      "description": "Call is used to invoke named action, previously defined using DefineOp",
       "properties": {
         "args": {
           "additionalProperties": true,
@@ -124,6 +125,7 @@
     },
     "execOpSpec": {
       "additionalProperties": false,
+      "description": "Executes external program using OS's exec",
       "properties": {
         "args": {
           "description": "Optional arguments for program",
@@ -167,6 +169,7 @@
     },
     "exportOpSpec": {
       "additionalProperties": false,
+      "description": "Exports data in desired format from the data tree",
       "properties": {
         "file": {
           "description": "File to export data onto",
@@ -189,6 +192,7 @@
     },
     "extOpSpec": {
       "additionalProperties": false,
+      "description": "ExtOp invokes extension function, previously registered with runtime",
       "properties": {
         "args": {
           "additionalProperties": true,
@@ -271,6 +275,7 @@
       ]
     },
     "importOpSpec": {
+      "description": "Imports data from file into data tree",
       "properties": {
         "file": {
           "description": "File to read data from",
@@ -770,6 +775,7 @@
       }
     },
     "setOpSpec": {
+      "description": "Sets the data into data tree",
       "properties": {
         "data": {
           "additionalProperties": true,

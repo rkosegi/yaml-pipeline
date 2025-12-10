@@ -79,7 +79,7 @@ type ActionMeta struct {
 	When *string `json:"when,omitempty" yaml:"when,omitempty"`
 }
 
-// CallOpSpec defines model for callOpSpec.
+// CallOpSpec Call is used to invoke named action, previously defined using DefineOp
 type CallOpSpec struct {
 	// Args Arguments to be passed to callable.
 	// Leaf values are recursively templated just before call is executed.
@@ -121,7 +121,7 @@ type EnvOpSpec struct {
 //   - ignore - error is silently ignored
 type ErrorPropagationPolicy string
 
-// ExecOpSpec defines model for execOpSpec.
+// ExecOpSpec Executes external program using OS's exec
 type ExecOpSpec struct {
 	// Args Optional arguments for program
 	Args *[]string `json:"args,omitempty" yaml:"args,omitempty"`
@@ -147,7 +147,7 @@ type ExecOpSpec struct {
 	ValidExitCodes *[]int `json:"validExitCodes,omitempty" yaml:"validExitCodes,omitempty"`
 }
 
-// ExportOpSpec defines model for exportOpSpec.
+// ExportOpSpec Exports data in desired format from the data tree
 type ExportOpSpec struct {
 	// File File to export data onto
 	File *ValOrRef `json:"file" yaml:"file"`
@@ -163,7 +163,7 @@ type ExportOpSpec struct {
 	Path *ValOrRef `json:"path,omitempty" yaml:"path,omitempty"`
 }
 
-// ExtOpSpec defines model for extOpSpec.
+// ExtOpSpec ExtOp invokes extension function, previously registered with runtime
 type ExtOpSpec struct {
 	// Args holds arguments to be passed to function
 	Args *map[string]interface{} `json:"args,omitempty" yaml:"args,omitempty"`
@@ -222,7 +222,7 @@ type Html2DomOpSpec struct {
 	To string `json:"to" yaml:"to"`
 }
 
-// ImportOpSpec defines model for importOpSpec.
+// ImportOpSpec Imports data from file into data tree
 type ImportOpSpec struct {
 	// File File to read data from
 	File string `json:"file" yaml:"file"`
@@ -264,17 +264,25 @@ type LoopOpSpec struct {
 type OpSpec struct {
 	// Abort AbortOp can be used to abort execution
 	Abort *AbortOpSpec `json:"abort,omitempty" yaml:"abort,omitempty"`
-	Call  *CallOpSpec  `json:"call,omitempty" yaml:"call,omitempty"`
+
+	// Call Call is used to invoke named action, previously defined using DefineOp
+	Call *CallOpSpec `json:"call,omitempty" yaml:"call,omitempty"`
 
 	// Define DefineOp can be used to define the ActionSpec and later recall it by name via CallOp.
 	// Attempt to define name that was defined before will result in an error.
 	Define *DefineOpSpec `json:"define,omitempty" yaml:"define,omitempty"`
 
 	// Env This op is used to import OS environment variables into data
-	Env    *EnvOpSpec    `json:"env,omitempty" yaml:"env,omitempty"`
-	Exec   *ExecOpSpec   `json:"exec,omitempty" yaml:"exec,omitempty"`
+	Env *EnvOpSpec `json:"env,omitempty" yaml:"env,omitempty"`
+
+	// Exec Executes external program using OS's exec
+	Exec *ExecOpSpec `json:"exec,omitempty" yaml:"exec,omitempty"`
+
+	// Export Exports data in desired format from the data tree
 	Export *ExportOpSpec `json:"export,omitempty" yaml:"export,omitempty"`
-	Ext    *ExtOpSpec    `json:"ext,omitempty" yaml:"ext,omitempty"`
+
+	// Ext ExtOp invokes extension function, previously registered with runtime
+	Ext *ExtOpSpec `json:"ext,omitempty" yaml:"ext,omitempty"`
 
 	// ForEach ForEachOp can be used to repeat actions over list of items.
 	// Those items could be
@@ -286,7 +294,9 @@ type OpSpec struct {
 	// Html2dom Allow for conversion of XML/HTML source DOM tree.
 	// This is now deprecated and ImportOp with XML mode should be used instead.
 	Html2dom *Html2DomOpSpec `json:"html2dom,omitempty" yaml:"html2dom,omitempty"`
-	Import   *ImportOpSpec   `json:"import,omitempty" yaml:"import,omitempty"`
+
+	// Import Imports data from file into data tree
+	Import *ImportOpSpec `json:"import,omitempty" yaml:"import,omitempty"`
 
 	// Log LogOp just logs message to logger
 	Log *LogOpSpec `json:"log,omitempty" yaml:"log,omitempty"`
@@ -299,7 +309,9 @@ type OpSpec struct {
 
 	// Patch PatchOp performs RFC6902-style patch on global data document.
 	Patch *PatchOpSpec `json:"patch,omitempty" yaml:"patch,omitempty"`
-	Set   *SetOpSpec   `json:"set,omitempty" yaml:"set,omitempty"`
+
+	// Set Sets the data into data tree
+	Set *SetOpSpec `json:"set,omitempty" yaml:"set,omitempty"`
 
 	// Switch SwitchOp allows to choose control path based on expression value
 	Switch *SwitchOpSpec `json:"switch,omitempty" yaml:"switch,omitempty"`
@@ -508,7 +520,7 @@ type PatchOpSpec struct {
 // RecursiveFlag Whether to apply operation recursively
 type RecursiveFlag = bool
 
-// SetOpSpec defines model for setOpSpec.
+// SetOpSpec Sets the data into data tree
 type SetOpSpec struct {
 	// Data Arbitrary data to put into data tree
 	Data map[string]interface{} `json:"data" yaml:"data"`

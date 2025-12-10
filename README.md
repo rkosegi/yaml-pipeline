@@ -17,3 +17,31 @@
 It's like scripting, but described in YAML.
 
 Check [examples](docs/examples.md) for more info.
+
+## How to use it
+
+1. declare schema for auto-completion in your editor
+
+    ```yaml
+    # yaml-language-server: $schema=https://raw.githubusercontent.com/rkosegi/yaml-pipeline/refs/heads/main/schemas/pipeline.json
+    ---
+    ```
+
+2. declare input variables (optional)
+    ```yaml
+    vars:
+      mymsg: Hello world!
+    ```
+
+3. define steps
+    ```yaml
+   steps:
+     print-vars:
+       log:
+         message: 'Message is: {{ .vars.mymsg }}'
+    ```
+
+4. run pipeline
+    ```shell
+   yp --file mypipeline.yaml
+    ```
