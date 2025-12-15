@@ -27,7 +27,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/gookit/color v1.6.0
 	github.com/inhies/go-bytesize v0.0.0-20220417184213-4913239db9cf
-	github.com/kaptinlin/jsonschema v0.6.3
+	github.com/kaptinlin/jsonschema v0.6.5
 	github.com/otiai10/copy v1.14.1
 	github.com/rkosegi/slog-config v0.0.1
 	github.com/rkosegi/yaml-toolkit v1.0.67
@@ -56,9 +56,9 @@ require (
 	github.com/huandu/xstrings v1.5.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
-	github.com/kaptinlin/go-i18n v0.2.0 // indirect
-	github.com/kaptinlin/jsonpointer v0.4.6 // indirect
-	github.com/kaptinlin/messageformat-go v0.4.6 // indirect
+	github.com/kaptinlin/go-i18n v0.2.2 // indirect
+	github.com/kaptinlin/jsonpointer v0.4.8 // indirect
+	github.com/kaptinlin/messageformat-go v0.4.7 // indirect
 	github.com/magiconair/properties v1.8.10 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
