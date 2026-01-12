@@ -27,7 +27,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/gookit/color v1.6.0
 	github.com/inhies/go-bytesize v0.0.0-20220417184213-4913239db9cf
-	github.com/kaptinlin/jsonschema v0.6.5
+	github.com/kaptinlin/jsonschema v0.6.6
 	github.com/otiai10/copy v1.14.1
 	github.com/rkosegi/slog-config v0.0.1
 	github.com/rkosegi/yaml-toolkit v1.0.67
