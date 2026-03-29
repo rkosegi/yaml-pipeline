@@ -17,3 +17,4 @@ ignore:
   - pkg/cli/*
   - pkg/version/*
   - pkg/utils/*
+  - pkg/pipeline/gen\.go$
