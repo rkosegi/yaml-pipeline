@@ -41,7 +41,7 @@ func TestForeachStringItem(t *testing.T) {
 		Action: ActionSpec{
 			Operations: OpSpec{
 				Set: &SetOpSpec{
-					Path: ptr("{{ .forEach }}"),
+					Path: new("{{ .forEach }}"),
 					Data: map[string]interface{}{
 						"X": "abc",
 					},
@@ -87,7 +87,7 @@ func TestForeachStringItemChildError(t *testing.T) {
 		Action: ActionSpec{
 			Operations: OpSpec{
 				Set: &SetOpSpec{
-					Path: ptr("{{ .forEach }}"),
+					Path: new("{{ .forEach }}"),
 				},
 			},
 		},
@@ -156,7 +156,7 @@ func TestForeachQuery(t *testing.T) {
 	} {
 		t.Run(tc.qry, func(t *testing.T) {
 			op := &ForEachOpSpec{
-				Variable: ptr(tc.variable),
+				Variable: new(tc.variable),
 				Query:    &ValOrRef{Val: tc.qry},
 				Action: ActionSpec{
 					Operations: OpSpec{
@@ -243,7 +243,7 @@ func TestForeachGlobChildError(t *testing.T) {
 		Action: ActionSpec{
 			Operations: OpSpec{
 				Set: &SetOpSpec{
-					Path: ptr("{{ .forEach }}"),
+					Path: new("{{ .forEach }}"),
 				},
 			},
 		},

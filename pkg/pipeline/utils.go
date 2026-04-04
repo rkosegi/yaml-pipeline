@@ -75,8 +75,7 @@ func safeCloneActionSpec(as *ActionSpec, ctx ActionContext) *ActionSpec {
 	if as == nil {
 		return nil
 	}
-	x := as.CloneWith(ctx).CloneWith(ctx).(ActionSpec)
-	return &x
+	return new(as.CloneWith(ctx).CloneWith(ctx).(ActionSpec))
 }
 
 func safeStrDeref(in *string) string {
@@ -121,7 +120,7 @@ func nonEmpty(in *string) bool {
 
 func actionSpecFix(as ActionSpec) ActionSpec {
 	if as.Order == nil {
-		as.Order = ptr(0)
+		as.Order = new(0)
 	}
 	return as
 }
@@ -154,8 +153,7 @@ func safeRenderStrPointer(str *string, teng te.TemplateEngine, data map[string]i
 	if str == nil {
 		return nil
 	}
-	s := teng.RenderLenient(*str, data)
-	return &s
+	return new(teng.RenderLenient(*str, data))
 }
 
 func safeRenderStrSlice(args *[]string, teng te.TemplateEngine, data map[string]interface{}) *[]string {
@@ -174,10 +172,6 @@ func safeBoolDeref(in *bool) bool {
 		return false
 	}
 	return *in
-}
-
-func ptr[T any](v T) *T {
-	return &v
 }
 
 func fieldStringer(parent string, ptrVal any) string {

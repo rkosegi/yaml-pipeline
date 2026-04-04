@@ -84,7 +84,7 @@ func TestExecute(t *testing.T) {
 	ex = newTestExec(gd)
 	assert.NoError(t, ex.Execute(&ActionSpec{
 		ActionMeta: ActionMeta{
-			Name: ptr("root step"),
+			Name: new("root step"),
 		},
 		Operations: OpSpec{
 			Set: &SetOpSpec{
@@ -97,11 +97,11 @@ func TestExecute(t *testing.T) {
 			"sub1": {
 				Operations: OpSpec{
 					Set: &SetOpSpec{
-						Path: ptr("sub1.sub2"),
+						Path: new("sub1.sub2"),
 						Data: map[string]interface{}{
 							"leaf": "abcd",
 						},
-						Strategy: setStrategyPointer(SetStrategyReplace),
+						Strategy: new(SetStrategyReplace),
 					},
 				},
 			},
@@ -114,12 +114,12 @@ func TestExecute(t *testing.T) {
 	ex = newTestExec(gd)
 	assert.NoError(t, ex.Execute(&ActionSpec{
 		ActionMeta: ActionMeta{
-			Name: ptr("root step"),
+			Name: new("root step"),
 		},
 		Children: ChildActions{
 			"sub_step1": {
 				ActionMeta: ActionMeta{
-					Name: ptr("sub_step1"),
+					Name: new("sub_step1"),
 				},
 				Operations: OpSpec{
 					Template: &TemplateOpSpec{
@@ -143,7 +143,7 @@ func TestExecuteImport(t *testing.T) {
 	ex = newTestExec(gd)
 	assert.NoError(t, ex.Execute(&ActionSpec{
 		ActionMeta: ActionMeta{
-			Name: ptr("root step"),
+			Name: new("root step"),
 		},
 		Operations: OpSpec{
 			Import: &ImportOpSpec{
@@ -165,7 +165,7 @@ func TestExecuteImportInvalid(t *testing.T) {
 	ex = newTestExec(gd)
 	assert.Error(t, ex.Execute(&ActionSpec{
 		ActionMeta: ActionMeta{
-			Name: ptr("root step"),
+			Name: new("root step"),
 		},
 		Operations: OpSpec{
 			Import: &ImportOpSpec{},
@@ -182,7 +182,7 @@ func TestExecutePatch(t *testing.T) {
 	ex = newTestExec(gd)
 	assert.NoError(t, ex.Execute(&ActionSpec{
 		ActionMeta: ActionMeta{
-			Name: ptr("root step"),
+			Name: new("root step"),
 		},
 		Operations: OpSpec{
 			Patch: &PatchOpSpec{
@@ -204,34 +204,34 @@ func TestExecuteInnerSteps(t *testing.T) {
 	ex = newTestExec(gd)
 	assert.NoError(t, ex.Execute(&ActionSpec{
 		ActionMeta: ActionMeta{
-			Name: ptr("root step"),
+			Name: new("root step"),
 		},
 		Children: ChildActions{
 			"step20": {
 				ActionMeta: ActionMeta{
-					Order: ptr(20),
-					Name:  ptr("step 20"),
+					Order: new(20),
+					Name:  new("step 20"),
 				},
 				Operations: OpSpec{
 					Set: &SetOpSpec{
 						Data: map[string]interface{}{
 							"root.sub": 123,
 						},
-						Strategy: setStrategyPointer(SetStrategyReplace),
+						Strategy: new(SetStrategyReplace),
 					},
 				},
 			},
 			"step30": {
 				ActionMeta: ActionMeta{
-					Order: ptr(30),
-					Name:  ptr("step 30"),
+					Order: new(30),
+					Name:  new("step 30"),
 				},
 				Operations: OpSpec{
 					Set: &SetOpSpec{
 						Data: map[string]interface{}{
 							"root.sub": 456,
 						},
-						Strategy: setStrategyPointer(SetStrategyReplace),
+						Strategy: new(SetStrategyReplace),
 					},
 				},
 			},
@@ -243,13 +243,13 @@ func TestExecuteInnerSteps(t *testing.T) {
 func TestExecuteInnerStepsFail(t *testing.T) {
 	assert.Error(t, dummyExec.Execute(&ActionSpec{
 		ActionMeta: ActionMeta{
-			Name: ptr("root step"),
+			Name: new("root step"),
 		},
 		Children: ChildActions{
 			"step20": {
 				ActionMeta: ActionMeta{
-					Order: ptr(20),
-					Name:  ptr("step 20"),
+					Order: new(20),
+					Name:  new("step 20"),
 				},
 				Operations: OpSpec{
 					Set: &SetOpSpec{},
@@ -262,13 +262,13 @@ func TestExecuteInnerStepsFail(t *testing.T) {
 func TestExecuteInnerStepsSkipped(t *testing.T) {
 	assert.NoError(t, dummyExec.Execute(&ActionSpec{
 		ActionMeta: ActionMeta{
-			Name: ptr("root step"),
+			Name: new("root step"),
 		},
 		Children: ChildActions{
 			"step20": {
 				ActionMeta: ActionMeta{
-					When: strPointer("{{ .Data.Skip | default false }}"),
-					Name: ptr("step 20"),
+					When: new("{{ .Data.Skip | default false }}"),
+					Name: new("step 20"),
 				},
 			},
 		},
@@ -278,13 +278,13 @@ func TestExecuteInnerStepsSkipped(t *testing.T) {
 func TestExecuteInnerStepsWhenInvalid(t *testing.T) {
 	assert.Error(t, dummyExec.Execute(&ActionSpec{
 		ActionMeta: ActionMeta{
-			Name: ptr("root step"),
+			Name: new("root step"),
 		},
 		Children: ChildActions{
 			"step20": {
 				ActionMeta: ActionMeta{
-					When: strPointer("{{ .Data.Unknown.Field }}"),
-					Name: ptr("step 20"),
+					When: new("{{ .Data.Unknown.Field }}"),
+					Name: new("step 20"),
 				},
 			},
 		},
@@ -316,7 +316,7 @@ func TestExecuteForEachFileGlob(t *testing.T) {
 
 	ss := &ActionSpec{
 		ActionMeta: ActionMeta{
-			Name: ptr("root step"),
+			Name: new("root step"),
 		},
 		Operations: OpSpec{
 			ForEach: fe,

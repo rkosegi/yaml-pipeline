@@ -31,7 +31,7 @@ func TestOsOp(t *testing.T) {
 	t.Run("mkdir", func(t *testing.T) {
 		t.Run("Invalid empty dir", func(t *testing.T) {
 			oo := &OsOpSpec{Mkdir: &OsOpMkdirSpec{
-				Mode: ptr(os.FileMode(0o775)),
+				Mode: new(os.FileMode(0o775)),
 				Path: ValOrRef{},
 			}}
 			t.Log(oo)
@@ -50,7 +50,7 @@ func TestOsOp(t *testing.T) {
 								Path: ValOrRef{
 									Val: "{{ .forEach }}",
 								},
-								Recursive: ptr(true),
+								Recursive: new(true),
 							},
 						},
 					},

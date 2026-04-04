@@ -60,9 +60,8 @@ func (s ActionSpec) Do(ctx ActionContext) error {
 		if err := ctx.Executor().Execute(a); err != nil {
 			if s.shouldPropagateError() {
 				return err
-			} else {
-				return nil
 			}
+			return nil
 		}
 	}
 	return nil

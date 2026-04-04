@@ -26,13 +26,13 @@ import (
 func TestSortActionNames(t *testing.T) {
 	ca := ChildActions{
 		"a": ActionSpec{ActionMeta: ActionMeta{
-			Order: ptr(90),
+			Order: new(90),
 		}},
 		"b": ActionSpec{ActionMeta: ActionMeta{
-			Order: ptr(50),
+			Order: new(50),
 		}},
 		"c": ActionSpec{ActionMeta: ActionMeta{
-			Order: ptr(10),
+			Order: new(10),
 		},
 		},
 	}
@@ -53,8 +53,8 @@ func TestChildActionsCloneWith(t *testing.T) {
 					Data: map[string]interface{}{
 						"abcd": 123,
 					},
-					Path:     ptr("{{ .sub1.leaf1 }}"),
-					Strategy: setStrategyPointer(SetStrategyReplace),
+					Path:     new("{{ .sub1.leaf1 }}"),
+					Strategy: new(SetStrategyReplace),
 				},
 			},
 		},

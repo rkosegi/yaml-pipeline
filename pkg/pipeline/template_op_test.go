@@ -35,7 +35,7 @@ func TestExecuteTemplateOp(t *testing.T) {
 	ts = TemplateOpSpec{
 		Template: `{{ (mul .root.leaf1 2) | quote }}`,
 		Path:     &ValOrRef{Val: "result.x1"},
-		Trim:     ptr(true),
+		Trim:     new(true),
 	}
 	assert.NoError(t, New(WithData(gd)).Execute(&ts))
 	assert.Equal(t, "\"246912\"", gd.Get(pp.MustParse("result.x1")).AsLeaf().Value())
@@ -102,7 +102,7 @@ items:
 {{ printf "- %s" . }}
 {{- end }}`,
 		Path:    &ValOrRef{Val: "Out"},
-		ParseAs: ptr(ParseTextAsYaml),
+		ParseAs: new(ParseTextAsYaml),
 	}
 	err = New(WithData(gd)).Execute(&ts)
 	assert.NoError(t, err)
@@ -116,7 +116,7 @@ items:
 {{ (split "," "a,b,c") | list | toYaml }}
 `,
 		Path:    &ValOrRef{Val: "Out"},
-		ParseAs: ptr(ParseTextAsYaml),
+		ParseAs: new(ParseTextAsYaml),
 	}
 	err = New(WithData(gd)).Execute(&ts)
 	assert.NoError(t, err)
@@ -127,7 +127,7 @@ items:
 	ts = TemplateOpSpec{
 		Template: `*** this is not a YAML ***`,
 		Path:     &ValOrRef{Val: "Out"},
-		ParseAs:  ptr(ParseTextAsYaml),
+		ParseAs:  new(ParseTextAsYaml),
 	}
 	err = New(WithData(gd)).Execute(&ts)
 	assert.Error(t, err)
@@ -137,7 +137,7 @@ func TestExecuteTemplateOpAsInvalid(t *testing.T) {
 	assert.Error(t, New().Execute(&TemplateOpSpec{
 		Template: `---\nOla: Hi`,
 		Path:     &ValOrRef{Val: "Out"},
-		ParseAs:  ptr(ParseTextAs("invalid")),
+		ParseAs:  new(ParseTextAs("invalid")),
 	}))
 }
 
@@ -151,7 +151,7 @@ func TestExecuteTemplateOpAsFloat64(t *testing.T) {
 	ts = &TemplateOpSpec{
 		Template: `{{ maxf 1.5 3 4.5 }}`,
 		Path:     &ValOrRef{Val: "Out"},
-		ParseAs:  ptr(ParseTextAsFloat64),
+		ParseAs:  new(ParseTextAsFloat64),
 	}
 	err = New(WithData(gd)).Execute(ts)
 	assert.NoError(t, err)
@@ -161,7 +161,7 @@ func TestExecuteTemplateOpAsFloat64(t *testing.T) {
 	ts = &TemplateOpSpec{
 		Template: `XYZ`,
 		Path:     &ValOrRef{Val: "Out"},
-		ParseAs:  ptr(ParseTextAsFloat64),
+		ParseAs:  new(ParseTextAsFloat64),
 	}
 	err = New(WithData(gd)).Execute(ts)
 	assert.Error(t, err)
@@ -177,7 +177,7 @@ func TestExecuteTemplateOpAsInt64(t *testing.T) {
 	ts = &TemplateOpSpec{
 		Template: `{{ max 1 3 5 }}`,
 		Path:     &ValOrRef{Val: "Out"},
-		ParseAs:  ptr(ParseTextAsInt64),
+		ParseAs:  new(ParseTextAsInt64),
 	}
 	err = New(WithData(gd)).Execute(ts)
 	assert.NoError(t, err)
@@ -187,7 +187,7 @@ func TestExecuteTemplateOpAsInt64(t *testing.T) {
 	ts = &TemplateOpSpec{
 		Template: `XYZ`,
 		Path:     &ValOrRef{Val: "Out"},
-		ParseAs:  ptr(ParseTextAsInt64),
+		ParseAs:  new(ParseTextAsInt64),
 	}
 	err = New(WithData(gd)).Execute(ts)
 	assert.Error(t, err)

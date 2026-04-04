@@ -53,7 +53,7 @@ func TestExecutePatchOp(t *testing.T) {
 	gd.Set(pp.MustParse("root.sub1.leaf3"), dom.LeafNode("abcd"))
 	ps = PatchOpSpec{
 		Op:   patch.OpMove,
-		From: ptr("/root/sub1"),
+		From: new("/root/sub1"),
 		Path: "/root/sub2",
 	}
 	assert.NoError(t, New(WithData(gd)).Execute(&ps))
@@ -63,7 +63,7 @@ func TestExecutePatchOp(t *testing.T) {
 	gd.Set(pp.MustParse("root.sub1.leaf3"), dom.LeafNode("abcd"))
 	ps = PatchOpSpec{
 		Op:   patch.OpMove,
-		From: ptr("%#$&^^*&"),
+		From: new("%#$&^^*&"),
 		Path: "/root/sub2",
 	}
 	assert.Error(t, New(WithData(gd)).Execute(&ps))
@@ -92,7 +92,7 @@ func TestPatchOpAddValue(t *testing.T) {
 	ps = PatchOpSpec{
 		Op:        patch.OpAdd,
 		Path:      "/root/sub/leaf2",
-		ValueFrom: ptr("root.{{ .mypath }}"),
+		ValueFrom: new("root.{{ .mypath }}"),
 	}
 	assert.NoError(t, New(WithData(gd)).Execute(&ps))
 	assert.Equal(t, "aaaa", gd.Get(pp.MustParse("root.sub.leaf3")).AsLeaf().Value())

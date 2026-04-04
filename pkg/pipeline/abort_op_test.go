@@ -46,7 +46,7 @@ func TestAbortPipeline(t *testing.T) {
 	)
 	p := ActionSpec{
 		ActionMeta: ActionMeta{
-			When: strPointer("{{ eq .ENV \"prod\"}}"),
+			When: new("{{ eq .ENV \"prod\"}}"),
 		},
 		Operations: OpSpec{
 			Abort: &AbortOpSpec{

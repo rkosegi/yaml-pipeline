@@ -49,7 +49,7 @@ func (ts *TemplateOpSpec) Do(ctx ActionContext) error {
 		val = strings.TrimSpace(val)
 	}
 	if ts.ParseAs == nil {
-		ts.ParseAs = ptr(ParseTextAsNone)
+		ts.ParseAs = new(ParseTextAsNone)
 	}
 	var node dom.Node
 	switch *ts.ParseAs {

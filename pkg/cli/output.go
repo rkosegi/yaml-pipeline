@@ -61,9 +61,8 @@ func (s *simpleListener) OnAfter(ctx ytp.ActionContext, err error) {
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "%s %s %v\n", errStyle.Render("[Error]"), s.indentStr(), ctx.Action())
 		panic(err)
-	} else {
-		fmt.Fprintf(os.Stderr, "%s %s %v\n", endOpStyle.Render("[Done ]"), s.indentStr(), ctx.Action())
 	}
+	fmt.Fprintf(os.Stderr, "%s %s %v\n", endOpStyle.Render("[Done ]"), s.indentStr(), ctx.Action())
 }
 
 func (s *simpleListener) OnLog(_ ytp.ActionContext, v ...interface{}) {

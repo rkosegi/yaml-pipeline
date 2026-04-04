@@ -53,7 +53,7 @@ func TestTemplateFileOp(t *testing.T) {
 	tfo = &TemplateFileOpSpec{
 		File:   "../../testdata/simple.template",
 		Output: f.Name(),
-		Path:   ptr("invalid-Path"),
+		Path:   new("invalid-Path"),
 	}
 	assert.Error(t, tfo.Do(ctx))
 
@@ -61,7 +61,7 @@ func TestTemplateFileOp(t *testing.T) {
 	tfo = &TemplateFileOpSpec{
 		File:   "../../testdata/simple.template",
 		Output: f.Name(),
-		Path:   ptr("tmpl1"),
+		Path:   new("tmpl1"),
 	}
 	assert.NoError(t, tfo.Do(ctx))
 	assert.NoError(t, f.Close())

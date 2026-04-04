@@ -27,7 +27,7 @@ func TestForDefCall(t *testing.T) {
 		Children: ChildActions{
 			"init": ActionSpec{
 				ActionMeta: ActionMeta{
-					Order: ptr(1),
+					Order: new(1),
 				},
 				Operations: OpSpec{
 					Define: &DefineOpSpec{
@@ -44,7 +44,7 @@ func TestForDefCall(t *testing.T) {
 			},
 			"run": ActionSpec{
 				ActionMeta: ActionMeta{
-					Order: ptr(2),
+					Order: new(2),
 				},
 				Operations: OpSpec{
 					ForEach: &ForEachOpSpec{
@@ -56,7 +56,7 @@ func TestForDefCall(t *testing.T) {
 									Args: &map[string]interface{}{
 										"msg": "{{ .forEach }}",
 									},
-									ArgsPath: ptr("myargs"),
+									ArgsPath: new("myargs"),
 								},
 							},
 						},

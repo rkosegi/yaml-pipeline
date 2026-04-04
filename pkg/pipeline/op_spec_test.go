@@ -29,7 +29,7 @@ func TestOpSpecCloneWith(t *testing.T) {
 			Data: map[string]interface{}{
 				"a": 1,
 			},
-			Path: ptr("{{ .Path }}"),
+			Path: new("{{ .Path }}"),
 		},
 		Patch: &PatchOpSpec{
 			Path: "{{ .Path3 }}",
@@ -65,7 +65,7 @@ func TestOpSpecCloneWith(t *testing.T) {
 			},
 		},
 		Env: &EnvOpSpec{
-			Path: ptr("{{ .Path }}"),
+			Path: new("{{ .Path }}"),
 		},
 		Exec: &ExecOpSpec{
 			Program: "{{ .Shell }}",

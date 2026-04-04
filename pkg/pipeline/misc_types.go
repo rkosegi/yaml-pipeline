@@ -110,9 +110,8 @@ func (pv *ValOrRef) Resolve(ctx ActionContext) string {
 			return ctx.TemplateEngine().RenderLenient(v, ss)
 		}
 		return ""
-	} else {
-		return ctx.TemplateEngine().RenderLenient(pv.Val, ss)
 	}
+	return ctx.TemplateEngine().RenderLenient(pv.Val, ss)
 }
 
 func (pv *ValOrRef) String() string {

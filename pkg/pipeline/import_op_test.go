@@ -157,7 +157,7 @@ func TestExecuteImportOp(t *testing.T) {
 			File: "../../testdata/doc1.html",
 			Mode: ParseFileModeXml,
 			Xml: &XmlImportOptions{
-				Layout: ptr(XmlLayout("invalid")),
+				Layout: new(XmlLayout("invalid")),
 			},
 		}
 		assert.Error(t, New(WithData(gd)).Execute(&is))

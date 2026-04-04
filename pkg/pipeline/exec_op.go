@@ -41,7 +41,7 @@ func (e *ExecOpSpec) Do(ctx ActionContext) error {
 		e.Args = &[]string{}
 	}
 	if e.Dir == nil {
-		e.Dir = ptr("")
+		e.Dir = new("")
 	}
 	snapshot := ctx.Snapshot()
 	prog := ctx.TemplateEngine().RenderLenient(e.Program, snapshot)
@@ -69,8 +69,7 @@ func (e *ExecOpSpec) Do(ctx ActionContext) error {
 		},
 	} {
 		if stream.output != nil {
-			s := ctx.TemplateEngine().RenderLenient(*stream.output, snapshot)
-			stream.output = &s
+			stream.output = new(ctx.TemplateEngine().RenderLenient(*stream.output, snapshot))
 			out, err := os.OpenFile(*stream.output, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
 			if err != nil {
 				return err
@@ -81,8 +80,7 @@ func (e *ExecOpSpec) Do(ctx ActionContext) error {
 	}
 	ctx.Logger().Log(fmt.Sprintf("prog=%s,dir=%s,args=[%s]", prog, safeStrDeref(dir), strings.Join(args, " ")))
 	err := cmd.Run()
-	var exitErr *osx.ExitError
-	if errors.As(err, &exitErr) {
+	if exitErr, ok := errors.AsType[*osx.ExitError](err); ok {
 		if e.SaveExitCodeTo != nil {
 			ctx.Data().Set(pp.MustParse(*e.SaveExitCodeTo), dom.LeafNode(exitErr.ExitCode()))
 			ctx.InvalidateSnapshot()

@@ -41,7 +41,7 @@ var (
 	importOpXmlLayoutFnMap = map[XmlLayout]ImportOpXmlLayoutFn{
 		XmlLayoutDefault: convertHtmlNode2Dom,
 	}
-	importOpXmlDefOpts = &XmlImportOptions{Layout: ptr(XmlLayoutDefault), Query: &ValOrRef{Val: "/html"}}
+	importOpXmlDefOpts = &XmlImportOptions{Layout: new(XmlLayoutDefault), Query: &ValOrRef{Val: "/html"}}
 )
 
 func (pfm ParseFileMode) toValue(content []byte) (dom.Node, error) {
@@ -127,11 +127,10 @@ func (ia *ImportOpSpec) Do(ctx ActionContext) error {
 	} else {
 		if !val.IsContainer() {
 			return ErrNotContainer
-		} else {
-			for k, v := range val.AsContainer().Children() {
-				ctx.Data().Set(pp.MustParse(k), v)
-				ctx.InvalidateSnapshot()
-			}
+		}
+		for k, v := range val.AsContainer().Children() {
+			ctx.Data().Set(pp.MustParse(k), v)
+			ctx.InvalidateSnapshot()
 		}
 	}
 	return nil

@@ -74,7 +74,7 @@ func (sa *SetOpSpec) Do(ctx ActionContext) error {
 		return ErrNoDataToSet
 	}
 	if sa.Strategy == nil {
-		sa.Strategy = setStrategyPointer(SetStrategyMerge)
+		sa.Strategy = new(SetStrategyMerge)
 	}
 	handler, exists := setHandlerFnMap[*sa.Strategy]
 	if !exists {

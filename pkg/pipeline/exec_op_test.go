@@ -42,15 +42,15 @@ func TestExecOpDo(t *testing.T) {
 	eo = &ExecOpSpec{
 		Program: "sh",
 		Args:    &[]string{"-c", "echo abcd"},
-		Stdout:  strPointer(fout.Name()),
-		Stderr:  strPointer(ferr.Name()),
+		Stdout:  new(fout.Name()),
+		Stderr:  new(ferr.Name()),
 	}
 	assert.NoError(t, eo.Do(mockEmptyActCtx()))
 
 	eo = &ExecOpSpec{
 		Program: "sh",
 		Args:    &[]string{"-c", "echo abcd"},
-		Stdout:  strPointer("/"),
+		Stdout:  new("/"),
 	}
 	assert.Error(t, eo.Do(mockEmptyActCtx()))
 
@@ -58,7 +58,7 @@ func TestExecOpDo(t *testing.T) {
 		Program:        "sh",
 		Args:           &[]string{"-c", "exit 3"},
 		ValidExitCodes: &[]int{3},
-		SaveExitCodeTo: strPointer("Res"),
+		SaveExitCodeTo: new("Res"),
 	}
 	d := dom.ContainerNode()
 	ctx := newMockActBuilder().data(d).build()

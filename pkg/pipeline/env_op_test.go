@@ -24,7 +24,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func createRePtr(in string) *regexp.Regexp {
+func createRenew(in string) *regexp.Regexp {
 	x := regexp.MustCompile(in)
 	return x
 }
@@ -39,9 +39,9 @@ func TestEnvOpDo(t *testing.T) {
 	}
 
 	eo := EnvOpSpec{
-		Path:    ptr("Sub"),
-		Include: createRePtr(`MOCK\d+`),
-		Exclude: createRePtr("XYZ"),
+		Path:    new("Sub"),
+		Include: createRenew(`MOCK\d+`),
+		Exclude: createRenew("XYZ"),
 	}
 	d := dom.ContainerNode()
 	err := eo.Do(newMockActBuilder().data(d).build())
@@ -53,7 +53,7 @@ func TestEnvOpDo(t *testing.T) {
 
 func TestEnvOpCloneWith(t *testing.T) {
 	eo := &EnvOpSpec{
-		Path: ptr("{{ .NewPath }}"),
+		Path: new("{{ .NewPath }}"),
 	}
 	d := dom.ContainerNode()
 	d.AddValue("NewPath", dom.LeafNode("root"))

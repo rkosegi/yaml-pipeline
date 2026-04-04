@@ -42,7 +42,7 @@ func TestExecuteSetOp(t *testing.T) {
 		Data: map[string]interface{}{
 			"sub1": 123,
 		},
-		Path: ptr("sub0"),
+		Path: new("sub0"),
 	}
 	gd = dom.ContainerNode()
 	assert.NoError(t, New(WithData(gd)).Execute(&ss))
@@ -61,7 +61,7 @@ func TestExecuteSetOp(t *testing.T) {
 			Data: map[string]interface{}{
 				"url": "https://{{ .env }}.mydomain.tld",
 			},
-			Render: ptr(true),
+			Render: new(true),
 		}
 		assert.NoError(t, New(WithData(gd)).Execute(&ss))
 		assert.Equal(t, "https://dev.mydomain.tld", gd.Child("url").AsLeaf().Value())
@@ -74,7 +74,7 @@ func TestExecuteSetOp(t *testing.T) {
 			Data: map[string]interface{}{
 				"url": "https://{{ .env }}.mydomain.tld",
 			},
-			Render: ptr(false),
+			Render: new(false),
 		}
 		assert.NoError(t, New(WithData(gd)).Execute(&ss))
 		assert.Equal(t, "https://{{ .env }}.mydomain.tld", gd.Child("url").AsLeaf().Value())
@@ -134,7 +134,7 @@ func TestSetOpMergeSubPath(t *testing.T) {
 			"sub20": 123,
 		},
 		Strategy: setStrategyPointer(SetStrategyMerge),
-		Path:     ptr("sub10"),
+		Path:     new("sub10"),
 	}
 	gd = dom.ContainerNode()
 
@@ -149,7 +149,7 @@ func TestSetOpMergeSubPath(t *testing.T) {
 				"sub3b": 123,
 			},
 		},
-		Path:     ptr("sub10"),
+		Path:     new("sub10"),
 		Strategy: setStrategyPointer(SetStrategyMerge),
 	}
 	assert.NoError(t, New(WithData(gd)).Execute(&ss))

@@ -48,7 +48,7 @@ func TestHtml2Dom(t *testing.T) {
 		{
 			From:   "html1",
 			To:     "to",
-			Layout: ptr(Html2DomLayout("invalid")),
+			Layout: new(Html2DomLayout("invalid")),
 		},
 		{
 			From:  "html1",

@@ -31,19 +31,19 @@ func TestActionMetaString(t *testing.T) {
 	for _, tc := range []testcase{
 		{
 			am: &ActionMeta{
-				Name: ptr("test"),
+				Name: new("test"),
 			},
 			exp: "[name=test]",
 		},
 		{
 			am: &ActionMeta{
-				Order: ptr(1),
+				Order: new(1),
 			},
 			exp: "[order=1]",
 		},
 		{
 			am: &ActionMeta{
-				When: strPointer("{{ false }}"),
+				When: new("{{ false }}"),
 			},
 			exp: "[when={{ false }}]",
 		},

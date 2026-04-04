@@ -58,10 +58,10 @@ func (l *LoopOpSpec) CloneWith(ctx ActionContext) Action {
 	lc.Test = l.Test
 	lc.Action = l.Action.CloneWith(ctx).(ActionSpec)
 	if l.Init != nil {
-		lc.Init = ptr(l.Init.CloneWith(ctx).(ActionSpec))
+		lc.Init = new(l.Init.CloneWith(ctx).(ActionSpec))
 	}
 	if l.PostAction != nil {
-		lc.PostAction = ptr(l.PostAction.CloneWith(ctx).(ActionSpec))
+		lc.PostAction = new(l.PostAction.CloneWith(ctx).(ActionSpec))
 	}
 	return lc
 }

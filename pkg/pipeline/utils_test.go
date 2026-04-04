@@ -48,10 +48,6 @@ func (l *testingLogger) OnAfter(ctx ActionContext, err error) {
 	}
 }
 
-func strPointer(str string) *string {
-	return &str
-}
-
 func newMockActBuilder() *mockActCtxBuilder {
 	return &mockActCtxBuilder{d: dom.ContainerNode()}
 }
@@ -101,14 +97,14 @@ func TestGetActionFromContext(t *testing.T) {
 }
 
 func TestNonEmpty(t *testing.T) {
-	assert.False(t, nonEmpty(strPointer("")))
+	assert.False(t, nonEmpty(new("")))
 	assert.False(t, nonEmpty(nil))
-	assert.True(t, nonEmpty(strPointer("abcd")))
+	assert.True(t, nonEmpty(new("abcd")))
 }
 
 func TestSafeStrDeref(t *testing.T) {
 	assert.Equal(t, "", safeStrDeref(nil))
-	assert.Equal(t, "aa", safeStrDeref(strPointer("aa")))
+	assert.Equal(t, "aa", safeStrDeref(new("aa")))
 }
 
 func TestSafeRegexpDeref(t *testing.T) {
@@ -121,12 +117,11 @@ func TestSafeRenderStrPointerNil(t *testing.T) {
 }
 
 func TestSafeRenderStrPointer(t *testing.T) {
-	s := "{{ .X }}"
 	d := dom.DecodeAnyToNode(map[string]interface{}{
 		"X": "abc",
 	}).(dom.ContainerBuilder)
 	c := newMockActBuilder().data(d).build()
-	assert.Equal(t, "abc", *safeRenderStrPointer(&s, c.TemplateEngine(), c.Snapshot()))
+	assert.Equal(t, "abc", *safeRenderStrPointer(new("{{ .X }}"), c.TemplateEngine(), c.Snapshot()))
 }
 
 func TestStrTruncIfNeeded(t *testing.T) {
@@ -144,7 +139,7 @@ func TestSafeCopyIntSlice(t *testing.T) {
 
 func TestSafeBoolDeref(t *testing.T) {
 	assert.False(t, safeBoolDeref(nil))
-	assert.True(t, safeBoolDeref(ptr(true)))
+	assert.True(t, safeBoolDeref(new(true)))
 }
 
 func TestSafeSize(t *testing.T) {
@@ -171,7 +166,7 @@ func TestSortChildActions(t *testing.T) {
 	var names []string
 	t.Run("one non-nil and one nil", func(t *testing.T) {
 		names = sortActionNames(ChildActions{
-			"action1": ActionSpec{ActionMeta: ActionMeta{Order: ptr(1)}},
+			"action1": ActionSpec{ActionMeta: ActionMeta{Order: new(1)}},
 			"action2": ActionSpec{},
 		})
 		assert.Len(t, names, 2)
@@ -180,8 +175,8 @@ func TestSortChildActions(t *testing.T) {
 	})
 	t.Run("both non-nil", func(t *testing.T) {
 		names = sortActionNames(ChildActions{
-			"action1": ActionSpec{ActionMeta: ActionMeta{Order: ptr(10)}},
-			"action2": ActionSpec{ActionMeta: ActionMeta{Order: ptr(20)}},
+			"action1": ActionSpec{ActionMeta: ActionMeta{Order: new(10)}},
+			"action2": ActionSpec{ActionMeta: ActionMeta{Order: new(20)}},
 		})
 		assert.Len(t, names, 2)
 		assert.Equal(t, "action1", names[0])
