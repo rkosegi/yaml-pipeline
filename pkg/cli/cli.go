@@ -23,6 +23,7 @@ import (
 	"strings"
 
 	"github.com/gookit/color"
+	"github.com/kaptinlin/jsonschema"
 	xlog "github.com/rkosegi/slog-config"
 	ytp "github.com/rkosegi/yaml-pipeline/pkg/pipeline"
 	"github.com/rkosegi/yaml-pipeline/pkg/utils"
@@ -51,6 +52,14 @@ var (
 	endOpStyle   = color.Style{color.FgGreen}
 	errStyle     = color.Style{color.FgRed, color.OpBold}
 )
+
+func asErr(errMap map[string]*jsonschema.EvaluationError) error {
+	// just first error
+	for _, v := range errMap {
+		return v
+	}
+	return nil
+}
 
 func preRun(d *data) error {
 	applyColorUse(d.colorUse)
@@ -82,7 +91,7 @@ func preRun(d *data) error {
 			tree := treeprint.New()
 			utils.DumpSchemaEvalResultToTree(tree, res.Details)
 			fmt.Fprintln(os.Stderr, tree.String())
-			return res
+			return asErr(res.Errors)
 		}
 		fmt.Fprintln(os.Stderr, color.Blue.Render("[Schema] OK"))
 	}
