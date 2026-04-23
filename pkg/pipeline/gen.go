@@ -64,30 +64,30 @@ func (e OutputFormat) Valid() bool {
 	}
 }
 
-// Defines values for ParseFileMode.
+// Defines values for ParseContentMode.
 const (
-	ParseFileModeBinary     ParseFileMode = "binary"
-	ParseFileModeJson       ParseFileMode = "json"
-	ParseFileModeProperties ParseFileMode = "properties"
-	ParseFileModeText       ParseFileMode = "text"
-	ParseFileModeXml        ParseFileMode = "xml"
-	ParseFileModeYaml       ParseFileMode = "yaml"
+	ParseContentModeBinary     ParseContentMode = "binary"
+	ParseContentModeJson       ParseContentMode = "json"
+	ParseContentModeProperties ParseContentMode = "properties"
+	ParseContentModeText       ParseContentMode = "text"
+	ParseContentModeXml        ParseContentMode = "xml"
+	ParseContentModeYaml       ParseContentMode = "yaml"
 )
 
-// Valid indicates whether the value is a known member of the ParseFileMode enum.
-func (e ParseFileMode) Valid() bool {
+// Valid indicates whether the value is a known member of the ParseContentMode enum.
+func (e ParseContentMode) Valid() bool {
 	switch e {
-	case ParseFileModeBinary:
+	case ParseContentModeBinary:
 		return true
-	case ParseFileModeJson:
+	case ParseContentModeJson:
 		return true
-	case ParseFileModeProperties:
+	case ParseContentModeProperties:
 		return true
-	case ParseFileModeText:
+	case ParseContentModeText:
 		return true
-	case ParseFileModeXml:
+	case ParseContentModeXml:
 		return true
-	case ParseFileModeYaml:
+	case ParseContentModeYaml:
 		return true
 	default:
 		return false
@@ -321,14 +321,14 @@ type ImportOpSpec struct {
 	// File File to read data from
 	File string `json:"file" yaml:"file"`
 
-	// Mode ParseFileMode defines how the file is parsed before is put into data tree
-	//  * binary - File is read and encoded using base64 string into data tree
-	//  * text - File is read as-is and is assumed it represents utf-8 encoded byte stream
+	// Mode Defines how the content is parsed before it is put into data tree
+	//  * binary - Content is read and encoded using base64 string into data tree
+	//  * text - Content is read as-is and is assumed it represents utf-8 encoded byte stream
 	//  * yaml - File is parsed as YAML document and put as child node into data tree
-	//  * xml - File is parsed as XML document and transformed using selected layout.
+	//  * xml - Content is parsed as XML document and transformed using selected layout.
 	//  * json - File is parsed as JSON document and put as child node into data tree
-	//  * properties - File is parsed as Java properties into map[string]interface{} and put as child node into data tree
-	Mode ParseFileMode `json:"mode" yaml:"mode"`
+	//  * properties - Content is parsed as Java properties into map[string]interface{} and put as a child node into data tree
+	Mode ParseContentMode `json:"mode" yaml:"mode"`
 
 	// Path Path at which to import the data.
 	Path string `json:"path" yaml:"path"`
@@ -576,14 +576,14 @@ type OsOpUserHomeSpec struct {
 // OutputFormat Format of output file
 type OutputFormat string
 
-// ParseFileMode ParseFileMode defines how the file is parsed before is put into data tree
-//   - binary - File is read and encoded using base64 string into data tree
-//   - text - File is read as-is and is assumed it represents utf-8 encoded byte stream
+// ParseContentMode Defines how the content is parsed before it is put into data tree
+//   - binary - Content is read and encoded using base64 string into data tree
+//   - text - Content is read as-is and is assumed it represents utf-8 encoded byte stream
 //   - yaml - File is parsed as YAML document and put as child node into data tree
-//   - xml - File is parsed as XML document and transformed using selected layout.
+//   - xml - Content is parsed as XML document and transformed using selected layout.
 //   - json - File is parsed as JSON document and put as child node into data tree
-//   - properties - File is parsed as Java properties into map[string]interface{} and put as child node into data tree
-type ParseFileMode string
+//   - properties - Content is parsed as Java properties into map[string]interface{} and put as a child node into data tree
+type ParseContentMode string
 
 // ParseTextAs ParseTextAs defines how to parse text.
 //   - none - do not parse, it's just a text (dom.Leaf)

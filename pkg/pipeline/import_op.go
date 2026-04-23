@@ -44,20 +44,20 @@ var (
 	importOpXmlDefOpts = &XmlImportOptions{Layout: new(XmlLayoutDefault), Query: &ValOrRef{Val: "/html"}}
 )
 
-func (pfm ParseFileMode) toValue(content []byte) (dom.Node, error) {
+func (pfm ParseContentMode) toValue(content []byte) (dom.Node, error) {
 	switch pfm {
-	case ParseFileModeBinary:
+	case ParseContentModeBinary:
 		return dom.LeafNode(base64.StdEncoding.EncodeToString(content)), nil
-	case ParseFileModeText:
+	case ParseContentModeText:
 		return dom.LeafNode(string(content)), nil
-	case ParseFileModeYaml:
+	case ParseContentModeYaml:
 		return dom.DecodeReader(bytes.NewReader(content), dom.DefaultYamlDecoder)
-	case ParseFileModeJson:
+	case ParseContentModeJson:
 		return dom.DecodeReader(bytes.NewReader(content), dom.DefaultJsonDecoder)
-	case ParseFileModeProperties:
+	case ParseContentModeProperties:
 		return dom.DecodeReader(bytes.NewReader(content), props.DecoderFn)
 	default:
-		return nil, fmt.Errorf("invalid ParseFileMode: %v", pfm)
+		return nil, fmt.Errorf("invalid ParseContentMode: %v", pfm)
 	}
 }
 
@@ -108,15 +108,15 @@ func (ia *ImportOpSpec) Do(ctx ActionContext) error {
 		val dom.Node
 		err error
 	)
-	if ia.Mode == ParseFileModeXml {
-		val, err = parseFile(file, ParseFileModeText)
+	if ia.Mode == ParseContentModeXml {
+		val, err = parseFile(file, ParseContentModeText)
 	} else {
 		val, err = parseFile(file, ia.Mode)
 	}
 	if err != nil {
 		return errWithInfo(err, "import/parseFile")
 	}
-	if ia.Mode == ParseFileModeXml {
+	if ia.Mode == ParseContentModeXml {
 		if val, err = ia.loadXml(val.AsLeaf().Value().(string), ctx); err != nil {
 			return errWithInfo(err, "import/loadXml")
 		}

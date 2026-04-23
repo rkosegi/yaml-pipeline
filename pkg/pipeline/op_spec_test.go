@@ -49,7 +49,7 @@ func TestOpSpecCloneWith(t *testing.T) {
 		},
 		Import: &ImportOpSpec{
 			Path: "{{ .Path }}",
-			Mode: ParseFileModeYaml,
+			Mode: ParseContentModeYaml,
 		},
 		Call: &CallOpSpec{
 			Name: "invalid",

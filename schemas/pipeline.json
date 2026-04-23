@@ -282,7 +282,7 @@
           "type": "string"
         },
         "mode": {
-          "$ref": "#/$defs/parseFileMode",
+          "$ref": "#/$defs/parseContentMode",
           "description": "How to parse the file before the import takes place"
         },
         "path": {
@@ -687,8 +687,8 @@
       ],
       "type": "string"
     },
-    "parseFileMode": {
-      "description": "ParseFileMode defines how the file is parsed before is put into data tree\n * binary - File is read and encoded using base64 string into data tree\n * text - File is read as-is and is assumed it represents utf-8 encoded byte stream\n * yaml - File is parsed as YAML document and put as child node into data tree\n * xml - File is parsed as XML document and transformed using selected layout.\n * json - File is parsed as JSON document and put as child node into data tree\n * properties - File is parsed as Java properties into map[string]interface{} and put as child node into data tree",
+    "parseContentMode": {
+      "description": "Defines how the content is parsed before it is put into data tree\n * binary - Content is read and encoded using base64 string into data tree\n * text - Content is read as-is and is assumed it represents utf-8 encoded byte stream\n * yaml - File is parsed as YAML document and put as child node into data tree\n * xml - Content is parsed as XML document and transformed using selected layout.\n * json - File is parsed as JSON document and put as child node into data tree\n * properties - Content is parsed as Java properties into map[string]interface{} and put as a child node into data tree",
       "enum": [
         "binary",
         "text",

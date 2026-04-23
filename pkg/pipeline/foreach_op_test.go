@@ -182,7 +182,7 @@ func TestForeachGlob(t *testing.T) {
 				Import: &ImportOpSpec{
 					File: "{{ .forEach }}",
 					Path: "import.files.{{ b64enc (osBase .forEach) }}",
-					Mode: ParseFileModeYaml,
+					Mode: ParseContentModeYaml,
 				},
 			},
 		},
@@ -260,7 +260,7 @@ func TestForeachGlobInvalid(t *testing.T) {
 				Import: &ImportOpSpec{
 					File: "{{ .forEach }}",
 					Path: "import.files.{{ b64enc (osBase .forEach) }}",
-					Mode: ParseFileModeYaml,
+					Mode: ParseContentModeYaml,
 				},
 			},
 		},

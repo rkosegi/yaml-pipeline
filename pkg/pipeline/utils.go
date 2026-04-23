@@ -49,13 +49,13 @@ func strTruncIfNeeded(in string, size int) string {
 	return in[0:size]
 }
 
-func parseFile(path string, mode ParseFileMode) (dom.Node, error) {
+func parseFile(path string, mode ParseContentMode) (dom.Node, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}
 	if len(mode) == 0 {
-		mode = ParseFileModeText
+		mode = ParseContentModeText
 	}
 	val, err := mode.toValue(data)
 	if err != nil {

@@ -149,7 +149,7 @@ func TestExecuteImport(t *testing.T) {
 			Import: &ImportOpSpec{
 				File: "../../testdata/props1.properties",
 				Path: "wrapped",
-				Mode: ParseFileModeProperties,
+				Mode: ParseContentModeProperties,
 			},
 		},
 	}))
@@ -305,7 +305,7 @@ func TestExecuteForEachFileGlob(t *testing.T) {
 				Import: &ImportOpSpec{
 					File: "{{ .forEach }}",
 					Path: "import.files.{{ b64enc (osBase .forEach) }}",
-					Mode: ParseFileModeYaml,
+					Mode: ParseContentModeYaml,
 				},
 				Ext: &ExtOpSpec{
 					Function: "noop",

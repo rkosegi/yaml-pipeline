@@ -33,7 +33,7 @@ func TestExecuteImportOp(t *testing.T) {
 		is = ImportOpSpec{
 			File: "../../testdata/doc1.json",
 			Path: "step1.data",
-			Mode: ParseFileModeJson,
+			Mode: ParseContentModeJson,
 		}
 
 		assert.NoError(t, New(WithData(gd)).Execute(&is))
@@ -43,7 +43,7 @@ func TestExecuteImportOp(t *testing.T) {
 	t.Run("parsing YAML file as JSON should lead to error", func(t *testing.T) {
 		is = ImportOpSpec{
 			File: "../testdata/doc1.yaml",
-			Mode: ParseFileModeJson,
+			Mode: ParseContentModeJson,
 		}
 		assert.Error(t, New().Execute(&is))
 	})
@@ -52,7 +52,7 @@ func TestExecuteImportOp(t *testing.T) {
 		gd = dom.ContainerNode()
 		is = ImportOpSpec{
 			File: "../../testdata/doc1.yaml",
-			Mode: ParseFileModeYaml,
+			Mode: ParseContentModeYaml,
 			Path: "step1.data",
 		}
 		assert.NoError(t, New(WithData(gd)).Execute(&is))
@@ -63,7 +63,7 @@ func TestExecuteImportOp(t *testing.T) {
 		gd = dom.ContainerNode()
 		is = ImportOpSpec{
 			File: "../../testdata/doc1.yaml",
-			Mode: ParseFileModeText,
+			Mode: ParseContentModeText,
 			Path: "step3",
 		}
 		assert.NoError(t, New(WithData(gd)).Execute(&is))
@@ -75,7 +75,7 @@ func TestExecuteImportOp(t *testing.T) {
 		gd = dom.ContainerNode()
 		is = ImportOpSpec{
 			File: "../../testdata/doc1.yaml",
-			Mode: ParseFileModeBinary,
+			Mode: ParseContentModeBinary,
 			Path: "files.doc1",
 		}
 		assert.NoError(t, New(WithData(gd)).Execute(&is))
@@ -102,7 +102,7 @@ func TestExecuteImportOp(t *testing.T) {
 	t.Run("import properties file into specific path", func(t *testing.T) {
 		is = ImportOpSpec{
 			File: "../../testdata/props1.properties",
-			Mode: ParseFileModeProperties,
+			Mode: ParseContentModeProperties,
 			Path: "props",
 		}
 		assert.NoError(t, New().Execute(&is))
@@ -111,7 +111,7 @@ func TestExecuteImportOp(t *testing.T) {
 	t.Run("import text into root (empty path) should fail", func(t *testing.T) {
 		is = ImportOpSpec{
 			File: "../../testdata/props1.properties",
-			Mode: ParseFileModeText,
+			Mode: ParseContentModeText,
 		}
 		assert.Error(t, New().Execute(&is))
 	})
@@ -119,7 +119,7 @@ func TestExecuteImportOp(t *testing.T) {
 	t.Run("import JSON document directly to root (no path)", func(t *testing.T) {
 		is = ImportOpSpec{
 			File: "../../testdata/doc1.json",
-			Mode: ParseFileModeJson,
+			Mode: ParseContentModeJson,
 		}
 		assert.NoError(t, New().Execute(&is))
 	})
@@ -136,7 +136,7 @@ func TestExecuteImportOp(t *testing.T) {
 	t.Run("import valid XML/HTML", func(t *testing.T) {
 		is = ImportOpSpec{
 			File: "../../testdata/doc1.html",
-			Mode: ParseFileModeXml,
+			Mode: ParseContentModeXml,
 		}
 		assert.NoError(t, New().Execute(&is))
 	})
@@ -144,7 +144,7 @@ func TestExecuteImportOp(t *testing.T) {
 	t.Run("import XML/HTML with invalid xpath should fail", func(t *testing.T) {
 		is = ImportOpSpec{
 			File: "../../testdata/doc1.html",
-			Mode: ParseFileModeXml,
+			Mode: ParseContentModeXml,
 			Xml: &XmlImportOptions{
 				Query: &ValOrRef{Val: "////bad"},
 			},
@@ -155,7 +155,7 @@ func TestExecuteImportOp(t *testing.T) {
 	t.Run("import XML/HTML with invalid layout should fail", func(t *testing.T) {
 		is = ImportOpSpec{
 			File: "../../testdata/doc1.html",
-			Mode: ParseFileModeXml,
+			Mode: ParseContentModeXml,
 			Xml: &XmlImportOptions{
 				Layout: new(XmlLayout("invalid")),
 			},
@@ -166,7 +166,7 @@ func TestExecuteImportOp(t *testing.T) {
 	t.Run("import XML/HTML with empty query should fallback to /html", func(t *testing.T) {
 		is = ImportOpSpec{
 			File: "../../testdata/doc1.html",
-			Mode: ParseFileModeXml,
+			Mode: ParseContentModeXml,
 			Xml: &XmlImportOptions{
 				Query: &ValOrRef{Ref: "non.existing"},
 			},
@@ -177,7 +177,7 @@ func TestExecuteImportOp(t *testing.T) {
 	t.Run("import XML/HTML with non-resolvable query should fail", func(t *testing.T) {
 		is = ImportOpSpec{
 			File: "../../testdata/doc1.html",
-			Mode: ParseFileModeXml,
+			Mode: ParseContentModeXml,
 			Xml: &XmlImportOptions{
 				Query: &ValOrRef{Val: "/this/does/not/work"},
 			},
