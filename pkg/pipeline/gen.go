@@ -179,11 +179,16 @@ type CallOpSpec struct {
 	// Leaf values are recursively templated just before call is executed.
 	Args *map[string]interface{} `json:"args,omitempty" yaml:"args,omitempty"`
 
+	// ArgsFrom When specified, this is a path within the global data where to take arguments from.
+	// This takes precedence over "args" which are ignored.
+	ArgsFrom *ValOrRef `json:"argsFrom,omitempty" yaml:"argsFrom,omitempty"`
+
 	// ArgsPath ArgsPath is optional path within the global data where arguments are stored prior to execution. When omitted, then default value of "args" is assumed. Note that passing arguments to nested callable is only possible if path is different, otherwise inner's arguments will overwrite outer's one. Template is accepted as possible value.
 	ArgsPath *string `json:"argsPath,omitempty" yaml:"argsPath,omitempty"`
 
 	// Name Name is name of callable previously registered using DefineOp.
-	// Attempt to use name that was not registered will result in error
+	// Attempt to use name that was not registered will result in error.
+	// Template is supported
 	Name string `json:"name" yaml:"name"`
 }
 

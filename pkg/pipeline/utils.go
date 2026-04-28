@@ -219,3 +219,7 @@ func cloneFieldsWith[T Action](as Action, ctx ActionContext) Action {
 	}
 	return *ret
 }
+
+func isNodeValidArgs(n dom.Node) bool {
+	return n != nil && n.IsContainer()
+}

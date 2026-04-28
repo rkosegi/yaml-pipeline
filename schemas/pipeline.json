@@ -63,6 +63,10 @@
           "description": "Arguments to be passed to callable.\nLeaf values are recursively templated just before call is executed.",
           "type": "object"
         },
+        "argsFrom": {
+          "description": "When specified, this is a path within the global data where to take arguments from.\nThis takes precedence over \"args\" which are ignored.",
+          "type": "string"
+        },
         "argsPath": {
           "description": "ArgsPath is optional path within the global data where arguments are stored prior to execution. When omitted, then default value of \"args\" is assumed. Note that passing arguments to nested callable is only possible if path is different, otherwise inner's arguments will overwrite outer's one. Template is accepted as possible value.",
           "type": "string"

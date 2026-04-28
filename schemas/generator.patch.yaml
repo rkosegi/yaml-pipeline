@@ -64,3 +64,7 @@ components:
           x-go-type: ValOrRef
         cases:
           x-go-type: ChildActions
+    callOpSpec:
+      properties:
+        argsFrom:
+          x-go-type: ValOrRef

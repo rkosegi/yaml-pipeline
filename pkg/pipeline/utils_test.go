@@ -184,3 +184,9 @@ func TestSortChildActions(t *testing.T) {
 	})
 
 }
+
+func TestIsNodeValidArgs(t *testing.T) {
+	assert.False(t, isNodeValidArgs(nil))
+	assert.True(t, isNodeValidArgs(dom.ContainerNode()))
+	assert.False(t, isNodeValidArgs(dom.ListNode()))
+}
