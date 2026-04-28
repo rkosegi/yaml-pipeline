@@ -121,6 +121,15 @@
       "type": "object",
       "x-doc-gen": "ops"
     },
+    "encodeDataAs": {
+      "description": "Defines how node within the data tree will be encoded.\n * binary - content of dom.Leaf, which must be either string or []byte will be used as-is\n * json/yaml - dom.Node will be encoded using respective codec",
+      "enum": [
+        "binary",
+        "json",
+        "yaml"
+      ],
+      "type": "string"
+    },
     "envOpSpec": {
       "additionalProperties": false,
       "description": "This op is used to import OS environment variables into data",
@@ -304,6 +313,104 @@
         "to"
       ]
     },
+    "httpHeaders": {
+      "additionalProperties": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "description": "HTTP headers container"
+    },
+    "httpMethod": {
+      "description": "HTTP method (rfc9110,rfc5789)",
+      "enum": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE",
+        "OPTIONS",
+        "HEAD",
+        "TRACE",
+        "PATCH"
+      ],
+      "type": "string"
+    },
+    "httpOpSpec": {
+      "description": "Performs a simple HTTP request.\nFor more advanced HTTP operations, one can use ExecOp with curl.\nIn particular, request/response bodies are handled fully in memory, which make this unsuitable for huge data.",
+      "properties": {
+        "bodyFrom": {
+          "$ref": "#/$defs/sourceOfData",
+          "description": "Where to get request body from"
+        },
+        "encodeAs": {
+          "$ref": "#/$defs/encodeDataAs",
+          "description": "How to encode request body taken from global data tree before sending"
+        },
+        "headers": {
+          "$ref": "#/$defs/httpHeaders",
+          "description": "HTTP request headers"
+        },
+        "method": {
+          "$ref": "#/$defs/httpMethod",
+          "description": "HTTP method"
+        },
+        "parseAs": {
+          "$ref": "#/$defs/parseContentMode",
+          "description": "How to parse the response body before storing it to data tree.\nWhen omitted, then body is taken as-is (binary)."
+        },
+        "skipBody": {
+          "description": "When true, response body is not read from server, only status/headers.\nIf not specified, then body is fully read",
+          "type": "boolean"
+        },
+        "storeTo": {
+          "$ref": "#/$defs/storeResultTo",
+          "description": "Location within the data tree where to store the result"
+        },
+        "url": {
+          "description": "Target resource",
+          "type": "string"
+        },
+        "validStatusCodes": {
+          "description": "List of HTTP status codes that are considered valid.\nAnything else will cause operation to fail.\nWhen omitted, then any status code is accepted",
+          "items": {
+            "type": "integer"
+          },
+          "type": "array"
+        },
+        "writeTo": {
+          "$ref": "#/$defs/osFilePath",
+          "description": "Path to the local file, where response body will be written into.\nOnly considered when skipBody is not true"
+        }
+      },
+      "required": [
+        "method",
+        "url"
+      ]
+    },
+    "httpResponse": {
+      "description": "Container for complete HTTP response",
+      "properties": {
+        "body": {
+          "description": "Response body content",
+          "type": "object"
+        },
+        "headers": {
+          "$ref": "#/$defs/httpHeaders"
+        },
+        "status": {
+          "description": "HTTP status code",
+          "maximum": 999,
+          "minimum": 100,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "status",
+        "headers",
+        "body"
+      ]
+    },
     "importOpSpec": {
       "description": "Imports data from file into data tree",
       "properties": {
@@ -409,6 +516,10 @@
         "html2dom": {
           "$ref": "#/$defs/html2DomOpSpec",
           "description": "Html2Dom can be used to process HTML source into DOM"
+        },
+        "http": {
+          "$ref": "#/$defs/httpOpSpec",
+          "description": "Http performs request to web server"
         },
         "import": {
           "$ref": "#/$defs/importOpSpec",
@@ -893,6 +1004,19 @@
         "merge"
       ],
       "type": "string"
+    },
+    "sourceOfData": {
+      "description": "Describes how to source the data locally.",
+      "properties": {
+        "file": {
+          "description": "Data are read from the file on a local filesystem",
+          "type": "string"
+        },
+        "tree": {
+          "description": "Data is taken from the global data tree at a given path",
+          "type": "string"
+        }
+      }
     },
     "storeResultTo": {
       "description": "Path to location within the data, where result of operation is store upon success",

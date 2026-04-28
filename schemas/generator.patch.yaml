@@ -64,6 +64,16 @@ components:
           x-go-type: ValOrRef
         cases:
           x-go-type: ChildActions
+    sourceOfData:
+      properties:
+        file:
+          x-go-type: ValOrRef
+        tree:
+          x-go-type: ValOrRef
+    httpOpSpec:
+      properties:
+        storeTo:
+          x-go-type: ValOrRef
     callOpSpec:
       properties:
         argsFrom:

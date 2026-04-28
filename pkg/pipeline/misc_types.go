@@ -17,8 +17,10 @@ limitations under the License.
 package pipeline
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
+	"os"
 	"strings"
 
 	te "github.com/rkosegi/yaml-pipeline/pkg/pipeline/template_engine"
@@ -182,3 +184,62 @@ func (skv StrKeysStrValues) RenderValues(teng te.TemplateEngine, data StrKeysAny
 
 // StrKeysAnyValues is a map with string keys and values with any type
 type StrKeysAnyValues map[string]any
+
+func ensureLeafNode(node dom.Node) (dom.Leaf, error) {
+	if !node.IsLeaf() {
+		return nil, fmt.Errorf("expected dom.Leaf() node, got %v", node.Desc())
+	}
+	return node.AsLeaf(), nil
+}
+
+func encodeStringLikeNode(node dom.Node) ([]byte, error) {
+	leaf, err := ensureLeafNode(node)
+	if err != nil {
+		return nil, err
+	}
+	switch x := leaf.Value().(type) {
+	case string:
+		return []byte(x), nil
+	case []byte:
+		return x, nil
+	default:
+		return nil, fmt.Errorf("unsupported value type %T: %v", leaf.Value(), leaf.Value())
+	}
+}
+
+func (ed EncodeDataAs) Encode(node dom.Node) ([]byte, error) {
+	if node == nil {
+		return nil, nil
+	}
+	var (
+		buff bytes.Buffer
+		err  error
+	)
+	switch ed {
+	case EncodeDataAsBinary:
+		return encodeStringLikeNode(node)
+	case EncodeDataAsJson:
+		err = dom.DefaultJsonEncoder(&buff, node.AsAny())
+		return buff.Bytes(), err
+	case EncodeDataAsYaml:
+		err = dom.DefaultYamlEncoder(&buff, node.AsAny())
+		return buff.Bytes(), err
+
+	default:
+		return nil, fmt.Errorf("unknown encode type '%v'", ed)
+	}
+}
+
+func (s *SourceOfData) Resolve(ctx ActionContext) (dom.Leaf, error) {
+	if s.Tree != nil {
+		return dom.LeafNode(s.Tree.Resolve(ctx)), nil
+	}
+	if s.File != nil {
+		data, err := os.ReadFile(s.File.Resolve(ctx))
+		if err != nil {
+			return nil, err
+		}
+		return dom.LeafNode(string(data)), nil
+	}
+	return nil, errors.New("neither 'tree', nor 'file' was specified")
+}
