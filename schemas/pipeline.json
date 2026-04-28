@@ -68,7 +68,7 @@
           "type": "string"
         },
         "name": {
-          "description": "Name is name of callable previously registered using DefineOp.\nAttempt to use name that was not registered will result in error",
+          "description": "Name is name of callable previously registered using DefineOp.\nAttempt to use name that was not registered will result in error.\nTemplate is supported",
           "type": "string"
         }
       },

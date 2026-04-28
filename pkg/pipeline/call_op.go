@@ -32,9 +32,10 @@ func (c *CallOpSpec) Do(ctx ActionContext) error {
 	if c.ArgsPath != nil {
 		ap = *c.ArgsPath
 	}
+	name := ctx.TemplateEngine().RenderLenient(c.Name, snap)
 	ap = ctx.TemplateEngine().RenderLenient(ap, snap)
-	if spec, exists := ctx.Ext().GetAction(c.Name); !exists {
-		return fmt.Errorf("callable '%s' is not registered", c.Name)
+	if spec, exists := ctx.Ext().GetAction(name); !exists {
+		return fmt.Errorf("callable '%s' is not registered", name)
 	} else {
 		ctx.Data().Set(pp.MustParse(ap), dom.DecodeAnyToNode(
 			ctx.TemplateEngine().RenderMapLenient(*c.Args, snap)),
