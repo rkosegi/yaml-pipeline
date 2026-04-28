@@ -22,9 +22,11 @@ generate:
 compatibility:
   always-prefix-enum-values: true
 output-options:
+
   skip-prune: true
   yaml-tags: true
   exclude-schemas:
     - actionSpec
     - pipelineSpec
     - serviceSpec
+    - retryConfig

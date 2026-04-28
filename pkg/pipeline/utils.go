@@ -18,6 +18,7 @@ package pipeline
 
 import (
 	"fmt"
+	"net/http"
 	"os"
 	"reflect"
 	"regexp"
@@ -222,4 +223,17 @@ func cloneFieldsWith[T Action](as Action, ctx ActionContext) Action {
 
 func isNodeValidArgs(n dom.Node) bool {
 	return n != nil && n.IsContainer()
+}
+
+// this faster than dom codec and can't produce IO error
+func httpHeaders2Dom(h http.Header) dom.ContainerBuilder {
+	o := dom.ContainerNode()
+	for k, v := range h {
+		vals := dom.ListNode()
+		for _, val := range v {
+			vals.Append(dom.LeafNode(val))
+		}
+		o.AddValue(k, vals)
+	}
+	return o
 }
