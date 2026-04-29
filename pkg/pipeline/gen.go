@@ -452,6 +452,15 @@ type OsOpCopySpec struct {
 	To OsFilePath `json:"to" yaml:"to"`
 }
 
+// OsOpExistsSpec Checks if file exists. Similar to Stat, but does not errors out if file is missing. Result of the operation is boolean.
+type OsOpExistsSpec struct {
+	// Path Arbitrary file path
+	Path OsFilePath `json:"path" yaml:"path"`
+
+	// StoreTo Path to location within the data, where result of operation is store upon success
+	StoreTo StoreResultTo `json:"storeTo" yaml:"storeTo"`
+}
+
 // OsOpGetcwdSpec Gets current working directory
 type OsOpGetcwdSpec struct {
 	// StoreTo Path to location within the data, where result of operation is store upon success
@@ -526,6 +535,9 @@ type OsOpSpec struct {
 	// Copy Copy file(s) from source path to the destination
 	Copy *OsOpCopySpec `json:"copy,omitempty" yaml:"copy,omitempty"`
 
+	// Exists Checks if file exists. Similar to Stat, but does not errors out if file is missing. Result of the operation is boolean.
+	Exists *OsOpExistsSpec `json:"exists,omitempty" yaml:"exists,omitempty"`
+
 	// Getcwd Gets current working directory
 	Getcwd *OsOpGetcwdSpec `json:"getcwd,omitempty" yaml:"getcwd,omitempty"`
 
@@ -547,7 +559,8 @@ type OsOpSpec struct {
 	// Rename Rename/move a file. For details, such as semantics etc, see man rename(2)
 	Rename *OsOpRenameSpec `json:"rename,omitempty" yaml:"rename,omitempty"`
 
-	// Stat Gets a file info
+	// Stat Gets a file info. File must exists, otherwise this operation will fail.
+	// To check if file exists, use osOpExists
 	Stat *OsOpStatSpec `json:"stat,omitempty" yaml:"stat,omitempty"`
 
 	// Touch Update the access and modification times of the file
@@ -557,7 +570,8 @@ type OsOpSpec struct {
 	Userhome *OsOpUserHomeSpec `json:"userhome,omitempty" yaml:"userhome,omitempty"`
 }
 
-// OsOpStatSpec Gets a file info
+// OsOpStatSpec Gets a file info. File must exists, otherwise this operation will fail.
+// To check if file exists, use osOpExists
 type OsOpStatSpec struct {
 	// Path Arbitrary file path
 	Path OsFilePath `json:"path" yaml:"path"`

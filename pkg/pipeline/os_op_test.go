@@ -166,10 +166,43 @@ func TestOsOp(t *testing.T) {
 			t.Log(oo.String())
 			assert.NoError(t, oo.Do(newMockActBuilder().data(gd).build()))
 		})
-
 		t.Run("stat of non-existent directory should fail", func(t *testing.T) {
 			oo := OsOpSpec{Stat: &OsOpStatSpec{
 				Path: ValOrRef{Val: filepath.Join(t.TempDir(), "12345678")}, StoreTo: ValOrRef{Val: "out"}},
+			}
+			t.Log(oo.String())
+			assert.Error(t, oo.Do(mockEmptyActCtx()))
+		})
+	})
+	t.Run("exists", func(t *testing.T) {
+		t.Run("temp directory should exists", func(t *testing.T) {
+			gd := dom.ContainerNode()
+			oo := OsOpSpec{Exists: &OsOpExistsSpec{
+				Path: ValOrRef{Val: t.TempDir()}, StoreTo: ValOrRef{Val: "out"}},
+			}
+			t.Log(oo.String())
+			assert.NoError(t, oo.Do(newMockActBuilder().data(gd).build()))
+			assert.Equal(t, "true", gd.Child("out").AsLeaf().Value())
+		})
+		t.Run("something under temp directory should not exists", func(t *testing.T) {
+			gd := dom.ContainerNode()
+			oo := OsOpSpec{Exists: &OsOpExistsSpec{
+				Path: ValOrRef{Val: t.TempDir() + "/this/is/non-sense"}, StoreTo: ValOrRef{Val: "out"}},
+			}
+			assert.NoError(t, oo.Do(newMockActBuilder().data(gd).build()))
+			assert.Equal(t, "false", gd.Child("out").AsLeaf().Value())
+		})
+		t.Run("insufficient permissions should fail the op", func(t *testing.T) {
+			p1 := filepath.Join(t.TempDir(), "sub1")
+			p2 := filepath.Join(p1, "sub2")
+			t.Cleanup(func() {
+				_ = os.Chmod(p1, 0777)
+				_ = os.RemoveAll(p1)
+			})
+			assert.NoError(t, os.MkdirAll(p2, 0777))
+			assert.NoError(t, os.Chmod(p1, 0))
+			oo := OsOpSpec{Exists: &OsOpExistsSpec{
+				Path: ValOrRef{Val: p2}, StoreTo: ValOrRef{Val: "out"}},
 			}
 			t.Log(oo.String())
 			assert.Error(t, oo.Do(mockEmptyActCtx()))

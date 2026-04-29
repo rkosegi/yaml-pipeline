@@ -476,6 +476,24 @@
       ],
       "type": "object"
     },
+    "osOpExistsSpec": {
+      "description": "Checks if file exists. Similar to Stat, but does not errors out if file is missing. Result of the operation is boolean.",
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/osFilePath",
+          "description": "Path to the file to check"
+        },
+        "storeTo": {
+          "$ref": "#/$defs/storeResultTo",
+          "description": "Path within the data where to store the result"
+        }
+      },
+      "required": [
+        "path",
+        "storeTo"
+      ],
+      "type": "object"
+    },
     "osOpGetcwdSpec": {
       "description": "Gets current working directory",
       "properties": {
@@ -608,6 +626,9 @@
         "copy": {
           "$ref": "#/$defs/osOpCopySpec"
         },
+        "exists": {
+          "$ref": "#/$defs/osOpExistsSpec"
+        },
         "getcwd": {
           "$ref": "#/$defs/osOpGetcwdSpec"
         },
@@ -641,14 +662,15 @@
       }
     },
     "osOpStatSpec": {
-      "description": "Gets a file info",
+      "description": "Gets a file info. File must exists, otherwise this operation will fail.\nTo check if file exists, use osOpExists",
       "properties": {
         "path": {
           "$ref": "#/$defs/osFilePath",
           "description": "Path to the file to get info for"
         },
         "storeTo": {
-          "$ref": "#/$defs/storeResultTo"
+          "$ref": "#/$defs/storeResultTo",
+          "description": "Path within the data where to store FileInfo structure upon success"
         }
       },
       "required": [

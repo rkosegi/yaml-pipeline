@@ -19,6 +19,7 @@ package pipeline
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"time"
 
 	cp "github.com/otiai10/copy"
@@ -61,6 +62,10 @@ func (m *OsOpRemoveSpec) String() string {
 
 func (m *OsOpStatSpec) String() string {
 	return fmt.Sprintf("stat[path=%s]", m.Path.String())
+}
+
+func (m *OsOpExistsSpec) String() string {
+	return fmt.Sprintf("exists[path=%s,storeTo=%v]", m.Path.String(), m.StoreTo.String())
 }
 
 func (m *OsOpReadDirSpec) String() string {
@@ -119,6 +124,17 @@ func (o OsOpSpec) Do(ctx ActionContext) error {
 		if err = os.Chmod(p, o.Chmod.Mode); err != nil {
 			return err
 		}
+	}
+	if o.Exists != nil {
+		exists := true
+		if _, err = os.Stat(o.Exists.Path.Resolve(ctx)); err != nil {
+			if os.IsNotExist(err) {
+				exists = false
+			} else {
+				return err
+			}
+		}
+		ctx.Data().Set(pp.MustParse(o.Exists.StoreTo.Resolve(ctx)), dom.LeafNode(strconv.FormatBool(exists)))
 	}
 	if o.Getcwd != nil {
 		d, _ := os.Getwd()
