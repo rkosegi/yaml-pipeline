@@ -135,14 +135,17 @@ func (o OsOpSpec) Do(ctx ActionContext) error {
 			}
 		}
 		ctx.Data().Set(pp.MustParse(o.Exists.StoreTo.Resolve(ctx)), dom.LeafNode(strconv.FormatBool(exists)))
+		ctx.InvalidateSnapshot()
 	}
 	if o.Getcwd != nil {
 		d, _ := os.Getwd()
 		ctx.Data().Set(pp.MustParse(o.Getcwd.StoreTo.Resolve(ctx)), dom.LeafNode(d))
+		ctx.InvalidateSnapshot()
 	}
 	if o.Hostname != nil {
 		d, _ := os.Hostname()
 		ctx.Data().Set(pp.MustParse(o.Hostname.StoreTo.Resolve(ctx)), dom.LeafNode(d))
+		ctx.InvalidateSnapshot()
 	}
 	if o.Link != nil {
 		var fn = os.Link
@@ -189,6 +192,7 @@ func (o OsOpSpec) Do(ctx ActionContext) error {
 			return err
 		}
 		ctx.Data().Set(pp.MustParse(o.Userhome.StoreTo.Resolve(ctx)), dom.LeafNode(d))
+		ctx.InvalidateSnapshot()
 	}
 	if o.Readdir != nil {
 		var de []os.DirEntry
@@ -199,6 +203,7 @@ func (o OsOpSpec) Do(ctx ActionContext) error {
 			return dirEntryToDom(item)
 		})
 		ctx.Data().Set(pp.MustParse(o.Readdir.StoreTo.Resolve(ctx)), dom.ListNode(entries...))
+		ctx.InvalidateSnapshot()
 	}
 	if o.Stat != nil {
 		var fi os.FileInfo
@@ -206,6 +211,7 @@ func (o OsOpSpec) Do(ctx ActionContext) error {
 			return err
 		}
 		ctx.Data().Set(pp.MustParse(o.Stat.StoreTo.Resolve(ctx)), fileInfoToDom(fi))
+		ctx.InvalidateSnapshot()
 	}
 	if o.Copy != nil {
 		from := o.Copy.From.Resolve(ctx)
