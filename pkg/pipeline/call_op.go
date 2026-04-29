@@ -66,5 +66,6 @@ func (c *CallOpSpec) CloneWith(_ ActionContext) Action {
 		Name:     c.Name,
 		Args:     c.Args,
 		ArgsPath: c.ArgsPath,
+		ArgsFrom: c.ArgsFrom,
 	}
 }
