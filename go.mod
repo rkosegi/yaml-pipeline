@@ -23,7 +23,7 @@ require (
 	github.com/antchfx/htmlquery v1.3.6
 	github.com/emirpasic/gods v1.18.1
 	github.com/google/uuid v1.6.0
-	github.com/gookit/color v1.6.0
+	github.com/gookit/color v1.6.1
 	github.com/inhies/go-bytesize v0.0.0-20220417184213-4913239db9cf
 	github.com/kaptinlin/jsonschema v0.7.11
 	github.com/otiai10/copy v1.14.1
