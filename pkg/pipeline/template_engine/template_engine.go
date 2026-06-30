@@ -48,6 +48,7 @@ var defFuncs = template.FuncMap{
 	"sizeStrFmt":          sizeStrFmtFunc,
 	"sizeStrFmtLong":      sizeStrFmtLongFunc,
 	"deterministicUUIDv4": deterministicUUIDv4,
+	"uuidv4FromHex":       uuidv4FromHexFunc,
 }
 
 var pp = props.NewPathParser()

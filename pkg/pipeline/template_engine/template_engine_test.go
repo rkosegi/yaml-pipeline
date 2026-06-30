@@ -391,6 +391,26 @@ func TestTemplateFuncUrlParseQuery(t *testing.T) {
 	assert.Error(t, err)
 }
 
+func TestTemplateFuncUuidV4FromHex(t *testing.T) {
+	var (
+		err    error
+		uuidv4 string
+	)
+	t.Run("invalid input", func(t *testing.T) {
+		_, err = uuidv4FromHexFunc("$%^")
+		assert.Error(t, err)
+	})
+	t.Run("not enough data", func(t *testing.T) {
+		_, err = uuidv4FromHexFunc("00991c17fb14a0d5c40685f30dd55b")
+		assert.Error(t, err)
+	})
+	t.Run("valid", func(t *testing.T) {
+		uuidv4, err = uuidv4FromHexFunc("00991c17fb14a0d5c40685f30dd55b21")
+		assert.NoError(t, err)
+		assert.Equal(t, "00991c17-fb14-40d5-8406-85f30dd55b21", uuidv4)
+	})
+}
+
 func TestTemplateFuncRegexNamedExtract(t *testing.T) {
 	var (
 		res map[string]string

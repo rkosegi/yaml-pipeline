@@ -17,7 +17,9 @@ limitations under the License.
 package template_engine
 
 import (
+	"bytes"
 	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"net/url"
 	"os"
@@ -26,6 +28,7 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/google/uuid"
 	"github.com/inhies/go-bytesize"
 	"github.com/rkosegi/yaml-toolkit/analytics"
 	"github.com/rkosegi/yaml-toolkit/common"
@@ -174,6 +177,21 @@ func sizeStrFmtFunc(format string, unit string, size float64) string {
 
 func sizeStrFmtLongFunc(format string, unit string, size float64) string {
 	return bytesize.New(size).Format(format, unit, true)
+}
+
+func uuidv4FromHexFunc(hexStr string) (string, error) {
+	var (
+		enc    []byte
+		err    error
+		uuidv4 uuid.UUID
+	)
+	if enc, err = hex.DecodeString(hexStr); err != nil {
+		return "", err
+	}
+	if uuidv4, err = uuid.NewRandomFromReader(bytes.NewReader(enc)); err != nil {
+		return "", err
+	}
+	return uuidv4.String(), nil
 }
 
 func regexNamedExtractFunc(pattern string, str string) (map[string]string, error) {
