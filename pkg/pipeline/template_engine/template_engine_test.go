@@ -418,6 +418,10 @@ func TestStrIndexFunc(t *testing.T) {
 	assert.Equal(t, 6, strIndexFunc("Hello World!", "World"))
 }
 
+func TestStrDeterministicUUIDv4Func(t *testing.T) {
+	assert.Equal(t, "936a185c-aaa2-46bb-9cbe-981e9e05cb78", deterministicUUIDv4("Hello", "World"))
+}
+
 func TestSizeStrFunc(t *testing.T) {
 	type testCase struct {
 		size float64

@@ -17,6 +17,8 @@ limitations under the License.
 package template_engine
 
 import (
+	"crypto/sha256"
+	"fmt"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -194,4 +196,33 @@ func regexNamedExtractFunc(pattern string, str string) (map[string]string, error
 		}
 	}
 	return res, nil
+}
+
+// Creates a deterministic UUIDv4 based on two input variables
+// By definition, a UUID v4 is random. A deterministic UUID v4 is actually a contradiction in terms,
+// even if you take a hash and then set the version and variant bits to v4.
+// However, if you want to perform a deterministic transformation—or if you're proceeding step by step —
+// you can use this function to generate a string that looks like a UUIDv4.
+func deterministicUUIDv4(baseString, identifier string) string {
+	// Normalize stable inputs
+	seed := strings.ToLower(strings.TrimSpace(baseString) + strings.TrimSpace(identifier))
+
+	// SHA256 -> first 128 bits (16 bytes)
+	hash := sha256.Sum256([]byte(seed))
+	uuidBytes := hash[:16]
+
+	// Set UUID version (4)
+	uuidBytes[6] = (uuidBytes[6] & 0x0F) | 0x40
+
+	// Set RFC4122 variant (10xx)
+	uuidBytes[8] = (uuidBytes[8] & 0x3F) | 0x80
+
+	// Format as UUID string
+	return fmt.Sprintf("%08x-%04x-%04x-%04x-%012x",
+		uuidBytes[0:4],
+		uuidBytes[4:6],
+		uuidBytes[6:8],
+		uuidBytes[8:10],
+		uuidBytes[10:16],
+	)
 }
