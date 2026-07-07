@@ -21,13 +21,13 @@ import (
 )
 
 type ActionSpec struct {
-	ActionMeta `yaml:",inline"`
+	ActionMeta `yaml:",inline" json:",inline"`
 	// Operations to perform
-	Operations OpSpec `yaml:",inline"`
+	Operations OpSpec `yaml:",inline" json:",inline"`
 	// Children element is an optional map of child actions that will be executed
 	// as a part of this action (after any of OpSpec in Operations are performed).
 	// Exact order of execution is given by Order field value (lower the value, sooner the execution will take place).
-	Children ChildActions `yaml:"steps,omitempty"`
+	Children ChildActions `yaml:"steps,omitempty" json:"steps,omitempty"`
 }
 
 func (s ActionSpec) CloneWith(ctx ActionContext) Action {

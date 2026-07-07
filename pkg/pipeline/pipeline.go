@@ -20,9 +20,9 @@ import "fmt"
 
 type PipelineSpec struct {
 	// Initial variables
-	Vars       map[string]interface{}      `yaml:"vars"`
-	Services   map[string]ConfigurableSpec `yaml:"services"`
-	ActionSpec `yaml:",inline"`
+	Vars       map[string]interface{}      `yaml:"vars,omitempty" json:"vars,omitempty"`
+	Services   map[string]ConfigurableSpec `yaml:"services,omitempty" json:"services,omitempty"`
+	ActionSpec `yaml:",inline" json:",inline"`
 }
 
 func (p *PipelineSpec) String() string {
@@ -30,5 +30,5 @@ func (p *PipelineSpec) String() string {
 }
 
 type ConfigurableSpec struct {
-	Args map[string]interface{} `yaml:"args"`
+	Args map[string]interface{} `yaml:"args" json:"args,omitempty"`
 }
