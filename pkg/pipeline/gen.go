@@ -426,7 +426,7 @@ type OpSpec struct {
 type OsFileMode = os.FileMode
 
 // OsFilePath Arbitrary file path
-type OsFilePath = ValOrRef
+type OsFilePath = *ValOrRef
 
 // OsOpChdirSpec Change working directory
 type OsOpChdirSpec struct {
@@ -657,7 +657,7 @@ type SetOpSpec struct {
 type SetStrategy string
 
 // StoreResultTo Path to location within the data, where result of operation is store upon success
-type StoreResultTo = ValOrRef
+type StoreResultTo = *ValOrRef
 
 // SwitchOpSpec SwitchOp allows to choose control path based on expression value
 type SwitchOpSpec struct {

@@ -43,11 +43,11 @@ components:
         query:
           x-go-type: ValOrRef
     osFilePath:
-      x-go-type: ValOrRef
+      x-go-type: '*ValOrRef'
     osFileMode:
       x-go-type: os.FileMode
     storeResultTo:
-      x-go-type: ValOrRef
+      x-go-type: '*ValOrRef'
     patchOpSpec:
       properties:
         value:

@@ -32,7 +32,7 @@ func TestOsOp(t *testing.T) {
 		t.Run("Invalid empty dir", func(t *testing.T) {
 			oo := &OsOpSpec{Mkdir: &OsOpMkdirSpec{
 				Mode: new(os.FileMode(0o775)),
-				Path: ValOrRef{},
+				Path: &ValOrRef{},
 			}}
 			t.Log(oo)
 			assert.Error(t, oo.Do(mockEmptyActCtx()))
@@ -47,7 +47,7 @@ func TestOsOp(t *testing.T) {
 					Operations: OpSpec{
 						Os: &OsOpSpec{
 							Mkdir: &OsOpMkdirSpec{
-								Path: ValOrRef{
+								Path: &ValOrRef{
 									Val: "{{ .forEach }}",
 								},
 								Recursive: new(true),
@@ -79,7 +79,7 @@ func TestOsOp(t *testing.T) {
 				_ = os.Chdir(d)
 			})
 			assert.NoError(t, err)
-			oo := &OsOpSpec{Chdir: &OsOpChdirSpec{Path: ValOrRef{Val: t.TempDir()}}}
+			oo := &OsOpSpec{Chdir: &OsOpChdirSpec{Path: &ValOrRef{Val: t.TempDir()}}}
 			t.Log(oo)
 			assert.NoError(t, oo.Do(mockEmptyActCtx()))
 		})
@@ -91,13 +91,13 @@ func TestOsOp(t *testing.T) {
 				_ = os.Setenv("HOME", x)
 			}()
 			_ = os.Unsetenv("HOME")
-			oo := OsOpSpec{Userhome: &OsOpUserHomeSpec{StoreTo: ValOrRef{Val: "out"}}}
+			oo := OsOpSpec{Userhome: &OsOpUserHomeSpec{StoreTo: &ValOrRef{Val: "out"}}}
 			t.Log(oo.String())
 			assert.Error(t, oo.Do(mockEmptyActCtx()))
 		})
 		t.Run("valid ", func(t *testing.T) {
 			gd := dom.ContainerNode()
-			oo := OsOpSpec{Userhome: &OsOpUserHomeSpec{StoreTo: ValOrRef{Val: "out"}}}
+			oo := OsOpSpec{Userhome: &OsOpUserHomeSpec{StoreTo: &ValOrRef{Val: "out"}}}
 			t.Log(oo.String())
 			assert.NoError(t, oo.Do(newMockActBuilder().data(gd).build()))
 			assert.Equal(t, x, gd.Child("out").AsLeaf().Value())
@@ -107,7 +107,7 @@ func TestOsOp(t *testing.T) {
 	t.Run("getcwd", func(t *testing.T) {
 		t.Run("should get cwd", func(t *testing.T) {
 			gd := dom.ContainerNode()
-			oo := OsOpSpec{Getcwd: &OsOpGetcwdSpec{StoreTo: ValOrRef{Val: "out"}}}
+			oo := OsOpSpec{Getcwd: &OsOpGetcwdSpec{StoreTo: &ValOrRef{Val: "out"}}}
 			t.Log(oo.String())
 			assert.NoError(t, oo.Do(newMockActBuilder().data(gd).build()))
 			assert.True(t, len(gd.Child("out").AsLeaf().Value().(string)) > 0)
@@ -117,7 +117,7 @@ func TestOsOp(t *testing.T) {
 	t.Run("hostname", func(t *testing.T) {
 		t.Run("should get hostname", func(t *testing.T) {
 			gd := dom.ContainerNode()
-			oo := OsOpSpec{Hostname: &OsOpHostnameSpec{StoreTo: ValOrRef{Val: "out"}}}
+			oo := OsOpSpec{Hostname: &OsOpHostnameSpec{StoreTo: &ValOrRef{Val: "out"}}}
 			t.Log(oo.String())
 			assert.NoError(t, oo.Do(newMockActBuilder().data(gd).build()))
 			assert.True(t, len(gd.Child("out").AsLeaf().Value().(string)) > 0)
@@ -130,10 +130,10 @@ func TestOsOp(t *testing.T) {
 			gd := dom.ContainerNode()
 			oo := OsOpSpec{
 				Readdir: &OsOpReadDirSpec{
-					Path: ValOrRef{
+					Path: &ValOrRef{
 						Val: x,
 					},
-					StoreTo: ValOrRef{
+					StoreTo: &ValOrRef{
 						Val: "out",
 					},
 				}}
@@ -146,10 +146,10 @@ func TestOsOp(t *testing.T) {
 		t.Run("read of invalid directory should fail", func(t *testing.T) {
 			oo := OsOpSpec{
 				Readdir: &OsOpReadDirSpec{
-					Path: ValOrRef{
+					Path: &ValOrRef{
 						Val: "/I/hope/this/does/not/exist",
 					},
-					StoreTo: ValOrRef{
+					StoreTo: &ValOrRef{
 						Val: "out",
 					},
 				}}
@@ -161,14 +161,14 @@ func TestOsOp(t *testing.T) {
 		t.Run("stat of temp directory should work", func(t *testing.T) {
 			gd := dom.ContainerNode()
 			oo := OsOpSpec{Stat: &OsOpStatSpec{
-				Path: ValOrRef{Val: t.TempDir()}, StoreTo: ValOrRef{Val: "out"}},
+				Path: &ValOrRef{Val: t.TempDir()}, StoreTo: &ValOrRef{Val: "out"}},
 			}
 			t.Log(oo.String())
 			assert.NoError(t, oo.Do(newMockActBuilder().data(gd).build()))
 		})
 		t.Run("stat of non-existent directory should fail", func(t *testing.T) {
 			oo := OsOpSpec{Stat: &OsOpStatSpec{
-				Path: ValOrRef{Val: filepath.Join(t.TempDir(), "12345678")}, StoreTo: ValOrRef{Val: "out"}},
+				Path: &ValOrRef{Val: filepath.Join(t.TempDir(), "12345678")}, StoreTo: &ValOrRef{Val: "out"}},
 			}
 			t.Log(oo.String())
 			assert.Error(t, oo.Do(mockEmptyActCtx()))
@@ -178,7 +178,7 @@ func TestOsOp(t *testing.T) {
 		t.Run("temp directory should exists", func(t *testing.T) {
 			gd := dom.ContainerNode()
 			oo := OsOpSpec{Exists: &OsOpExistsSpec{
-				Path: ValOrRef{Val: t.TempDir()}, StoreTo: ValOrRef{Val: "out"}},
+				Path: &ValOrRef{Val: t.TempDir()}, StoreTo: &ValOrRef{Val: "out"}},
 			}
 			t.Log(oo.String())
 			assert.NoError(t, oo.Do(newMockActBuilder().data(gd).build()))
@@ -187,7 +187,7 @@ func TestOsOp(t *testing.T) {
 		t.Run("something under temp directory should not exists", func(t *testing.T) {
 			gd := dom.ContainerNode()
 			oo := OsOpSpec{Exists: &OsOpExistsSpec{
-				Path: ValOrRef{Val: t.TempDir() + "/this/is/non-sense"}, StoreTo: ValOrRef{Val: "out"}},
+				Path: &ValOrRef{Val: t.TempDir() + "/this/is/non-sense"}, StoreTo: &ValOrRef{Val: "out"}},
 			}
 			assert.NoError(t, oo.Do(newMockActBuilder().data(gd).build()))
 			assert.Equal(t, "false", gd.Child("out").AsLeaf().Value())
@@ -202,7 +202,7 @@ func TestOsOp(t *testing.T) {
 			assert.NoError(t, os.MkdirAll(p2, 0777))
 			assert.NoError(t, os.Chmod(p1, 0))
 			oo := OsOpSpec{Exists: &OsOpExistsSpec{
-				Path: ValOrRef{Val: p2}, StoreTo: ValOrRef{Val: "out"}},
+				Path: &ValOrRef{Val: p2}, StoreTo: &ValOrRef{Val: "out"}},
 			}
 			t.Log(oo.String())
 			assert.Error(t, oo.Do(mockEmptyActCtx()))
@@ -217,8 +217,8 @@ func TestOsOp(t *testing.T) {
 			assert.NoError(t, err)
 			oo := OsOpSpec{
 				Rename: &OsOpRenameSpec{
-					NewPath: ValOrRef{Val: fmt.Sprintf("%s/%s", t.TempDir(), "newname.txt")},
-					OldPath: ValOrRef{Val: f.Name()},
+					NewPath: &ValOrRef{Val: fmt.Sprintf("%s/%s", t.TempDir(), "newname.txt")},
+					OldPath: &ValOrRef{Val: f.Name()},
 				},
 			}
 			assert.NoError(t, oo.Do(newMockActBuilder().testLogger(t).build()))
@@ -226,8 +226,8 @@ func TestOsOp(t *testing.T) {
 		t.Run("should fail on non-existing file", func(t *testing.T) {
 			oo := OsOpSpec{
 				Rename: &OsOpRenameSpec{
-					NewPath: ValOrRef{Val: "/////"},
-					OldPath: ValOrRef{Val: "?????"},
+					NewPath: &ValOrRef{Val: "/////"},
+					OldPath: &ValOrRef{Val: "?????"},
 				},
 			}
 			assert.Error(t, oo.Do(newMockActBuilder().testLogger(t).build()))
@@ -241,7 +241,7 @@ func TestOsOp(t *testing.T) {
 			assert.NotNil(t, fi1)
 			time.Sleep(time.Millisecond * 10)
 			oo := OsOpSpec{Touch: &OsOpTouchSpec{
-				Path: ValOrRef{Val: d},
+				Path: &ValOrRef{Val: d},
 			}}
 			assert.NoError(t, oo.Do(newMockActBuilder().testLogger(t).build()))
 			fi2, err := os.Stat(d)
@@ -251,7 +251,7 @@ func TestOsOp(t *testing.T) {
 		})
 		t.Run("should fail on invalid path", func(t *testing.T) {
 			oo := OsOpSpec{Touch: &OsOpTouchSpec{
-				Path: ValOrRef{Val: "????////"},
+				Path: &ValOrRef{Val: "????////"},
 			}}
 			assert.Error(t, oo.Do(newMockActBuilder().testLogger(t).build()))
 		})
@@ -260,13 +260,13 @@ func TestOsOp(t *testing.T) {
 	t.Run("remove", func(t *testing.T) {
 		for _, rec := range []bool{true, false} {
 			t.Run(fmt.Sprintf("remove of temp dir should pass rec=%v", rec), func(t *testing.T) {
-				oo := OsOpSpec{Remove: &OsOpRemoveSpec{Recursive: &rec, Path: ValOrRef{Val: t.TempDir()}}}
+				oo := OsOpSpec{Remove: &OsOpRemoveSpec{Recursive: &rec, Path: &ValOrRef{Val: t.TempDir()}}}
 				t.Log(oo.String())
 				assert.NoError(t, oo.Do(mockEmptyActCtx()))
 			})
 		}
 		t.Run("remove of non-existent directory should fail", func(t *testing.T) {
-			oo := OsOpSpec{Remove: &OsOpRemoveSpec{Path: ValOrRef{Val: filepath.Join(t.TempDir(), "098765432")}}}
+			oo := OsOpSpec{Remove: &OsOpRemoveSpec{Path: &ValOrRef{Val: filepath.Join(t.TempDir(), "098765432")}}}
 			t.Log(oo.String())
 			assert.Error(t, oo.Do(mockEmptyActCtx()))
 		})
@@ -284,8 +284,8 @@ func TestOsOp(t *testing.T) {
 			newPath := filepath.Join(t.TempDir(), "new")
 			assert.NoError(t, os.WriteFile(oldPath, []byte("old"), 0777))
 			oo := OsOpSpec{Link: &OsOpLinkSpec{
-				OldName:  ValOrRef{Val: oldPath},
-				NewName:  ValOrRef{Val: newPath},
+				OldName:  &ValOrRef{Val: oldPath},
+				NewName:  &ValOrRef{Val: newPath},
 				Symbolic: true,
 			}}
 			t.Log(oo.String())
@@ -298,8 +298,8 @@ func TestOsOp(t *testing.T) {
 			to := t.TempDir()
 			assert.NoError(t, os.WriteFile(filepath.Join(from, "file1.txt"), []byte("aaa"), 0777))
 			oo := OsOpSpec{Copy: &OsOpCopySpec{
-				From: ValOrRef{Val: from},
-				To:   ValOrRef{Val: to},
+				From: &ValOrRef{Val: from},
+				To:   &ValOrRef{Val: to},
 			}}
 			t.Log(oo.String())
 			assert.NoError(t, oo.Do(mockEmptyActCtx()))
@@ -310,8 +310,8 @@ func TestOsOp(t *testing.T) {
 			to := t.TempDir()
 			assert.NoError(t, os.WriteFile(filepath.Join(from, "file1.txt"), []byte("aaa"), 0777))
 			oo := OsOpSpec{Copy: &OsOpCopySpec{
-				From: ValOrRef{Val: filepath.Join(from, "this does not exist")},
-				To:   ValOrRef{Val: to},
+				From: &ValOrRef{Val: filepath.Join(from, "this does not exist")},
+				To:   &ValOrRef{Val: to},
 			}}
 			t.Log(oo.String())
 			assert.Error(t, oo.Do(mockEmptyActCtx()))

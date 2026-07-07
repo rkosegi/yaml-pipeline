@@ -82,6 +82,13 @@ func (pv *ValOrRef) MarshalYAML() (interface{}, error) {
 	return pv.Val, nil
 }
 
+func (pv *ValOrRef) check() error {
+	if len(pv.Val) == 0 && len(pv.Ref) == 0 {
+		return errors.New("missing 'val' or 'ref' field")
+	}
+	return nil
+}
+
 func (pv *ValOrRef) UnmarshalYAML(node *yaml.Node) error {
 	switch node.Kind {
 	case yaml.MappingNode:
@@ -93,16 +100,20 @@ func (pv *ValOrRef) UnmarshalYAML(node *yaml.Node) error {
 			pv.isRef = true
 			pv.Ref = x.(string)
 		}
-		return nil
+		return pv.check()
 
 	case yaml.ScalarNode:
 		pv.Val = node.Value
-		return nil
+		return pv.check()
 	}
+
 	return fmt.Errorf("invalid value: '%v'", node)
 }
 
 func (pv *ValOrRef) Resolve(ctx ActionContext) string {
+	if pv == nil {
+		return ""
+	}
 	ss := ctx.Snapshot()
 	if pv.isRef {
 		if n := ctx.Data().Get(pp.MustParse(pv.Ref)); n != nil && n.IsLeaf() {

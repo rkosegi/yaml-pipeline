@@ -73,7 +73,7 @@ func (m *OsOpReadDirSpec) String() string {
 }
 
 func (m *OsOpLinkSpec) String() string {
-	return fmt.Sprintf("link[old=%s,new=%s]", m.OldName.String(), m.NewName.String())
+	return fmt.Sprintf("link[old=%v,new=%v]", m.OldName, m.NewName)
 }
 
 func fileInfoToDom(fi os.FileInfo) dom.Container {

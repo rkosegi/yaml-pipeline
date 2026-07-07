@@ -18,6 +18,7 @@ package pipeline
 
 import (
 	"bytes"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -43,4 +44,25 @@ func TestValOrRefMarshalYaml(t *testing.T) {
 		assert.NoError(t, yaml.NewDecoder(&out).Decode(&node))
 		assert.Equal(t, yaml.ScalarNode, node.Content[0].Kind)
 	})
+}
+
+func TestValOrRefUnmarshalYaml(t *testing.T) {
+	t.Run("unmarshal embedded", func(t *testing.T) {
+		var buf bytes.Buffer
+		vIn := OsOpSpec{Stat: &OsOpStatSpec{Path: &ValOrRef{Val: "/tmp/1.txt"}}}
+		assert.NoError(t, yaml.NewEncoder(&buf).Encode(vIn))
+		var vOut OsOpSpec
+		assert.NoError(t, yaml.NewDecoder(&buf).Decode(&vOut))
+		assert.Equal(t, "/tmp/1.txt", vOut.Stat.Path.Val)
+	})
+
+	t.Run("Unmarshal empty val+ref empty should fail", func(t *testing.T) {
+		y1 := `
+ref: ""
+val: ""
+`
+		var v ValOrRef
+		assert.Error(t, yaml.NewDecoder(strings.NewReader(y1)).Decode(&v))
+	})
+
 }
