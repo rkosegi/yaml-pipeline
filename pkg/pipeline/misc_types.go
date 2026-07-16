@@ -59,10 +59,10 @@ func (pv *AnyVal) Value() dom.Node {
 type ValOrRef struct {
 	isRef bool
 	// Ref is resolved reference, if any
-	Ref string
+	Ref string `yaml:"ref,omitempty" json:"ref,omitempty"`
 	// Val is value of dom.Leaf pointed to by ref after Resolve(ctx) has been called, or immediate value
 	// if Ref is empty
-	Val string
+	Val string `yaml:"val,omitempty" json:"val,omitempty"`
 }
 
 func (pv *ValOrRef) CloneWith(ctx ActionContext) *ValOrRef {
