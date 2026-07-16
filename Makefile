@@ -42,3 +42,9 @@ jsonschema-to-openapi:
 
 generate: jsonschema-to-openapi
 	go tool oapi-codegen --config=schemas/.openapi-config.yaml .private/openapi-spec.yaml
+
+update-go-deps:
+	@for m in $$(go list -mod=readonly -m -f '{{ if and (not .Indirect) (not .Main)}}{{.Path}}{{end}}' all); do \
+		go get $$m; \
+	done
+	@go mod tidy
