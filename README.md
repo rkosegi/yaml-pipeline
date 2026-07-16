@@ -64,7 +64,7 @@ import (
 )
 
 ....
-	
+
 gd := dom.ContainerNode()
 ex := pipeline.New(
      pipeline.WithData(gd),
@@ -81,7 +81,7 @@ ex := pipeline.New(
          "prom_gauge":   ops.NewPromGauge(),
      }),
  )
- 
+
 po := &pipeline.PipelineSpec{}
 po.Children = v.Steps
 

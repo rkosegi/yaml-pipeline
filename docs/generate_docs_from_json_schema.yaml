@@ -1,0 +1,105 @@
+#  Copyright 2025 Richard Kosegi
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#  http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+---
+# this pipeline generates documentation from JSON schema file for specific schema objects
+# yaml-language-server: $schema=https://raw.githubusercontent.com/rkosegi/yaml-pipeline/refs/heads/main/schemas/pipeline.json
+vars:
+  inputFile: schemas/pipeline.json
+  outputDir: docs
+steps:
+  010-load-input-file:
+    order: 10
+    import:
+      file: '{{ .vars.inputFile }}'
+      mode: json
+      path: work.input
+  010-set-temp-vars:
+    order: 10
+    set:
+      path: work
+      data:
+        temp: ""
+  # get ops names and sort then alphanumerically, just to have deterministic order
+  015-filter-schema-objects:
+    order: 15
+    template:
+      template: |
+        {{- $out := dict }}
+        {{- range $name, $spec := (get .work.input "$defs") }}
+          {{- if eq (get $spec "x-doc-gen") "ops" }}
+            {{ $_ := set $out $name $spec }}
+          {{- end }}
+        {{- end }}
+        {{ $out | toYaml }}
+      parseAs: yaml
+      path: work.ops
+  019-ops-sorted-names:
+    order: 19
+    template:
+      template: |
+        {{ .work.ops | keys | sortAlpha | toYaml }}
+      path: work.ops_names
+      parseAs: yaml
+  020-iterate-schema-objects:
+    order: 20
+    forEach:
+      query: work.ops_names
+      action:
+        steps:
+          01-log:
+            order: 1
+            log:
+              message: '{{ .forEach }}'
+          20-template:
+            order: 20
+            template:
+              template: |
+                {{- $op := .forEach }}
+                  {{- printf "%s\n" ($.work.temp | default "") }}
+                  {{- $spec := get .work.ops $op }}
+                <h1>{{ $op | replace "OpSpec" "" }}</h1>
+
+                  {{ printf "%s\n" $spec.description }}
+
+                <h3>Arguments</h3>
+
+                  {{- range $k, $v := $spec.properties }}
+                  {{   printf "- <code>%s</code>" $k }}
+                  {{   printf "%s\n" $v.description }}
+                  {{- end }}
+
+                  {{- with $spec.examples }}
+                <h3>Examples</h3>
+                  {{- range . }}
+                  {{ printf "- %s" .description }}
+                  {{ printf "```yaml" -}}
+                  {{ .content | toYaml | nindent 2 }}
+                  {{ printf "```\n" }}
+                  {{- end }}
+                {{- end }}
+              path: work.temp
+              trim: true
+  029-append-newline:
+    order: 29
+    template:
+      template: |
+        {{- printf "%s\n" .work.temp -}}
+      trim: false
+      path: work.output
+  030-export-markdown:
+    order: 30
+    export:
+      path: work.output
+      file: docs/ops.md
+      format: text

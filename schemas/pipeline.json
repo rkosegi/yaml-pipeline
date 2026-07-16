@@ -2,6 +2,25 @@
   "$defs": {
     "abortOpSpec": {
       "description": "AbortOp can be used to abort execution",
+      "examples": [
+        {
+          "content": {
+            "abort": {
+              "message": "Pipeline aborted"
+            }
+          },
+          "description": "Abort execution unconditionally"
+        },
+        {
+          "content": {
+            "abort": {
+              "message": "Pipeline aborted"
+            },
+            "when": "{{ not (eq 1502 .result.code) }}"
+          },
+          "description": "Abort execution when data in the specific path, in the tree is not equal to some value"
+        }
+      ],
       "properties": {
         "message": {
           "description": "The reason of abort",
@@ -11,7 +30,8 @@
       "required": [
         "message"
       ],
-      "type": "object"
+      "type": "object",
+      "x-doc-gen": "ops"
     },
     "actionMeta": {
       "properties": {
@@ -79,7 +99,8 @@
       "required": [
         "name"
       ],
-      "type": "object"
+      "type": "object",
+      "x-doc-gen": "ops"
     },
     "defineOpSpec": {
       "additionalProperties": false,
@@ -97,7 +118,8 @@
         "name",
         "action"
       ],
-      "type": "object"
+      "type": "object",
+      "x-doc-gen": "ops"
     },
     "envOpSpec": {
       "additionalProperties": false,
@@ -118,7 +140,8 @@
           "type": "string"
         }
       },
-      "type": "object"
+      "type": "object",
+      "x-doc-gen": "ops"
     },
     "errorPropagationPolicy": {
       "description": "ErrorPropagation configure behavior of error propagation.\n * ignore - error is silently ignored",
@@ -169,7 +192,8 @@
       "required": [
         "program"
       ],
-      "type": "object"
+      "type": "object",
+      "x-doc-gen": "ops"
     },
     "exportOpSpec": {
       "additionalProperties": false,
@@ -192,7 +216,8 @@
         "file",
         "format"
       ],
-      "type": "object"
+      "type": "object",
+      "x-doc-gen": "ops"
     },
     "extOpSpec": {
       "additionalProperties": false,
@@ -211,7 +236,8 @@
       "required": [
         "function"
       ],
-      "type": "object"
+      "type": "object",
+      "x-doc-gen": "ops"
     },
     "forEachOpSpec": {
       "additionalProperties": false,
@@ -303,7 +329,8 @@
         "mode",
         "path"
       ],
-      "type": "object"
+      "type": "object",
+      "x-doc-gen": "ops"
     },
     "logOpSpec": {
       "description": "LogOp just logs message to logger",
@@ -316,7 +343,8 @@
       "required": [
         "message"
       ],
-      "type": "object"
+      "type": "object",
+      "x-doc-gen": "ops"
     },
     "loopOpSpec": {
       "description": "LoopOp is similar to ForEach, but it also has initial and post actions",
@@ -460,6 +488,15 @@
     },
     "osOpCopySpec": {
       "description": "Copy file(s) from source path to the destination",
+      "examples": [
+        {
+          "content": {
+            "from": "files.txt",
+            "to": "/tmp"
+          },
+          "description": "Copy file from current directory to the /tmp"
+        }
+      ],
       "properties": {
         "from": {
           "$ref": "#/$defs/osFilePath",
@@ -474,7 +511,8 @@
         "from",
         "to"
       ],
-      "type": "object"
+      "type": "object",
+      "x-doc-gen": "osOps"
     },
     "osOpExistsSpec": {
       "description": "Checks if file exists. Similar to Stat, but does not errors out if file is missing. Result of the operation is boolean.",
@@ -737,6 +775,26 @@
     },
     "patchOpSpec": {
       "description": "PatchOp performs RFC6902-style patch on global data document.",
+      "examples": [
+        {
+          "content": {
+            "op": "remove",
+            "path": "/hr/employees/0"
+          },
+          "description": "Delete first item from list \"employees\" under \"hr\" element in the root of data"
+        },
+        {
+          "content": {
+            "op": "add",
+            "path": "/hr/employees/2",
+            "value": {
+              "department": "Management",
+              "name": "Bob"
+            }
+          },
+          "description": "Add new item at position 2, to the list \"employees\" under \"hr\" element in the root of data"
+        }
+      ],
       "properties": {
         "from": {
           "description": "Path used as a source with Copy and Move operations",
@@ -764,7 +822,8 @@
         "op",
         "path"
       ],
-      "type": "object"
+      "type": "object",
+      "x-doc-gen": "ops"
     },
     "pipelineSpec": {
       "anyOf": [
@@ -824,7 +883,8 @@
       "required": [
         "data"
       ],
-      "type": "object"
+      "type": "object",
+      "x-doc-gen": "ops"
     },
     "setStrategy": {
       "description": "Defines how data are handled when conflict occurs during set.\n * replace - old value is replaced with new.\n * merge - merge is attempted by applying new value on top of old one.",
@@ -881,7 +941,8 @@
         "file",
         "output"
       ],
-      "type": "object"
+      "type": "object",
+      "x-doc-gen": "ops"
     },
     "templateOpSpec": {
       "description": "TemplateOp can be used to render value from data at runtime",
@@ -908,7 +969,8 @@
         "template",
         "path"
       ],
-      "type": "object"
+      "type": "object",
+      "x-doc-gen": "ops"
     },
     "xmlImportOptions": {
       "description": "Configuration to customize XML loading. Only relevant for 'xml' mode",

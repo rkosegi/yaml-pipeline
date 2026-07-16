@@ -57,3 +57,12 @@ repos:
     rev: v8.30.0
     hooks:
       - id: gitleaks
+  - repo: https://github.com/rkosegi/yaml-pipeline
+    rev: v0.0.9
+    hooks:
+      - id: yaml-pipeline-file
+        name: Regenerate documentation from JSON schema
+        args:
+          - --file
+          - docs/generate_docs_from_json_schema.yaml
+        files: schemas/pipeline.json
