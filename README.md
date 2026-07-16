@@ -20,6 +20,8 @@ Check [examples](docs/examples.md) for more info.
 
 ## How to use it
 
+### CLI
+
 1. declare schema for auto-completion in your editor
 
     ```yaml
@@ -45,3 +47,43 @@ Check [examples](docs/examples.md) for more info.
     ```shell
    yp --file mypipeline.yaml
     ```
+
+### Pipeline as a library (PaaL)
+
+You can embed this library into your application and invoke pipeline as you wish.
+This allows for custom functions and services.
+
+Here is [one downstream repository](https://github.com/rkosegi/universal-exporter) that uses this approach.
+
+
+```go
+
+import (
+    "github.com/rkosegi/yaml-pipeline/pkg/pipeline"
+    "github.com/rkosegi/yaml-toolkit/dom"
+)
+
+....
+	
+gd := dom.ContainerNode()
+ex := pipeline.New(
+     pipeline.WithData(gd),
+     pipeline.WithListener(&pipelineLogAdapter{
+         l: p.l.With("component", "pipeline"),
+     }),
+     pipeline.WithServices(map[string]pipeline.Service{
+         "HttpClient":    p.hcs,
+         "MetricService": p.ms,
+     }),
+     pipeline.WithExtActions(map[string]pipeline.ActionFactory{
+         "http_fetch":   ops.NewHttpFetch(),
+         "prom_counter": ops.NewPromCounter(),
+         "prom_gauge":   ops.NewPromGauge(),
+     }),
+ )
+ 
+po := &pipeline.PipelineSpec{}
+po.Children = v.Steps
+
+err := ex.Execute(po)
+```
