@@ -33,7 +33,7 @@ builds:
       - linux_arm64
       - darwin_amd64_v1
       - darwin_arm64
-    dir: pkg/cmd/cli
+    dir: pkg/cmd/yp
     main: main.go
     binary: yp
     flags:
