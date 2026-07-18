@@ -18,6 +18,10 @@ It's like scripting, but described in YAML.
 
 Check [examples](docs/examples.md) for more info.
 
+## Generated documentation
+
+Please [check here](docs/ops.md)
+
 ## How to use it
 
 ### CLI
