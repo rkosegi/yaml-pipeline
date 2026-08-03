@@ -14,7 +14,7 @@
 
 module github.com/rkosegi/yaml-pipeline
 
-go 1.26.4
+go 1.26.5
 
 tool github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen
 
@@ -25,7 +25,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/gookit/color v1.6.1
 	github.com/inhies/go-bytesize v0.0.0-20220417184213-4913239db9cf
-	github.com/kaptinlin/jsonschema v0.9.3
+	github.com/kaptinlin/jsonschema v0.9.6
 	github.com/otiai10/copy v1.14.1
 	github.com/rkosegi/slog-config v0.0.1
 	github.com/rkosegi/yaml-toolkit v1.0.69
@@ -53,7 +53,7 @@ require (
 	github.com/google/go-cmp v0.7.0 // indirect
 	github.com/huandu/xstrings v1.5.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
-	github.com/kaptinlin/jsonpointer v0.4.27 // indirect
+	github.com/kaptinlin/jsonpointer v0.4.28 // indirect
 	github.com/magiconair/properties v1.8.10 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
