@@ -78,8 +78,8 @@ github.com/inhies/go-bytesize v0.0.0-20220417184213-4913239db9cf h1:FtEj8sfIcaaB
 github.com/inhies/go-bytesize v0.0.0-20220417184213-4913239db9cf/go.mod h1:yrqSXGoD/4EKfF26AOGzscPOgTTJcyAwM2rpixWT+t4=
 github.com/kaptinlin/jsonpointer v0.4.28 h1:PyxOfdml9PGpxQz+JnNLGsyzQ+Rnm+OVNTGcgbVLqgg=
 github.com/kaptinlin/jsonpointer v0.4.28/go.mod h1:JzeIDw1+60bryzOFea9P3zjKg8pfJHd+UIA/zfZ70x8=
-github.com/kaptinlin/jsonschema v0.9.7 h1:2jOBrfpCAcfaJJfgtDmJTGwuf0/skctp3Fnj3DxJtw8=
-github.com/kaptinlin/jsonschema v0.9.7/go.mod h1:/T5IxJXz1mrNz2ATCdNeHTsd1AZ16ctWHqf9hQwZ3DM=
+github.com/kaptinlin/jsonschema v0.9.8 h1:srpfx2MAm4ecYz0zJLbz6fiW+UXiuv+vGhUqZUIWmrg=
+github.com/kaptinlin/jsonschema v0.9.8/go.mod h1:TP7RFmFBNExjBE0b3fsM6RpA/9PeOzfg2g4weXqOrDg=
 github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORNo=
 github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=
 github.com/kr/pretty v0.3.1/go.mod h1:hoEshYVHaxMs3cyo3Yncou5ZscifuDolrwPKZanG3xk=
