@@ -41,7 +41,7 @@ repos:
         args:
           - -c=.yamllint-config.yaml
   - repo: https://github.com/santhosh-tekuri/jsonschema
-    rev: v6.0.2
+    rev: cmd/jv/0.8.0
     hooks:
       - id: jsonschema-validate
         name: Validate action.yaml and GitHub workflows against schema
