@@ -10,6 +10,27 @@ import (
 	"github.com/rkosegi/yaml-toolkit/patch"
 )
 
+// Defines values for EncodeDataAs.
+const (
+	EncodeDataAsBinary EncodeDataAs = "binary"
+	EncodeDataAsJson   EncodeDataAs = "json"
+	EncodeDataAsYaml   EncodeDataAs = "yaml"
+)
+
+// Valid indicates whether the value is a known member of the EncodeDataAs enum.
+func (e EncodeDataAs) Valid() bool {
+	switch e {
+	case EncodeDataAsBinary:
+		return true
+	case EncodeDataAsJson:
+		return true
+	case EncodeDataAsYaml:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for ErrorPropagationPolicy.
 const (
 	ErrorPropagationPolicyIgnore ErrorPropagationPolicy = "ignore"
@@ -34,6 +55,39 @@ const (
 func (e Html2DomLayout) Valid() bool {
 	switch e {
 	case Html2DomLayoutDefault:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for HttpMethod.
+const (
+	HttpMethodDELETE  HttpMethod = "DELETE"
+	HttpMethodGET     HttpMethod = "GET"
+	HttpMethodHEAD    HttpMethod = "HEAD"
+	HttpMethodOPTIONS HttpMethod = "OPTIONS"
+	HttpMethodPOST    HttpMethod = "POST"
+	HttpMethodPUT     HttpMethod = "PUT"
+	HttpMethodTRACE   HttpMethod = "TRACE"
+)
+
+// Valid indicates whether the value is a known member of the HttpMethod enum.
+func (e HttpMethod) Valid() bool {
+	switch e {
+	case HttpMethodDELETE:
+		return true
+	case HttpMethodGET:
+		return true
+	case HttpMethodHEAD:
+		return true
+	case HttpMethodOPTIONS:
+		return true
+	case HttpMethodPOST:
+		return true
+	case HttpMethodPUT:
+		return true
+	case HttpMethodTRACE:
 		return true
 	default:
 		return false
@@ -112,6 +166,24 @@ func (e ParseTextAs) Valid() bool {
 	case ParseTextAsNone:
 		return true
 	case ParseTextAsYaml:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for RetryPolicy.
+const (
+	RetryPolicyBackoff RetryPolicy = "backoff"
+	RetryPolicyFixed   RetryPolicy = "fixed"
+)
+
+// Valid indicates whether the value is a known member of the RetryPolicy enum.
+func (e RetryPolicy) Valid() bool {
+	switch e {
+	case RetryPolicyBackoff:
+		return true
+	case RetryPolicyFixed:
 		return true
 	default:
 		return false
@@ -200,6 +272,11 @@ type DefineOpSpec struct {
 	// Name Name that will be used for registration
 	Name string `json:"name" yaml:"name"`
 }
+
+// EncodeDataAs Defines how node within the data tree will be encoded.
+//   - binary - content of dom.Leaf, which must be either string or []byte will be used as-is
+//   - json/yaml - dom.Node will be encoded using respective codec
+type EncodeDataAs string
 
 // EnvOpSpec This op is used to import OS environment variables into data
 type EnvOpSpec struct {
@@ -319,6 +396,65 @@ type Html2DomOpSpec struct {
 
 	// To destination where to put converted document as dom.Container
 	To string `json:"to" yaml:"to"`
+}
+
+// HttpHeaders HTTP headers container
+type HttpHeaders map[string][]string
+
+// HttpMethod HTTP method (rfc9110)
+type HttpMethod string
+
+// HttpOpSpec Performs a simple HTTP request.
+// For more advanced HTTP operations, one can use ExecOp with curl.
+type HttpOpSpec struct {
+	// BodyFrom Describes how to source the data locally.
+	BodyFrom *SourceOfData `json:"bodyFrom,omitempty" yaml:"bodyFrom,omitempty"`
+
+	// Headers HTTP headers container
+	Headers *HttpHeaders `json:"headers,omitempty" yaml:"headers,omitempty"`
+
+	// Method HTTP method (rfc9110)
+	Method HttpMethod `json:"method" yaml:"method"`
+
+	// ParseAs Defines how the content is parsed before it is put into data tree
+	//  * binary - Content is read and encoded using base64 string into data tree
+	//  * text - Content is read as-is and is assumed it represents utf-8 encoded byte stream
+	//  * yaml - File is parsed as YAML document and put as child node into data tree
+	//  * xml - Content is parsed as XML document and transformed using selected layout.
+	//  * json - File is parsed as JSON document and put as child node into data tree
+	//  * properties - Content is parsed as Java properties into map[string]interface{} and put as a child node into data tree
+	ParseAs *ParseContentMode `json:"parseAs,omitempty" yaml:"parseAs,omitempty"`
+	Retry   *RetryConfig      `json:"retry,omitempty" yaml:"retry,omitempty"`
+
+	// SkipBody When true, response body is not read from server, only status/headers.
+	// If not specified, then body is fully read
+	SkipBody *bool `json:"skipBody,omitempty" yaml:"skipBody,omitempty"`
+
+	// StoreTo Path to location within the data, where result of operation is store upon success
+	StoreTo *StoreResultTo `json:"storeTo,omitempty" yaml:"storeTo,omitempty"`
+
+	// Url Target resource
+	Url string `json:"url" yaml:"url"`
+
+	// ValidStatusCodes List of HTTP status codes that are considered valid.
+	// Anything else will cause operation to fail.
+	// When omitted, then any status code is accepted
+	ValidStatusCodes *[]int `json:"validStatusCodes,omitempty" yaml:"validStatusCodes,omitempty"`
+
+	// WriteTo Arbitrary file path
+	WriteTo *OsFilePath `json:"writeTo,omitempty" yaml:"writeTo,omitempty"`
+}
+
+// HttpResponse Container for complete HTTP response
+type HttpResponse struct {
+	// Body Response body content
+	Body map[string]interface{} `json:"body" yaml:"body"`
+
+	// Headers HTTP headers container
+	Headers HttpHeaders `json:"headers" yaml:"headers"`
+
+	// Status HTTP status code
+	Status int `json:"status" yaml:"status"`
 }
 
 // ImportOpSpec Imports data from file into data tree
@@ -633,6 +769,24 @@ type PatchOpSpec struct {
 // RecursiveFlag Whether to apply operation recursively
 type RecursiveFlag = bool
 
+// RetryBackoffSpec Specification of backoff retry policy
+type RetryBackoffSpec struct {
+	// Factor Multiplication factor
+	Factor float32 `json:"factor" yaml:"factor"`
+
+	// Jitter Whether to randomize backoff steps
+	Jitter *bool `json:"jitter,omitempty" yaml:"jitter,omitempty"`
+
+	// Max Maximum duration
+	Max string `json:"max" yaml:"max"`
+
+	// Min Minimum duration
+	Min string `json:"min" yaml:"min"`
+}
+
+// RetryPolicy Retry policy
+type RetryPolicy string
+
 // SetOpSpec Sets the data into data tree
 type SetOpSpec struct {
 	// Data Arbitrary data to put into data tree
@@ -655,6 +809,15 @@ type SetOpSpec struct {
 //   - replace - old value is replaced with new.
 //   - merge - merge is attempted by applying new value on top of old one.
 type SetStrategy string
+
+// SourceOfData Describes how to source the data locally.
+type SourceOfData struct {
+	// File Data are read from the file on a local filesystem
+	File *ValOrRef `json:"file,omitempty" yaml:"file,omitempty"`
+
+	// Tree Data is taken from the global data tree at a given path
+	Tree *ValOrRef `json:"tree,omitempty" yaml:"tree,omitempty"`
+}
 
 // StoreResultTo Path to location within the data, where result of operation is store upon success
 type StoreResultTo = *ValOrRef

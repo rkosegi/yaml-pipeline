@@ -47,7 +47,7 @@ components:
     osFileMode:
       x-go-type: os.FileMode
     storeResultTo:
-      x-go-type: '*ValOrRef'
+      x-go-type: ValOrRef
     patchOpSpec:
       properties:
         value:
@@ -64,6 +64,12 @@ components:
           x-go-type: ValOrRef
         cases:
           x-go-type: ChildActions
+    sourceOfData:
+      properties:
+        file:
+          x-go-type: ValOrRef
+        tree:
+          x-go-type: ValOrRef
     callOpSpec:
       properties:
         argsFrom:
