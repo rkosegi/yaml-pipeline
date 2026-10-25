@@ -134,6 +134,49 @@ If neither of these conditions are met, then it is considered as if path does no
   - <code>function</code>
   Name of the function that was registered with the Executor
 
+<h1>http</h1>
+
+  Performs a simple HTTP request.
+For more advanced HTTP operations, one can use ExecOp with curl.
+In particular, request/response bodies are handled fully in memory, which make this unsuitable for huge data.
+
+
+<h3>Arguments</h3>
+  - <code>bodyFrom</code>
+  Where to get request body from
+
+  - <code>encodeAs</code>
+  How to encode request body taken from global data tree before sending
+
+  - <code>headers</code>
+  HTTP request headers
+
+  - <code>method</code>
+  HTTP method
+
+  - <code>parseAs</code>
+  How to parse the response body before storing it to data tree.
+When omitted, then body is taken as-is (binary).
+
+  - <code>skipBody</code>
+  When true, response body is not read from server, only status/headers.
+If not specified, then body is fully read
+
+  - <code>storeTo</code>
+  Location within the data tree where to store the result
+
+  - <code>url</code>
+  Target resource
+
+  - <code>validStatusCodes</code>
+  List of HTTP status codes that are considered valid.
+Anything else will cause operation to fail.
+When omitted, then any status code is accepted
+
+  - <code>writeTo</code>
+  Path to the local file, where response body will be written into.
+Only considered when skipBody is not true
+
 <h1>import</h1>
 
   Imports data from file into data tree

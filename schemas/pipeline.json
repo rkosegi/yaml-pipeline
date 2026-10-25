@@ -386,7 +386,8 @@
       "required": [
         "method",
         "url"
-      ]
+      ],
+      "x-doc-gen": "ops"
     },
     "httpResponse": {
       "description": "Container for complete HTTP response",
