@@ -41,7 +41,7 @@ type Executor interface {
 type Logger interface {
 	// Log logs given values.
 	// Format of values passed to this method is undefined.
-	Log(v ...interface{})
+	Log(v ...any)
 }
 
 // Listener interface allows to hook into execution of Action.
@@ -52,7 +52,7 @@ type Listener interface {
 	// Any error returned by invoking Do() method is returned as last parameter.
 	OnAfter(ctx ActionContext, err error)
 	// OnLog is called whenever action invokes Log method on Logger instance
-	OnLog(ctx ActionContext, v ...interface{})
+	OnLog(ctx ActionContext, v ...any)
 }
 
 // ExtInterface enables actions to use extensions.
@@ -98,7 +98,7 @@ type DataServices interface {
 	Data() dom.ContainerBuilder
 	// Snapshot is read-only view of Data() in point in time.
 	// This value is cached for performance reasons.
-	Snapshot() map[string]interface{}
+	Snapshot() map[string]any
 	// InvalidateSnapshot marks cached snapshot as dirty so next snapshot request will cause retrieval.
 	InvalidateSnapshot()
 }

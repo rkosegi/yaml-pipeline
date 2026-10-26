@@ -60,7 +60,7 @@ func TestTemplateEngineRenderLenient(t *testing.T) {
 	}
 	assert.Equal(t, "AAA", te.RenderLenient("AAA", nil))
 	assert.Equal(t, "{{ data }}", te.RenderLenient("{{ data }}", nil))
-	assert.Equal(t, "123", te.RenderLenient("{{ .data }}", map[string]interface{}{
+	assert.Equal(t, "123", te.RenderLenient("{{ .data }}", map[string]any{
 		"data": 123,
 	}))
 }
@@ -71,11 +71,11 @@ func TestRenderTemplate(t *testing.T) {
 		err error
 	)
 	// invalid template syntax
-	_, err = renderTemplate("{{", map[string]interface{}{}, sprig.TxtFuncMap())
+	_, err = renderTemplate("{{", map[string]any{}, sprig.TxtFuncMap())
 	assert.Error(t, err)
 
 	// valid template, valid data
-	out, err = renderTemplate("{{ .X }}", map[string]interface{}{
+	out, err = renderTemplate("{{ .X }}", map[string]any{
 		"X": "abcd",
 	}, sprig.TxtFuncMap())
 	assert.NoError(t, err)
@@ -89,41 +89,41 @@ func TestRenderTemplate(t *testing.T) {
 func TestTemplateEngineRenderMapLenient(t *testing.T) {
 	te := &templateEngine{}
 	t.Run("without slices", func(t *testing.T) {
-		ret := te.RenderMapLenient(map[string]interface{}{
-			"sub": map[string]interface{}{
+		ret := te.RenderMapLenient(map[string]any{
+			"sub": map[string]any{
 				"leaf": "{{ .Y }}",
 			},
 			"int_leaf": 1,
-		}, map[string]interface{}{
+		}, map[string]any{
 			"X": 123,
 			"Y": "abc",
 		})
-		assert.Equal(t, "abc", ret["sub"].(map[string]interface{})["leaf"])
+		assert.Equal(t, "abc", ret["sub"].(map[string]any)["leaf"])
 		assert.Equal(t, 1, ret["int_leaf"])
 	})
 	t.Run("with slices", func(t *testing.T) {
-		ret := te.RenderMapLenient(map[string]interface{}{
-			"sub": map[string]interface{}{
-				"list": []interface{}{
-					map[string]interface{}{
+		ret := te.RenderMapLenient(map[string]any{
+			"sub": map[string]any{
+				"list": []any{
+					map[string]any{
 						"file": "application.yaml",
 						"cm":   "{{ .Env.APP_NAME }}-config",
 					},
 				},
 			},
 			"int_leaf": 1,
-		}, map[string]interface{}{
+		}, map[string]any{
 			"Env": map[string]string{
 				"APP_NAME": "myapp",
 			},
 		})
-		assert.Equal(t, "myapp-config", ret["sub"].(map[string]interface{})["list"].([]interface{})[0].(map[string]interface{})["cm"])
+		assert.Equal(t, "myapp-config", ret["sub"].(map[string]any)["list"].([]any)[0].(map[string]any)["cm"])
 	})
 }
 
 func TestTemplateEngineRenderSliceLenient(t *testing.T) {
 	te := &templateEngine{}
-	ret := te.RenderSliceLenient([]string{"a", "{{ .x }}"}, map[string]interface{}{
+	ret := te.RenderSliceLenient([]string{"a", "{{ .x }}"}, map[string]any{
 		"x": "abc",
 	})
 	assert.Equal(t, "a", ret[0])
@@ -135,7 +135,7 @@ func TestTemplateEngineRenderTpl(t *testing.T) {
 		out string
 		err error
 	)
-	out, err = renderTemplate("{{ tpl .T . }}", map[string]interface{}{
+	out, err = renderTemplate("{{ tpl .T . }}", map[string]any{
 		"T": "{{ add .X 3 }}",
 		"X": 10,
 	}, sprig.TxtFuncMap())
@@ -147,7 +147,7 @@ func TestTemplateEngineRenderTplInvalid(t *testing.T) {
 	var (
 		err error
 	)
-	_, err = renderTemplate("{{ tpl .T . }}", map[string]interface{}{
+	_, err = renderTemplate("{{ tpl .T . }}", map[string]any{
 		"T": "{{",
 	}, sprig.TxtFuncMap())
 	assert.Error(t, err)
@@ -158,8 +158,8 @@ func TestTemplateEngineRenderToYaml(t *testing.T) {
 		out string
 		err error
 	)
-	out, err = DefaultTemplateEngine().Render("{{ toYaml . }}", map[string]interface{}{
-		"x": map[string]interface{}{
+	out, err = DefaultTemplateEngine().Render("{{ toYaml . }}", map[string]any{
+		"x": map[string]any{
 			"z": "abc",
 		},
 		"y": 25,
@@ -170,7 +170,7 @@ func TestTemplateEngineRenderToYaml(t *testing.T) {
 
 func TestTemplateFuncIsEmpty(t *testing.T) {
 	type testCase struct {
-		v   interface{}
+		v   any
 		res bool
 	}
 	for _, v := range []testCase{
@@ -196,12 +196,12 @@ func TestTemplateFuncIsEmpty(t *testing.T) {
 }
 
 func TestTemplateFuncUnflatten(t *testing.T) {
-	r := unflattenFunc(map[string]interface{}{
+	r := unflattenFunc(map[string]any{
 		"a.b": 1,
 		"c":   "hello",
 	})
 	assert.Equal(t, 2, len(r))
-	assert.Equal(t, 1, r["a"].(map[string]interface{})["b"])
+	assert.Equal(t, 1, r["a"].(map[string]any)["b"])
 	assert.Equal(t, "hello", r["c"])
 }
 
@@ -316,7 +316,7 @@ func TestTemplateFuncDom2Yaml(t *testing.T) {
 	} {
 		var res string
 		res, err = DefaultTemplateEngine().Render(`{{ mergeFiles ( glob ( printf "%s/*.yaml" .Temp ) ) | dom2`+tc.format+` | trim }}`,
-			map[string]interface{}{
+			map[string]any{
 				"Temp": d,
 			})
 		t.Logf("Merged content using format '%s':\n%s", tc.format, res)
@@ -336,12 +336,12 @@ func domToAnyAt(d dom.Container, p string) any {
 
 func TestTemplateFuncDomDiff(t *testing.T) {
 	pp := props.NewPathParser()
-	d := dom.DecodeAnyToNode(map[string]interface{}{
-		"a": map[string]interface{}{
-			"b": map[string]interface{}{
+	d := dom.DecodeAnyToNode(map[string]any{
+		"a": map[string]any{
+			"b": map[string]any{
 				"c": 1,
 			},
-			"d": map[string]interface{}{
+			"d": map[string]any{
 				"h": "hello",
 			},
 		},
@@ -497,18 +497,18 @@ func TestBoolExpressionEval(t *testing.T) {
 		fm: sprig.TxtFuncMap(),
 	}
 	expr := `{{ eq .Env "Development" }}`
-	val, err = te.EvalBool(expr, map[string]interface{}{
+	val, err = te.EvalBool(expr, map[string]any{
 		"Env": "Development",
 	})
 	assert.NoError(t, err)
 	assert.Equal(t, true, val)
 
-	val, err = te.EvalBool(expr, map[string]interface{}{
+	val, err = te.EvalBool(expr, map[string]any{
 		"Env": "Production",
 	})
 	assert.NoError(t, err)
 	assert.Equal(t, false, val)
 
-	_, err = te.EvalBool(`{{`, map[string]interface{}{})
+	_, err = te.EvalBool(`{{`, map[string]any{})
 	assert.Error(t, err)
 }

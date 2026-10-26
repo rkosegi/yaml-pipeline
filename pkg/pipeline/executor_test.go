@@ -71,8 +71,8 @@ set:
 	assert.NotNil(t, pl)
 	assert.Contains(t, pl.String(), "root step")
 	assert.Equal(t, "root step", *pl.Name)
-	assert.Equal(t, 123, pl.Operations.Set.Data["root"].(map[string]interface{})["sub1"].(map[string]interface{})["leaf1"])
-	assert.Equal(t, "list_item1", pl.Operations.Set.Data["root"].(map[string]interface{})["sub2"].([]interface{})[0])
+	assert.Equal(t, 123, pl.Operations.Set.Data["root"].(map[string]any)["sub1"].(map[string]any)["leaf1"])
+	assert.Equal(t, "list_item1", pl.Operations.Set.Data["root"].(map[string]any)["sub2"].([]any)[0])
 }
 
 func TestExecute(t *testing.T) {
@@ -88,7 +88,7 @@ func TestExecute(t *testing.T) {
 		},
 		Operations: OpSpec{
 			Set: &SetOpSpec{
-				Data: map[string]interface{}{
+				Data: map[string]any{
 					"leaf": "abcd",
 				},
 			},
@@ -98,7 +98,7 @@ func TestExecute(t *testing.T) {
 				Operations: OpSpec{
 					Set: &SetOpSpec{
 						Path: new("sub1.sub2"),
-						Data: map[string]interface{}{
+						Data: map[string]any{
 							"leaf": "abcd",
 						},
 						Strategy: new(SetStrategyReplace),
@@ -188,7 +188,7 @@ func TestExecutePatch(t *testing.T) {
 			Patch: &PatchOpSpec{
 				Op:    patch.OpAdd,
 				Path:  "/root",
-				Value: anyValFromMap(map[string]interface{}{"leaf": "abcd"}),
+				Value: anyValFromMap(map[string]any{"leaf": "abcd"}),
 			},
 		},
 	}))
@@ -214,7 +214,7 @@ func TestExecuteInnerSteps(t *testing.T) {
 				},
 				Operations: OpSpec{
 					Set: &SetOpSpec{
-						Data: map[string]interface{}{
+						Data: map[string]any{
 							"root.sub": 123,
 						},
 						Strategy: new(SetStrategyReplace),
@@ -228,7 +228,7 @@ func TestExecuteInnerSteps(t *testing.T) {
 				},
 				Operations: OpSpec{
 					Set: &SetOpSpec{
-						Data: map[string]interface{}{
+						Data: map[string]any{
 							"root.sub": 456,
 						},
 						Strategy: new(SetStrategyReplace),

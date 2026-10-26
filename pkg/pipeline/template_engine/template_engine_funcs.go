@@ -38,8 +38,8 @@ import (
 	"github.com/rkosegi/yaml-toolkit/props"
 )
 
-func tplFunc(tmpl *template.Template) func(string, interface{}) (string, error) {
-	return func(tpl string, data interface{}) (string, error) {
+func tplFunc(tmpl *template.Template) func(string, any) (string, error) {
+	return func(tpl string, data any) (string, error) {
 		t, _ := tmpl.Clone()
 		t, err := t.New(tmpl.Name()).Parse(tpl)
 		if err != nil {
@@ -51,14 +51,14 @@ func tplFunc(tmpl *template.Template) func(string, interface{}) (string, error) 
 	}
 }
 
-func toYamlFunc(v interface{}) (string, error) {
+func toYamlFunc(v any) (string, error) {
 	var buf strings.Builder
 	err := common.NewYamlEncoder(&buf).Encode(v)
 	return strings.TrimSuffix(buf.String(), "\n"), err
 }
 
 // isEmptyFunc returns true if given argument is nil, or empty string
-func isEmptyFunc(v interface{}) bool {
+func isEmptyFunc(v any) bool {
 	if v == nil {
 		return true
 	}
@@ -71,7 +71,7 @@ func isEmptyFunc(v interface{}) bool {
 }
 
 // un-flatten map
-func unflattenFunc(v map[string]interface{}) map[string]interface{} {
+func unflattenFunc(v map[string]any) map[string]any {
 	return common.Unflatten(v)
 }
 
@@ -140,7 +140,7 @@ func domDiffFunc(left, right dom.Node) ([]diff.Modification, error) {
 
 // diffTreeFunc computes difference between 2 container nodes.
 // Both of nodes must be of dom.Container type, otherwise result is empty slice
-func diffTreeFunc(v1, v2 interface{}) ([]diff.Modification, error) {
+func diffTreeFunc(v1, v2 any) ([]diff.Modification, error) {
 	var (
 		c1, c2 dom.Node
 	)

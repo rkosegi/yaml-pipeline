@@ -63,7 +63,7 @@ func (e *ExportOpSpec) Do(ctx ActionContext) (err error) {
 	case OutputFormatProperties:
 		enc = props.EncoderFn
 	case OutputFormatText:
-		enc = func(w io.Writer, v interface{}) error {
+		enc = func(w io.Writer, v any) error {
 			_, err = fmt.Fprintf(w, "%v", v)
 			return err
 		}

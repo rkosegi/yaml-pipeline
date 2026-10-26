@@ -50,11 +50,11 @@ type clientCtx struct {
 func (ac *clientCtx) Action() Action     { return ac.c }
 func (ac *clientCtx) Executor() Executor { return ac.exec }
 func (ac *clientCtx) Logger() Logger     { return ac }
-func (ac *clientCtx) Log(v ...interface{}) {
+func (ac *clientCtx) Log(v ...any) {
 	ac.l.OnLog(ac, v...)
 }
 
-func ApplyArgs[T any](ctx ClientContext, opSpec *T, args map[string]interface{}) {
+func ApplyArgs[T any](ctx ClientContext, opSpec *T, args map[string]any) {
 	m := ctx.TemplateEngine().RenderMapLenient(args, ctx.Snapshot())
 	x := fluent.NewConfigHelper[T]().Add(opSpec).Add(m).Result()
 	*opSpec = *x
@@ -88,7 +88,7 @@ func (p *exec) Execute(act Action) (err error) {
 	slices.Reverse(names)
 	sysNode := dom.ContainerNode().
 		AddValue("LocalPath", dom.LeafNode(getActLocalName(act))).
-		AddValue("AbsolutePath", dom.ListNode(lo.Map(names, func(item interface{}, _ int) dom.Node {
+		AddValue("AbsolutePath", dom.ListNode(lo.Map(names, func(item any, _ int) dom.Node {
 			return dom.LeafNode(getActLocalName(item.(Action)))
 		})...))
 	ctx.Data().AddValue("$$_System", sysNode)
@@ -134,9 +134,9 @@ func (p *exec) Run(po *PipelineSpec) error {
 
 type noopListener struct{}
 
-func (n *noopListener) OnBefore(ActionContext)              {}
-func (n *noopListener) OnAfter(ActionContext, error)        {}
-func (n *noopListener) OnLog(ActionContext, ...interface{}) {}
+func (n *noopListener) OnBefore(ActionContext)       {}
+func (n *noopListener) OnAfter(ActionContext, error) {}
+func (n *noopListener) OnLog(ActionContext, ...any)  {}
 
 type Opt func(*exec)
 

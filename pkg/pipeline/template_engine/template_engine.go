@@ -58,7 +58,7 @@ type templateEngine struct {
 	fm template.FuncMap
 }
 
-func renderTemplate(tmplStr string, data interface{}, fm template.FuncMap) (string, error) {
+func renderTemplate(tmplStr string, data any, fm template.FuncMap) (string, error) {
 	tmpl := template.New("tmpl").Funcs(fm)
 	tmpl.Funcs(template.FuncMap{
 		"tpl": tplFunc(tmpl),
@@ -84,7 +84,7 @@ func possiblyTemplate(in string) bool {
 	return closeIdx > 0
 }
 
-func renderLenientTemplate(tmpl string, data map[string]interface{}, fm template.FuncMap) string {
+func renderLenientTemplate(tmpl string, data map[string]any, fm template.FuncMap) string {
 	if possiblyTemplate(tmpl) {
 		if val, err := renderTemplate(tmpl, data, fm); err != nil {
 			return tmpl
@@ -95,11 +95,11 @@ func renderLenientTemplate(tmpl string, data map[string]interface{}, fm template
 	return tmpl
 }
 
-func (te templateEngine) RenderLenient(tmpl string, data map[string]interface{}) string {
+func (te templateEngine) RenderLenient(tmpl string, data map[string]any) string {
 	return renderLenientTemplate(tmpl, data, te.fm)
 }
 
-func (te templateEngine) RenderSliceLenient(tmpls []string, data map[string]interface{}) []string {
+func (te templateEngine) RenderSliceLenient(tmpls []string, data map[string]any) []string {
 	out := make([]string, len(tmpls))
 	for i, tmpl := range tmpls {
 		out[i] = renderLenientTemplate(tmpl, data, te.fm)
@@ -107,34 +107,34 @@ func (te templateEngine) RenderSliceLenient(tmpls []string, data map[string]inte
 	return out
 }
 
-func (te templateEngine) RenderAny(in any, data map[string]interface{}) any {
+func (te templateEngine) RenderAny(in any, data map[string]any) any {
 	if s, ok := in.(string); ok {
 		return te.RenderLenient(s, data)
 	}
-	if m, ok := in.(map[string]interface{}); ok {
+	if m, ok := in.(map[string]any); ok {
 		return te.RenderMapLenient(m, data)
 	}
-	if l, ok := in.([]interface{}); ok {
-		return lo.Map(l, func(item interface{}, _ int) interface{} {
+	if l, ok := in.([]any); ok {
+		return lo.Map(l, func(item any, _ int) any {
 			return te.RenderAny(item, data)
 		})
 	}
 	return in
 }
 
-func (te templateEngine) RenderMapLenient(input map[string]interface{}, data map[string]interface{}) map[string]interface{} {
-	ret := make(map[string]interface{})
+func (te templateEngine) RenderMapLenient(input map[string]any, data map[string]any) map[string]any {
+	ret := make(map[string]any)
 	for k, v := range input {
 		ret[k] = te.RenderAny(v, data)
 	}
 	return ret
 }
 
-func (te templateEngine) Render(tmpl string, data map[string]interface{}) (string, error) {
+func (te templateEngine) Render(tmpl string, data map[string]any) (string, error) {
 	return renderTemplate(tmpl, data, te.fm)
 }
 
-func (te templateEngine) EvalBool(template string, data map[string]interface{}) (bool, error) {
+func (te templateEngine) EvalBool(template string, data map[string]any) (bool, error) {
 	val, err := te.Render(template, data)
 	if err != nil {
 		return false, err

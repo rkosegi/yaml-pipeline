@@ -26,7 +26,7 @@ import (
 func TestOpSpecCloneWith(t *testing.T) {
 	o := OpSpec{
 		Set: &SetOpSpec{
-			Data: map[string]interface{}{
+			Data: map[string]any{
 				"a": 1,
 			},
 			Path: new("{{ .Path }}"),
@@ -94,7 +94,7 @@ func TestOpSpecCloneWith(t *testing.T) {
 		},
 	}
 
-	a := o.CloneWith(newMockActBuilder().data(dom.DecodeAnyToNode(map[string]interface{}{
+	a := o.CloneWith(newMockActBuilder().data(dom.DecodeAnyToNode(map[string]any{
 		"Path":  "root.sub2",
 		"Path3": "/root/sub3",
 		"Shell": "/bin/bash",

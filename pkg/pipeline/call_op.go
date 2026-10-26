@@ -32,7 +32,7 @@ func (c *CallOpSpec) Do(ctx ActionContext) error {
 	if c.ArgsPath != nil {
 		ap = *c.ArgsPath
 	}
-	var args map[string]interface{}
+	var args map[string]any
 	if c.Args != nil {
 		args = *c.Args
 	}
@@ -42,7 +42,7 @@ func (c *CallOpSpec) Do(ctx ActionContext) error {
 		if !isNodeValidArgs(an) {
 			return fmt.Errorf("path does not resolve to map: %s", afp)
 		}
-		args = an.AsAny().(map[string]interface{})
+		args = an.AsAny().(map[string]any)
 	}
 	name := ctx.TemplateEngine().RenderLenient(c.Name, snap)
 	ap = ctx.TemplateEngine().RenderLenient(ap, snap)

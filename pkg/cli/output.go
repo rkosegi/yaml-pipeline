@@ -65,7 +65,7 @@ func (s *simpleListener) OnAfter(ctx ytp.ActionContext, err error) {
 	fmt.Fprintf(os.Stderr, "%s %s %v\n", endOpStyle.Render("[Done ]"), s.indentStr(), ctx.Action())
 }
 
-func (s *simpleListener) OnLog(_ ytp.ActionContext, v ...interface{}) {
+func (s *simpleListener) OnLog(_ ytp.ActionContext, v ...any) {
 	if tag, hasTag := utils.GetLogTag(v...); hasTag {
 		switch tag {
 		case "skip":
@@ -130,7 +130,7 @@ func (g *gitlabListener) OnAfter(ctx ytp.ActionContext, err error) {
 	}
 }
 
-func (g *gitlabListener) OnLog(ctx ytp.ActionContext, v ...interface{}) {
+func (g *gitlabListener) OnLog(ctx ytp.ActionContext, v ...any) {
 	g.simpleListener.OnLog(ctx, v...)
 }
 
@@ -160,6 +160,6 @@ func (g *githubListener) OnAfter(ctx ytp.ActionContext, err error) {
 	}
 }
 
-func (g *githubListener) OnLog(ctx ytp.ActionContext, v ...interface{}) {
+func (g *githubListener) OnLog(ctx ytp.ActionContext, v ...any) {
 	fmt.Fprintf(os.Stderr, "::notice title=%v::%s\n", ctx.Action(), v)
 }

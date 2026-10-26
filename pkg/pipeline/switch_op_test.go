@@ -33,7 +33,7 @@ func TestSwitchOp(t *testing.T) {
 			"Alice": {
 				Operations: OpSpec{
 					Set: &SetOpSpec{
-						Data: map[string]interface{}{
+						Data: map[string]any{
 							"result": "Alice is winner",
 						},
 					},
@@ -42,7 +42,7 @@ func TestSwitchOp(t *testing.T) {
 			"Bob": {
 				Operations: OpSpec{
 					Set: &SetOpSpec{
-						Data: map[string]interface{}{
+						Data: map[string]any{
 							"result": "Bob is winner",
 						},
 					},
@@ -52,7 +52,7 @@ func TestSwitchOp(t *testing.T) {
 		Default: &ActionSpec{
 			Operations: OpSpec{
 				Set: &SetOpSpec{
-					Data: map[string]interface{}{
+					Data: map[string]any{
 						"result": "No winner",
 					},
 				},

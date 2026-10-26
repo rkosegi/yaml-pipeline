@@ -17,15 +17,15 @@ limitations under the License.
 package template_engine
 
 type TemplateEngine interface {
-	Render(template string, data map[string]interface{}) (string, error)
+	Render(template string, data map[string]any) (string, error)
 	// RenderLenient attempts to render given template using provided data, while swallowing any error.
 	// Value of template is first checked by simple means if it is actually template to avoid unnecessary errors.
 	// Use with caution.
-	RenderLenient(template string, data map[string]interface{}) string
+	RenderLenient(template string, data map[string]any) string
 	// RenderSliceLenient attempts to render slices of template strings using provided data, without reporting any error.
-	RenderSliceLenient(templates []string, data map[string]interface{}) []string
+	RenderSliceLenient(templates []string, data map[string]any) []string
 	// RenderMapLenient attempts to render every leaf value in provided map
-	RenderMapLenient(input map[string]interface{}, data map[string]interface{}) map[string]interface{}
+	RenderMapLenient(input map[string]any, data map[string]any) map[string]any
 	// EvalBool attempts to evaluate template as boolean value
-	EvalBool(template string, data map[string]interface{}) (bool, error)
+	EvalBool(template string, data map[string]any) (bool, error)
 }

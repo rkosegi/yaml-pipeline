@@ -150,14 +150,14 @@ func safeCopyIntSlice(in *[]int) *[]int {
 	return &r
 }
 
-func safeRenderStrPointer(str *string, teng te.TemplateEngine, data map[string]interface{}) *string {
+func safeRenderStrPointer(str *string, teng te.TemplateEngine, data map[string]any) *string {
 	if str == nil {
 		return nil
 	}
 	return new(teng.RenderLenient(*str, data))
 }
 
-func safeRenderStrSlice(args *[]string, teng te.TemplateEngine, data map[string]interface{}) *[]string {
+func safeRenderStrSlice(args *[]string, teng te.TemplateEngine, data map[string]any) *[]string {
 	if args == nil {
 		return nil
 	}
@@ -209,7 +209,7 @@ func cloneFieldsWith[T Action](as Action, ctx ActionContext) Action {
 	for _, field := range fields {
 		srcField := srcVal.FieldByIndex(field.Index)
 		if !reflect.ValueOf(srcField.Interface()).IsNil() {
-			var out interface{}
+			var out any
 			out = srcField.Interface()
 			if cloneable, ok := out.(Cloneable); ok {
 				out = cloneable.CloneWith(ctx)

@@ -51,7 +51,7 @@ func TestCallOp(t *testing.T) {
 							Action: ActionSpec{
 								Operations: OpSpec{
 									Set: &SetOpSpec{
-										Data: map[string]interface{}{
+										Data: map[string]any{
 											"AAA": 123,
 											"BBB": "{{ .args.arg2 }}",
 										},

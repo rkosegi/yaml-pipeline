@@ -52,7 +52,7 @@ func TestLoopOpSimple(t *testing.T) {
 		Init: &ActionSpec{
 			Operations: OpSpec{
 				Set: &SetOpSpec{
-					Data: map[string]interface{}{
+					Data: map[string]any{
 						"i": 0,
 					},
 				},

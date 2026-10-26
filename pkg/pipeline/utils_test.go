@@ -31,7 +31,7 @@ type testingLogger struct {
 	indent int
 }
 
-func (l *testingLogger) OnLog(_ ActionContext, v ...interface{}) {
+func (l *testingLogger) OnLog(_ ActionContext, v ...any) {
 	l.t.Logf("%s[LOG] %v\n", strings.Repeat(" ", l.indent), v)
 }
 
@@ -117,7 +117,7 @@ func TestSafeRenderStrPointerNil(t *testing.T) {
 }
 
 func TestSafeRenderStrPointer(t *testing.T) {
-	d := dom.DecodeAnyToNode(map[string]interface{}{
+	d := dom.DecodeAnyToNode(map[string]any{
 		"X": "abc",
 	}).(dom.ContainerBuilder)
 	c := newMockActBuilder().data(d).build()
