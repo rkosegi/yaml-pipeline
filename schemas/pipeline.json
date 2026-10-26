@@ -183,12 +183,12 @@
           "type": "string"
         },
         "stderr": {
-          "description": "Path to file where program's stderr will be written upon completion.\nAny error occurred during write will result in error.",
-          "type": "string"
+          "$ref": "#/$defs/streamDestination",
+          "description": "Where to store program's stderr upon completion.\nAny error occurred during write will result in error."
         },
         "stdout": {
-          "description": "Path to file where program's stdout will be written upon completion.\nAny error occurred during write will result in error.",
-          "type": "string"
+          "$ref": "#/$defs/streamDestination",
+          "description": "Where to store program's stdout upon completion.\nAny error occurred during write will result in error."
         },
         "validExitCodes": {
           "description": "List of exit codes that are assumed to be valid",
@@ -1022,6 +1022,41 @@
     "storeResultTo": {
       "description": "Path to location within the data, where result of operation is store upon success",
       "type": "string"
+    },
+    "streamDestination": {
+      "description": "Defines how to capture stream",
+      "oneOf": [
+        {
+          "description": "Stream is written to the file. If the file is already present, it will be overwritten",
+          "type": "string"
+        },
+        {
+          "properties": {
+            "tree": {
+              "description": "Stream will be captured into leaf node within the data tree at given path.\nAny possible value at this path is overwritten",
+              "type": "string"
+            }
+          },
+          "required": [
+            "tree"
+          ]
+        },
+        {
+          "properties": {
+            "append": {
+              "description": "Controls how existing content is treated. When true, new content is appended to the end of file",
+              "type": "boolean"
+            },
+            "file": {
+              "description": "Stream is written to the file at this path.\nIf file can't be created, operation will fail",
+              "type": "string"
+            }
+          },
+          "required": [
+            "file"
+          ]
+        }
+      ]
     },
     "switchOpSpec": {
       "description": "SwitchOp allows to choose control path based on expression value",

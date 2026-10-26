@@ -20,11 +20,13 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"io"
 	"os"
 	"strings"
 
 	te "github.com/rkosegi/yaml-pipeline/pkg/pipeline/template_engine"
 	"github.com/rkosegi/yaml-toolkit/dom"
+	"github.com/rkosegi/yaml-toolkit/path"
 	"gopkg.in/yaml.v3"
 )
 
@@ -35,6 +37,10 @@ var (
 	ErrFileEmpty     = errors.New("file cannot be empty")
 	ErrOutputEmpty   = errors.New("output cannot be empty")
 	ErrNotContainer  = errors.New("data element must be container when no path is provided")
+	ErrWriterNoInit  = errors.New("underlying writer has not been initialized")
+
+	nwc  = &nopWriteCloser{io.Discard}
+	nosd = &StreamDestination{}
 )
 
 func errWithInfo(err error, info string) error {
@@ -242,4 +248,130 @@ func (s *SourceOfData) Resolve(ctx ActionContext) (dom.Leaf, error) {
 		return dom.LeafNode(string(data)), nil
 	}
 	return nil, errors.New("neither 'tree', nor 'file' was specified")
+}
+
+type nopWriteCloser struct {
+	io.Writer
+}
+
+func (nopWriteCloser) Close() error {
+	return nil
+}
+
+// StreamDestination specifies where to put stream content.
+// Content is updated only after stream is closed.
+type StreamDestination struct {
+	// Tree specifies destination within the global data tree.
+	// Append is supported only for dom.Leaf's value of string
+	Tree *ValOrRef `json:"tree,omitempty" yaml:"tree,omitempty"`
+
+	// Path to the file on local filesystem. If file can't be opened for writing, operation will fail
+	File *ValOrRef `json:"file,omitempty" yaml:"file,omitempty"`
+
+	// When true, then stream content will be appended to the end of existing content.
+	Append bool `json:"append,omitempty" yaml:"append,omitempty"`
+
+	wc io.WriteCloser
+}
+
+type fileWriter struct {
+	fpath  string
+	append bool
+	file   *os.File
+}
+
+func (f *fileWriter) Write(p []byte) (n int, err error) {
+	if f.file != nil {
+		return f.file.Write(p)
+	}
+	return 0, ErrWriterNoInit
+}
+
+func (f *fileWriter) Close() error {
+	if f.file != nil {
+		defer func() { f.file = nil }()
+		return f.file.Close()
+	}
+	return nil
+}
+
+func (f *fileWriter) init() (err error) {
+	flags := os.O_WRONLY | os.O_CREATE
+	if f.append {
+		flags |= os.O_APPEND
+	} else {
+		flags |= os.O_TRUNC
+	}
+	f.file, err = os.OpenFile(f.fpath, flags, 0644)
+	return
+}
+
+type domLeafNodeWriter struct {
+	leafPath path.Path
+	rootNode dom.ContainerBuilder
+	buf      *bytes.Buffer
+	append   bool
+}
+
+func (d *domLeafNodeWriter) Write(p []byte) (n int, err error) {
+	return d.buf.Write(p)
+}
+
+func (d *domLeafNodeWriter) Close() error {
+	x := d.buf.String()
+	if d.append {
+		if en := d.rootNode.Get(d.leafPath); en != nil && en.IsLeaf() {
+			if str, ok := en.AsLeaf().Value().(string); ok {
+				x = str + x
+			}
+		}
+	}
+	d.rootNode.Set(d.leafPath, dom.LeafNode(x))
+	return nil
+}
+
+func (s *StreamDestination) Write(p []byte) (n int, err error) {
+	if s.wc != nil {
+		return s.wc.Write(p)
+	}
+	return 0, ErrWriterNoInit
+}
+
+func (s *StreamDestination) Close() (err error) {
+	if s.wc != nil {
+		err = s.wc.Close()
+		s.wc = nil
+	}
+	return
+}
+
+func (s *StreamDestination) Resolve(ctx ActionContext) error {
+	if s.Tree != nil {
+		s.wc = &domLeafNodeWriter{
+			rootNode: ctx.Data(),
+			leafPath: pp.MustParse(s.Tree.Resolve(ctx)),
+			buf:      new(bytes.Buffer),
+			append:   s.Append,
+		}
+		return nil
+	} else if s.File != nil {
+		fw := &fileWriter{fpath: s.File.Resolve(ctx), append: s.Append}
+		s.wc = fw
+		return fw.init()
+	}
+
+	s.wc = nwc
+	return nil
+}
+
+func safeCloneStreamDestination(in *StreamDestination, ctx ActionContext) *StreamDestination {
+	if in == nil {
+		return nosd
+	}
+	out := &StreamDestination{
+		Tree:   safeCloneValOrRef(in.Tree, ctx),
+		File:   safeCloneValOrRef(in.File, ctx),
+		Append: in.Append,
+	}
+	return out
 }

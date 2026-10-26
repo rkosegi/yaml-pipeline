@@ -30,6 +30,13 @@ actions:
           x-go-type: regexp.Regexp
         include:
           x-go-type: regexp.Regexp
+  - target: $.components.schemas.execOpSpec
+    update:
+      properties:
+        stderr:
+          x-go-type: StreamDestination
+        stdout:
+          x-go-type: StreamDestination
   - target: $.components.schemas.exportOpSpec
     update:
       properties:
