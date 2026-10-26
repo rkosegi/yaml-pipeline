@@ -167,6 +167,10 @@ func strIndexFunc(str, substr string) int {
 	return strings.Index(str, substr)
 }
 
+func stripExtFunc(filename string) string {
+	return strings.TrimSuffix(filename, filepath.Ext(filename))
+}
+
 func sizeStrFunc(size float64) string {
 	return sizeStrFmtFunc(bytesize.Format, "", size)
 }
