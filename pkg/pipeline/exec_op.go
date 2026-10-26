@@ -20,7 +20,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"os"
+
 	osx "os/exec"
 	"slices"
 	"strings"
@@ -55,28 +55,29 @@ func (e *ExecOpSpec) Do(ctx ActionContext) error {
 		}
 	}()
 	type streamTgt struct {
+		sd     *StreamDestination
 		output *string
 		target *io.Writer
 	}
 	for _, stream := range []streamTgt{
 		{
-			output: e.Stdout,
+			sd: e.Stdout,
+			// output: e.Stdout,
 			target: &cmd.Stdout,
 		},
 		{
-			output: e.Stderr,
+			sd: e.Stderr,
+			// output: e.Stderr,
 			target: &cmd.Stderr,
 		},
 	} {
-		if stream.output != nil {
-			stream.output = new(ctx.TemplateEngine().RenderLenient(*stream.output, snapshot))
-			out, err := os.OpenFile(*stream.output, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
-			if err != nil {
-				return err
-			}
-			*stream.target = out
-			closables = append(closables, out)
+		if stream.sd == nil {
+			stream.sd = &StreamDestination{}
 		}
+		if err := stream.sd.Resolve(ctx); err != nil {
+			return err
+		}
+		closables = append(closables, stream.sd)
 	}
 	ctx.Logger().Log(fmt.Sprintf("prog=%s,dir=%s,args=[%s]", prog, safeStrDeref(dir), strings.Join(args, " ")))
 	err := cmd.Run()
@@ -100,8 +101,8 @@ func (e *ExecOpSpec) CloneWith(ctx ActionContext) Action {
 		Program:        ctx.TemplateEngine().RenderLenient(e.Program, ss),
 		Args:           safeRenderStrSlice(e.Args, ctx.TemplateEngine(), ss),
 		Dir:            safeRenderStrPointer(e.Dir, ctx.TemplateEngine(), ss),
-		Stdout:         safeRenderStrPointer(e.Stdout, ctx.TemplateEngine(), ss),
-		Stderr:         safeRenderStrPointer(e.Stderr, ctx.TemplateEngine(), ss),
+		Stdout:         safeCloneStreamDestination(e.Stdout, ctx),
+		Stderr:         safeCloneStreamDestination(e.Stderr, ctx),
 		ValidExitCodes: safeCopyIntSlice(e.ValidExitCodes),
 	}
 }

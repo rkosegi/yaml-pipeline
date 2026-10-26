@@ -30,5 +30,6 @@ output-options:
     - pipelineSpec
     - serviceSpec
     - retryConfig
+    - streamDestination
   overlay:
     path: overlay.yaml

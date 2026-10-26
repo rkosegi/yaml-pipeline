@@ -164,13 +164,11 @@ type ExecOpSpec struct {
 	// SaveExitCodeTo Path within the global data where to set exit code.
 	SaveExitCodeTo *string `json:"saveExitCodeTo,omitempty" yaml:"saveExitCodeTo,omitempty"`
 
-	// Stderr Path to file where program's stderr will be written upon completion.
-	// Any error occurred during write will result in error.
-	Stderr *string `json:"stderr,omitempty" yaml:"stderr,omitempty"`
+	// Stderr Defines how to capture stream
+	Stderr *StreamDestination `json:"stderr,omitempty" yaml:"stderr,omitempty"`
 
-	// Stdout Path to file where program's stdout will be written upon completion.
-	// Any error occurred during write will result in error.
-	Stdout *string `json:"stdout,omitempty" yaml:"stdout,omitempty"`
+	// Stdout Defines how to capture stream
+	Stdout *StreamDestination `json:"stdout,omitempty" yaml:"stdout,omitempty"`
 
 	// ValidExitCodes List of exit codes that are assumed to be valid
 	ValidExitCodes *[]int `json:"validExitCodes,omitempty" yaml:"validExitCodes,omitempty"`

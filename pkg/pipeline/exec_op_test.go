@@ -42,15 +42,15 @@ func TestExecOpDo(t *testing.T) {
 	eo = &ExecOpSpec{
 		Program: "sh",
 		Args:    &[]string{"-c", "echo abcd"},
-		Stdout:  new(fout.Name()),
-		Stderr:  new(ferr.Name()),
+		Stdout:  &StreamDestination{File: &ValOrRef{Val: fout.Name()}},
+		Stderr:  &StreamDestination{File: &ValOrRef{Val: ferr.Name()}},
 	}
 	assert.NoError(t, eo.Do(mockEmptyActCtx()))
 
 	eo = &ExecOpSpec{
 		Program: "sh",
 		Args:    &[]string{"-c", "echo abcd"},
-		Stdout:  new("/"),
+		Stdout:  &StreamDestination{File: &ValOrRef{Val: "/"}},
 	}
 	assert.Error(t, eo.Do(mockEmptyActCtx()))
 

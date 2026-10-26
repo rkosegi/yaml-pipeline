@@ -93,11 +93,11 @@ Only item names matching this regexp are added into data document.
   Path within the global data where to set exit code.
 
   - <code>stderr</code>
-  Path to file where program's stderr will be written upon completion.
+  Where to store program's stderr upon completion.
 Any error occurred during write will result in error.
 
   - <code>stdout</code>
-  Path to file where program's stdout will be written upon completion.
+  Where to store program's stdout upon completion.
 Any error occurred during write will result in error.
 
   - <code>validExitCodes</code>

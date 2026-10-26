@@ -177,3 +177,121 @@ func TestEncodeDataAs(t *testing.T) {
 	})
 
 }
+
+func TestFileWriter(t *testing.T) {
+	var (
+		data []byte
+		err  error
+	)
+	t.Run("create new file", func(t *testing.T) {
+		fpath := filepath.Join(t.TempDir(), "file.txt")
+		fw := &fileWriter{fpath: fpath}
+		assert.NoError(t, fw.init())
+		_, err = fw.Write([]byte("test"))
+		assert.NoError(t, err)
+		assert.NoError(t, fw.Close())
+		assert.NoError(t, fw.Close())
+		data, err = os.ReadFile(fpath)
+		assert.NoError(t, err)
+		assert.Equal(t, []byte("test"), data)
+	})
+	t.Run("append to existing file", func(t *testing.T) {
+		fpath := filepath.Join(t.TempDir(), "file.txt")
+		assert.NoError(t, os.WriteFile(fpath, []byte("1234"), 0640))
+		fw := &fileWriter{fpath: fpath, append: true}
+		assert.NoError(t, fw.init())
+		_, err = fw.Write([]byte("56"))
+		assert.NoError(t, err)
+		assert.NoError(t, fw.Close())
+		data, err = os.ReadFile(fpath)
+		assert.NoError(t, err)
+		assert.Equal(t, []byte("123456"), data)
+	})
+	t.Run("init not called", func(t *testing.T) {
+		fpath := filepath.Join(t.TempDir(), "file.txt")
+		fw := &fileWriter{fpath: fpath}
+		_, err = fw.Write([]byte(nil))
+		assert.Error(t, err)
+	})
+}
+
+func TestDomLeafNodeWriter(t *testing.T) {
+	var (
+		err error
+		gd  dom.ContainerBuilder
+		nw  *domLeafNodeWriter
+	)
+	leafPath := pp.MustParse("test")
+	t.Run("default", func(t *testing.T) {
+
+		gd = dom.ContainerNode()
+		nw = &domLeafNodeWriter{leafPath: leafPath, rootNode: gd, buf: new(bytes.Buffer)}
+		_, err = nw.Write([]byte("Ola"))
+		assert.NoError(t, err)
+		assert.NoError(t, nw.Close())
+		assert.Equal(t, "Ola", gd.Get(leafPath).AsLeaf().Value())
+	})
+	t.Run("append", func(t *testing.T) {
+		gd = dom.ContainerNode().Set(leafPath, dom.LeafNode("1+1"))
+		nw = &domLeafNodeWriter{leafPath: leafPath, rootNode: gd, buf: new(bytes.Buffer), append: true}
+		_, err = nw.Write([]byte("=2"))
+		assert.NoError(t, err)
+		assert.NoError(t, nw.Close())
+		assert.Equal(t, "1+1=2", gd.Get(leafPath).AsLeaf().Value())
+	})
+}
+
+func TestStreamDestination(t *testing.T) {
+	var (
+		sd   *StreamDestination
+		data []byte
+		err  error
+	)
+	t.Run("empty", func(t *testing.T) {
+		sd = &StreamDestination{}
+		assert.NoError(t, sd.Resolve(newMockActBuilder().build()))
+		_, err = sd.Write([]byte{})
+		assert.NoError(t, err)
+		assert.NoError(t, sd.Close())
+	})
+	t.Run("uninitialized", func(t *testing.T) {
+		sd = &StreamDestination{}
+		_, err = sd.Write([]byte{})
+		assert.Error(t, err)
+	})
+	t.Run("tree", func(t *testing.T) {
+		gd := dom.ContainerNode()
+		sd = &StreamDestination{Tree: &ValOrRef{Val: "test"}}
+		assert.NoError(t, sd.Resolve(newMockActBuilder().data(gd).build()))
+		_, err = sd.Write([]byte("Hello"))
+		assert.NoError(t, sd.Close())
+		assert.NoError(t, err)
+		assert.Equal(t, "Hello", gd.Child("test").AsLeaf().Value())
+	})
+	t.Run("file", func(t *testing.T) {
+		fpath := filepath.Join(t.TempDir(), "file.txt")
+		sd = &StreamDestination{File: &ValOrRef{Val: fpath}}
+		assert.NoError(t, sd.Resolve(newMockActBuilder().build()))
+		_, err = sd.Write([]byte("abcd"))
+		assert.NoError(t, err)
+		assert.NoError(t, sd.Close())
+		data, err = os.ReadFile(fpath)
+		assert.Equal(t, []byte("abcd"), data)
+	})
+
+	t.Run("clone", func(t *testing.T) {
+		fpath := filepath.Join(t.TempDir(), "myFile.txt")
+		gd := dom.ContainerNode().AddValue("forEach", dom.LeafNode(fpath))
+		sd = &StreamDestination{File: &ValOrRef{Ref: "forEach", isRef: true}}
+		ac := newMockActBuilder().data(gd).build()
+		sd = safeCloneStreamDestination(sd, ac)
+		assert.NoError(t, sd.Resolve(ac))
+		_, err = sd.Write([]byte("Ola"))
+		assert.NoError(t, err)
+		assert.NoError(t, sd.Close())
+		data, err = os.ReadFile(fpath)
+		assert.Equal(t, []byte("Ola"), data)
+		assert.NoError(t, err)
+
+	})
+}
