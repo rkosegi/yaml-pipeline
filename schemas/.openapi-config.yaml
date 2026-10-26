@@ -22,7 +22,7 @@ generate:
 compatibility:
   always-prefix-enum-values: true
 output-options:
-
+  skip-enum-validate: true
   skip-prune: true
   yaml-tags: true
   exclude-schemas:
