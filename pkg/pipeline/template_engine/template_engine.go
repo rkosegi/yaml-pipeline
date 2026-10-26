@@ -44,6 +44,7 @@ var defFuncs = template.FuncMap{
 	"regexNamedExtract":   regexNamedExtractFunc,
 	"diffTree":            diffTreeFunc,
 	"strIndex":            strIndexFunc,
+	"stripExt":            stripExtFunc,
 	"sizeStr":             sizeStrFunc,
 	"sizeStrFmt":          sizeStrFmtFunc,
 	"sizeStrFmtLong":      sizeStrFmtLongFunc,

@@ -411,6 +411,17 @@ func TestTemplateFuncUuidV4FromHex(t *testing.T) {
 	})
 }
 
+func TestTemplateFuncStripExt(t *testing.T) {
+	t.Run("simple", func(t *testing.T) {
+		assert.Equal(t, "hello", stripExtFunc("hello.txt"))
+		assert.Equal(t, "hello", stripExtFunc("hello.ab"))
+		assert.Equal(t, "hello", stripExtFunc("hello.o"))
+	})
+	t.Run("no ext", func(t *testing.T) {
+		assert.Equal(t, "hello", stripExtFunc("hello"))
+	})
+}
+
 func TestTemplateFuncRegexNamedExtract(t *testing.T) {
 	var (
 		res map[string]string
