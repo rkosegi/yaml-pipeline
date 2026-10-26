@@ -24,7 +24,7 @@ func (e *ExtOpSpec) String() string {
 
 func (e *ExtOpSpec) Do(ctx ActionContext) error {
 	if e.Args == nil {
-		e.Args = &map[string]interface{}{}
+		e.Args = &map[string]any{}
 	}
 	if fn := ctx.Ext().GetActionFactory(e.Function); fn != nil {
 		return ctx.Executor().Execute(fn.ForArgs(ctx, *e.Args))

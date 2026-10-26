@@ -53,7 +53,7 @@ func TestForDefCall(t *testing.T) {
 							Operations: OpSpec{
 								Call: &CallOpSpec{
 									Name: "dummy",
-									Args: &map[string]interface{}{
+									Args: &map[string]any{
 										"msg": "{{ .forEach }}",
 									},
 									ArgsPath: new("myargs"),

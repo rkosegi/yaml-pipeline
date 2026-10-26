@@ -30,7 +30,7 @@ func TestExecuteSetOp(t *testing.T) {
 		err error
 	)
 	ss = SetOpSpec{
-		Data: map[string]interface{}{
+		Data: map[string]any{
 			"sub1": 123,
 		},
 	}
@@ -39,7 +39,7 @@ func TestExecuteSetOp(t *testing.T) {
 	assert.Equal(t, 123, gd.Child("sub1").AsLeaf().Value())
 
 	ss = SetOpSpec{
-		Data: map[string]interface{}{
+		Data: map[string]any{
 			"sub1": 123,
 		},
 		Path: new("sub0"),
@@ -58,7 +58,7 @@ func TestExecuteSetOp(t *testing.T) {
 		gd = dom.ContainerNode()
 		gd.AddValue("env", dom.LeafNode("dev"))
 		ss = SetOpSpec{
-			Data: map[string]interface{}{
+			Data: map[string]any{
 				"url": "https://{{ .env }}.mydomain.tld",
 			},
 			Render: new(true),
@@ -71,7 +71,7 @@ func TestExecuteSetOp(t *testing.T) {
 		gd = dom.ContainerNode()
 		gd.AddValue("env", dom.LeafNode("dev"))
 		ss = SetOpSpec{
-			Data: map[string]interface{}{
+			Data: map[string]any{
 				"url": "https://{{ .env }}.mydomain.tld",
 			},
 			Render: new(false),
@@ -84,7 +84,7 @@ func TestExecuteSetOp(t *testing.T) {
 
 func TestSetOpInvalidSetStrategy(t *testing.T) {
 	assert.Error(t, New().Execute(&SetOpSpec{
-		Data:     map[string]interface{}{},
+		Data:     map[string]any{},
 		Strategy: setStrategyPointer("unknown"),
 	}))
 }
@@ -96,7 +96,7 @@ func TestSetOpMergeRoot(t *testing.T) {
 	)
 
 	ss = SetOpSpec{
-		Data: map[string]interface{}{
+		Data: map[string]any{
 			"sub1": 123,
 		},
 		Strategy: setStrategyPointer(SetStrategyMerge),
@@ -110,8 +110,8 @@ func TestSetOpMergeRoot(t *testing.T) {
 	gd = dom.ContainerNode()
 	gd.Set(pp.MustParse("sub2.sub3a"), dom.LeafNode(2))
 	ss = SetOpSpec{
-		Data: map[string]interface{}{
-			"sub2": map[string]interface{}{
+		Data: map[string]any{
+			"sub2": map[string]any{
 				"sub3b": 123,
 			},
 		},
@@ -130,7 +130,7 @@ func TestSetOpMergeSubPath(t *testing.T) {
 	)
 
 	ss = SetOpSpec{
-		Data: map[string]interface{}{
+		Data: map[string]any{
 			"sub20": 123,
 		},
 		Strategy: setStrategyPointer(SetStrategyMerge),
@@ -144,8 +144,8 @@ func TestSetOpMergeSubPath(t *testing.T) {
 	gd = dom.ContainerNode()
 	gd.Set(pp.MustParse("sub10.sub20.sub30"), dom.LeafNode(2))
 	ss = SetOpSpec{
-		Data: map[string]interface{}{
-			"sub20": map[string]interface{}{
+		Data: map[string]any{
+			"sub20": map[string]any{
 				"sub3b": 123,
 			},
 		},

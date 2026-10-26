@@ -57,7 +57,7 @@ func TestApplyValues(t *testing.T) {
 
 func TestApplyVarsToDom(t *testing.T) {
 	gd := dom.ContainerNode()
-	ApplyVarsToDom(map[string]interface{}{
+	ApplyVarsToDom(map[string]any{
 		"x": 1,
 		"y": "AAAA",
 	}, "myvars", gd)

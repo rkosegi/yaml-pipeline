@@ -49,7 +49,7 @@ func (tfo *TemplateFileOpSpec) Do(ctx ActionContext) error {
 	if err != nil {
 		return err
 	}
-	val, err := ctx.TemplateEngine().Render(string(tmpl), data.AsAny().(map[string]interface{}))
+	val, err := ctx.TemplateEngine().Render(string(tmpl), data.AsAny().(map[string]any))
 	if err != nil {
 		return err
 	}

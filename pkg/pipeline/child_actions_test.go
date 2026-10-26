@@ -41,8 +41,8 @@ func TestSortActionNames(t *testing.T) {
 }
 
 func TestChildActionsCloneWith(t *testing.T) {
-	ac := newMockActBuilder().data(dom.DecodeAnyToNode(map[string]interface{}{
-		"sub1": map[string]interface{}{
+	ac := newMockActBuilder().data(dom.DecodeAnyToNode(map[string]any{
+		"sub1": map[string]any{
 			"leaf1": "root.sub2",
 		},
 	}).(dom.ContainerBuilder)).build()
@@ -50,7 +50,7 @@ func TestChildActionsCloneWith(t *testing.T) {
 		"step1": ActionSpec{
 			Operations: OpSpec{
 				Set: &SetOpSpec{
-					Data: map[string]interface{}{
+					Data: map[string]any{
 						"abcd": 123,
 					},
 					Path:     new("{{ .sub1.leaf1 }}"),

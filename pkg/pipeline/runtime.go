@@ -29,13 +29,13 @@ import (
 type dataCtx struct {
 	d     dom.ContainerBuilder
 	dirty bool
-	ss    *map[string]interface{}
+	ss    *map[string]any
 }
 
 func (dc *dataCtx) Data() dom.ContainerBuilder { return dc.d }
-func (dc *dataCtx) Snapshot() map[string]interface{} {
+func (dc *dataCtx) Snapshot() map[string]any {
 	if dc.dirty || dc.ss == nil {
-		dc.ss = new(dc.Data().AsAny().(map[string]interface{}))
+		dc.ss = new(dc.Data().AsAny().(map[string]any))
 		dc.dirty = false
 	}
 	return *dc.ss

@@ -42,7 +42,7 @@ func TestForeachStringItem(t *testing.T) {
 			Operations: OpSpec{
 				Set: &SetOpSpec{
 					Path: new("{{ .forEach }}"),
-					Data: map[string]interface{}{
+					Data: map[string]any{
 						"X": "abc",
 					},
 				},
@@ -105,12 +105,12 @@ func TestForeachQuery(t *testing.T) {
 		path       string
 		validateFn func(data dom.ContainerBuilder)
 	}
-	data := dom.DecodeAnyToNode(map[string]interface{}{
+	data := dom.DecodeAnyToNode(map[string]any{
 		"leaf": "X",
-		"sub": map[string]interface{}{
+		"sub": map[string]any{
 			"leaf1": "Y",
 		},
-		"items": []interface{}{"a", "b", "c"},
+		"items": []any{"a", "b", "c"},
 	}).(dom.ContainerBuilder)
 	for _, qry := range []string{
 		"leaf", "sub", "items",

@@ -75,9 +75,9 @@ func (pv *ValOrRef) CloneWith(ctx ActionContext) *ValOrRef {
 	}
 }
 
-func (pv *ValOrRef) MarshalYAML() (interface{}, error) {
+func (pv *ValOrRef) MarshalYAML() (any, error) {
 	if len(pv.Ref) > 0 {
-		return map[string]interface{}{
+		return map[string]any{
 			"ref": pv.Ref,
 		}, nil
 	}
@@ -94,7 +94,7 @@ func (pv *ValOrRef) check() error {
 func (pv *ValOrRef) UnmarshalYAML(node *yaml.Node) error {
 	switch node.Kind {
 	case yaml.MappingNode:
-		m := make(map[string]interface{})
+		m := make(map[string]any)
 		_ = node.Decode(&m)
 		if x, ok := m["ref"]; !ok {
 			return errors.New("missing 'ref' field")
@@ -154,7 +154,7 @@ func (pv *ValOrRefSlice) String() string {
 	return "[" + strings.Join(strs, ",") + "]"
 }
 
-func anyValFromMap(m map[string]interface{}) *AnyVal {
+func anyValFromMap(m map[string]any) *AnyVal {
 	return &AnyVal{v: dom.DecodeAnyToNode(m)}
 }
 

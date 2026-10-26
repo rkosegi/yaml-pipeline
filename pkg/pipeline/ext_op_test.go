@@ -36,7 +36,7 @@ func TestExtOpDo(t *testing.T) {
 	ctx := newMockActBuilder().ext(map[string]ActionFactory{
 		"dummyfn": &dummyActFactory{
 			act: &SetOpSpec{
-				Data: map[string]interface{}{
+				Data: map[string]any{
 					"X": 123,
 				},
 			},

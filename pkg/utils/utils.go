@@ -34,7 +34,7 @@ import (
 var pp = props.NewPathParser()
 
 // ApplyVarsToDom takes map of key-to-any and puts them into DOM container under given prefix, ie "vars".
-func ApplyVarsToDom(kvs map[string]interface{}, prefix string, gd dom.ContainerBuilder) {
+func ApplyVarsToDom(kvs map[string]any, prefix string, gd dom.ContainerBuilder) {
 	if kvs == nil {
 		return
 	}
@@ -58,7 +58,7 @@ func ApplyValues(gd dom.ContainerBuilder, vals []string) {
 	}
 }
 
-func GetLogTag(v ...interface{}) (string, bool) {
+func GetLogTag(v ...any) (string, bool) {
 	if len(v) < 2 {
 		return "", false
 	}
@@ -101,7 +101,7 @@ func ValidateFileAgainstSchema(file string) (*jsonschema.EvaluationResult, error
 		_ = df.Close()
 	}(df)
 
-	doc := make(map[string]interface{})
+	doc := make(map[string]any)
 	if err = fluent.DefaultFileDecoderProvider(file)(df, &doc); err != nil {
 		return nil, err
 	}
