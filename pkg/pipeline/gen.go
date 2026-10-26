@@ -17,49 +17,15 @@ const (
 	EncodeDataAsYaml   EncodeDataAs = "yaml"
 )
 
-// Valid indicates whether the value is a known member of the EncodeDataAs enum.
-func (e EncodeDataAs) Valid() bool {
-	switch e {
-	case EncodeDataAsBinary:
-		return true
-	case EncodeDataAsJson:
-		return true
-	case EncodeDataAsYaml:
-		return true
-	default:
-		return false
-	}
-}
-
 // Defines values for ErrorPropagationPolicy.
 const (
 	ErrorPropagationPolicyIgnore ErrorPropagationPolicy = "ignore"
 )
 
-// Valid indicates whether the value is a known member of the ErrorPropagationPolicy enum.
-func (e ErrorPropagationPolicy) Valid() bool {
-	switch e {
-	case ErrorPropagationPolicyIgnore:
-		return true
-	default:
-		return false
-	}
-}
-
 // Defines values for Html2DomLayout.
 const (
 	Html2DomLayoutDefault Html2DomLayout = "default"
 )
-
-// Valid indicates whether the value is a known member of the Html2DomLayout enum.
-func (e Html2DomLayout) Valid() bool {
-	switch e {
-	case Html2DomLayoutDefault:
-		return true
-	default:
-		return false
-	}
-}
 
 // Defines values for HttpMethod.
 const (
@@ -73,30 +39,6 @@ const (
 	HttpMethodTRACE   HttpMethod = "TRACE"
 )
 
-// Valid indicates whether the value is a known member of the HttpMethod enum.
-func (e HttpMethod) Valid() bool {
-	switch e {
-	case HttpMethodDELETE:
-		return true
-	case HttpMethodGET:
-		return true
-	case HttpMethodHEAD:
-		return true
-	case HttpMethodOPTIONS:
-		return true
-	case HttpMethodPATCH:
-		return true
-	case HttpMethodPOST:
-		return true
-	case HttpMethodPUT:
-		return true
-	case HttpMethodTRACE:
-		return true
-	default:
-		return false
-	}
-}
-
 // Defines values for OutputFormat.
 const (
 	OutputFormatJson       OutputFormat = "json"
@@ -104,22 +46,6 @@ const (
 	OutputFormatText       OutputFormat = "text"
 	OutputFormatYaml       OutputFormat = "yaml"
 )
-
-// Valid indicates whether the value is a known member of the OutputFormat enum.
-func (e OutputFormat) Valid() bool {
-	switch e {
-	case OutputFormatJson:
-		return true
-	case OutputFormatProperties:
-		return true
-	case OutputFormatText:
-		return true
-	case OutputFormatYaml:
-		return true
-	default:
-		return false
-	}
-}
 
 // Defines values for ParseContentMode.
 const (
@@ -131,26 +57,6 @@ const (
 	ParseContentModeYaml       ParseContentMode = "yaml"
 )
 
-// Valid indicates whether the value is a known member of the ParseContentMode enum.
-func (e ParseContentMode) Valid() bool {
-	switch e {
-	case ParseContentModeBinary:
-		return true
-	case ParseContentModeJson:
-		return true
-	case ParseContentModeProperties:
-		return true
-	case ParseContentModeText:
-		return true
-	case ParseContentModeXml:
-		return true
-	case ParseContentModeYaml:
-		return true
-	default:
-		return false
-	}
-}
-
 // Defines values for ParseTextAs.
 const (
 	ParseTextAsFloat64 ParseTextAs = "float64"
@@ -159,54 +65,16 @@ const (
 	ParseTextAsYaml    ParseTextAs = "yaml"
 )
 
-// Valid indicates whether the value is a known member of the ParseTextAs enum.
-func (e ParseTextAs) Valid() bool {
-	switch e {
-	case ParseTextAsFloat64:
-		return true
-	case ParseTextAsInt64:
-		return true
-	case ParseTextAsNone:
-		return true
-	case ParseTextAsYaml:
-		return true
-	default:
-		return false
-	}
-}
-
 // Defines values for SetStrategy.
 const (
 	SetStrategyMerge   SetStrategy = "merge"
 	SetStrategyReplace SetStrategy = "replace"
 )
 
-// Valid indicates whether the value is a known member of the SetStrategy enum.
-func (e SetStrategy) Valid() bool {
-	switch e {
-	case SetStrategyMerge:
-		return true
-	case SetStrategyReplace:
-		return true
-	default:
-		return false
-	}
-}
-
 // Defines values for XmlLayout.
 const (
 	XmlLayoutDefault XmlLayout = "default"
 )
-
-// Valid indicates whether the value is a known member of the XmlLayout enum.
-func (e XmlLayout) Valid() bool {
-	switch e {
-	case XmlLayoutDefault:
-		return true
-	default:
-		return false
-	}
-}
 
 // AbortOpSpec AbortOp can be used to abort execution
 type AbortOpSpec struct {
