@@ -37,11 +37,12 @@ release:
 jsonschema-to-openapi:
 	test -d .private || mkdir .private
 	yq '.$$defs | {"components": {"schemas": . }}' schemas/pipeline.json -oyaml > .private/openapi-spec.yaml
-	yq eval-all '. as $$item ireduce ({}; . *+ $$item)' -i .private/openapi-spec.yaml schemas/generator.patch.yaml -oyaml
+	cp schemas/.openapi-config.yaml schemas/overlay.yaml .private/
+	yq '.output-options.overlay.path=".private/overlay.yaml"' -i .private/.openapi-config.yaml
 	sed -i 's#/$$defs/#/components/schemas/#g' .private/openapi-spec.yaml
 
 generate: jsonschema-to-openapi
-	go tool oapi-codegen --config=schemas/.openapi-config.yaml .private/openapi-spec.yaml
+	go tool oapi-codegen --config=.private/.openapi-config.yaml .private/openapi-spec.yaml
 
 update-go-deps:
 	@for m in $$(go list -mod=readonly -m -f '{{ if and (not .Indirect) (not .Main)}}{{.Path}}{{end}}' all); do \
