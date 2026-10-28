@@ -31,5 +31,6 @@ output-options:
     - serviceSpec
     - retryConfig
     - streamDestination
+    - valOrRef
   overlay:
     path: overlay.yaml

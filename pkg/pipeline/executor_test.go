@@ -123,8 +123,8 @@ func TestExecute(t *testing.T) {
 				},
 				Operations: OpSpec{
 					Template: &TemplateOpSpec{
-						Template: "{{ mul 1 2 3 4 5 6 }}",
-						Path:     &ValOrRef{Val: "Results.Factorial"},
+						Template: *makeVal("{{ mul 1 2 3 4 5 6 }}"),
+						Path:     makeVal("Results.Factorial"),
 					},
 				},
 			},

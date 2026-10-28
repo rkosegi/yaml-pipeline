@@ -98,6 +98,8 @@ actions:
       properties:
         path:
           x-go-type: '*ValOrRef'
+        template:
+          x-go-type: ValOrRef
   - target: $.components.schemas.xmlImportOptions
     update:
       properties:

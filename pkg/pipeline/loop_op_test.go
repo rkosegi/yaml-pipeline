@@ -69,8 +69,8 @@ func TestLoopOpSimple(t *testing.T) {
 		PostAction: &ActionSpec{
 			Operations: OpSpec{
 				Template: &TemplateOpSpec{
-					Template: "{{ add .i  1 }}",
-					Path:     &ValOrRef{Val: "i"},
+					Template: *makeVal("{{ add .i  1 }}"),
+					Path:     makeVal("i"),
 				},
 			},
 		},
