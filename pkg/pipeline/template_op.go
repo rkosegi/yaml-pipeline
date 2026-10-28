@@ -30,7 +30,8 @@ func (ts *TemplateOpSpec) String() string {
 }
 
 func (ts *TemplateOpSpec) Do(ctx ActionContext) error {
-	if len(ts.Template) == 0 {
+	tv := ts.Template.Resolve(ctx)
+	if len(tv) == 0 {
 		return ErrTemplateEmpty
 	}
 	if ts.Path == nil {
@@ -41,7 +42,7 @@ func (ts *TemplateOpSpec) Do(ctx ActionContext) error {
 		return ErrPathEmpty
 	}
 	ss := ctx.Snapshot()
-	val, err := ctx.TemplateEngine().Render(ts.Template, ss)
+	val, err := ctx.TemplateEngine().Render(tv, ss)
 	if err != nil {
 		return errWithInfo(err, "template/template")
 	}

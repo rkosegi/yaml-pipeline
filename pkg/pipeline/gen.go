@@ -701,8 +701,8 @@ type TemplateOpSpec struct {
 	// Path Path within global data tree where to set result at
 	Path *ValOrRef `json:"path" yaml:"path"`
 
-	// Template Template to render
-	Template string `json:"template" yaml:"template"`
+	// Template Auxiliary object that represent either direct string value or reference to value within the data tree
+	Template ValOrRef `json:"template" yaml:"template"`
 
 	// Trim When true, whitespace is trimmed off the value
 	Trim *bool `json:"trim,omitempty" yaml:"trim,omitempty"`

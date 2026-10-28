@@ -161,8 +161,8 @@ func TestForeachQuery(t *testing.T) {
 				Action: ActionSpec{
 					Operations: OpSpec{
 						Template: &TemplateOpSpec{
-							Template: tc.tmpl,
-							Path:     &ValOrRef{Val: tc.path},
+							Template: *makeVal(tc.tmpl),
+							Path:     makeVal(tc.path),
 						},
 					},
 				},
@@ -176,7 +176,7 @@ func TestForeachQuery(t *testing.T) {
 
 func TestForeachGlob(t *testing.T) {
 	op := ForEachOpSpec{
-		Glob: &ValOrRef{Val: "../../testdata/doc?.yaml"},
+		Glob: makeVal("../../testdata/doc?.yaml"),
 		Action: ActionSpec{
 			Operations: OpSpec{
 				Import: &ImportOpSpec{
@@ -222,8 +222,8 @@ func TestForeachActionSpec(t *testing.T) {
 				"sub": {
 					Operations: OpSpec{
 						Template: &TemplateOpSpec{
-							Path:     &ValOrRef{Val: "X"},
-							Template: "{{ add .X 1 }}",
+							Path:     makeVal("X"),
+							Template: *makeVal("{{ add .X 1 }}"),
 						},
 					},
 				},

@@ -28,6 +28,14 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+func makeVal(str string) *ValOrRef {
+	return &ValOrRef{Val: str}
+}
+
+func makeRef(path string) *ValOrRef {
+	return &ValOrRef{Ref: path, isRef: true}
+}
+
 func TestValOrRefMarshalYaml(t *testing.T) {
 	t.Run("Marshal ref", func(t *testing.T) {
 		var (

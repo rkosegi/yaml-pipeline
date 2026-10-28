@@ -951,6 +951,12 @@
           },
           "description": "Services declaration"
         },
+        "templates": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Dictionary of named templates. Those can be referenced from within the pipeline by name"
+        },
         "vars": {
           "additionalProperties": true,
           "description": "Initial variables that will be set under .vars",
@@ -1116,8 +1122,8 @@
           "type": "string"
         },
         "template": {
-          "description": "Template to render",
-          "type": "string"
+          "$ref": "#/$defs/valOrRef",
+          "description": "Template to render"
         },
         "trim": {
           "default": false,
@@ -1131,6 +1137,25 @@
       ],
       "type": "object",
       "x-doc-gen": "ops"
+    },
+    "valOrRef": {
+      "description": "Auxiliary object that represent either direct string value or reference to value within the data tree",
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "properties": {
+            "ref": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "ref"
+          ],
+          "type": "object"
+        }
+      ]
     },
     "xmlImportOptions": {
       "description": "Configuration to customize XML loading. Only relevant for 'xml' mode",
