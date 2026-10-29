@@ -56,9 +56,7 @@ func (h *HttpOpSpec) Do(ctx ActionContext) (err error) {
 	if reqBody, err = h.getReqBodyReader(ctx); err != nil {
 		return err
 	}
-	// TODO use NewRequestWithContext, but that will require global context.Context() within the ActionContext
-	// see https://github.com/rkosegi/yaml-pipeline/issues/303
-	if req, err = http.NewRequest(method, u, reqBody); err != nil {
+	if req, err = http.NewRequestWithContext(ctx.Context(), method, u, reqBody); err != nil {
 		return err
 	}
 	if h.Headers != nil {

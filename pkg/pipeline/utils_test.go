@@ -17,6 +17,7 @@ limitations under the License.
 package pipeline
 
 import (
+	"context"
 	"os"
 	"regexp"
 	"strings"
@@ -74,7 +75,7 @@ func (mcb *mockActCtxBuilder) testLogger(t *testing.T) *mockActCtxBuilder {
 
 func (mcb *mockActCtxBuilder) build() ActionContext {
 	mcb.opts = append(mcb.opts, WithData(mcb.d))
-	return New(mcb.opts...).(*exec).newActionCtx(nil)
+	return New(mcb.opts...).(*exec).newActionCtx(context.Background(), nil)
 }
 
 func mockEmptyActCtx() ActionContext {
