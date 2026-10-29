@@ -17,6 +17,7 @@ limitations under the License.
 package pipeline
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"iter"
@@ -33,8 +34,14 @@ type Executor interface {
 	// 2. `templates` map from PipelineSpec is merged into global data
 	Run(po *PipelineSpec) error
 
+	// RunContext runs the pipeline using provided context.Context
+	RunContext(ctx context.Context, po *PipelineSpec) error
+
 	// Execute executes single Action
 	Execute(act Action) error
+
+	// ExecuteContext executes a single Action using provided context.Context
+	ExecuteContext(ctx context.Context, act Action) error
 
 	// Runtime gets reference to RuntimeServices
 	Runtime() RuntimeServices
@@ -78,6 +85,8 @@ type ExtInterface interface {
 
 // ActionContext is created by Executor implementation for sole purpose of invoking Action's Do function.
 type ActionContext interface {
+	// Context gets access to current context.Context
+	Context() context.Context
 	ClientContext
 	// Action return reference to actual Action
 	Action() Action

@@ -32,8 +32,7 @@ func (e *ExecOpSpec) String() string {
 	return fmt.Sprintf("Exec[Program=%s,Dir=%s,Args=%d]", e.Program, safeStrDeref(e.Dir), safeSize(e.Args))
 }
 
-func (e *ExecOpSpec) Do(ctx ActionContext) error {
-	var closables []io.Closer
+func (e *ExecOpSpec) ensureValues() {
 	if e.ValidExitCodes == nil {
 		e.ValidExitCodes = &[]int{}
 	}
@@ -43,11 +42,16 @@ func (e *ExecOpSpec) Do(ctx ActionContext) error {
 	if e.Dir == nil {
 		e.Dir = new("")
 	}
+}
+
+func (e *ExecOpSpec) Do(ctx ActionContext) error {
+	var closables []io.Closer
+	e.ensureValues()
 	snapshot := ctx.Snapshot()
 	prog := ctx.TemplateEngine().RenderLenient(e.Program, snapshot)
 	args := *safeRenderStrSlice(e.Args, ctx.TemplateEngine(), snapshot)
 	dir := safeRenderStrPointer(e.Dir, ctx.TemplateEngine(), snapshot)
-	cmd := osx.Command(prog, args...)
+	cmd := osx.CommandContext(ctx.Context(), prog, args...)
 	cmd.Dir = *dir
 	defer func() {
 		for _, closer := range closables {

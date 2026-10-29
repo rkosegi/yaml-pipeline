@@ -17,6 +17,7 @@ limitations under the License.
 package cli
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"os"
@@ -115,7 +116,7 @@ func applyColorUse(use string) {
 	}
 }
 
-func run(d *data) error {
+func run(ctx context.Context, d *data) error {
 	var (
 		bytes []byte
 		err   error
@@ -131,7 +132,7 @@ func run(d *data) error {
 	return ytp.New(
 		ytp.WithData(gd),
 		ytp.WithListener(d.sl),
-	).Execute(d.pp.ActionSpec)
+	).ExecuteContext(ctx, d.pp.ActionSpec)
 }
 
 func New() *cobra.Command {
@@ -174,7 +175,7 @@ To set output option, use argument like this: --output-opt collapse=true
 			return preRun(d)
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return run(d)
+			return run(cmd.Context(), d)
 		},
 	}
 	cmd.Flags().StringSliceVar(&d.outputOpts, "output-opt", d.outputOpts, "Output options. These are decoration-specific")

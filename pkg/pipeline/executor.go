@@ -17,6 +17,7 @@ limitations under the License.
 package pipeline
 
 import (
+	"context"
 	"fmt"
 	"slices"
 
@@ -43,8 +44,13 @@ func (p *exec) Runtime() RuntimeServices {
 
 type clientCtx struct {
 	*exec
-	c Action
-	l Listener
+	c   Action
+	l   Listener
+	ctx context.Context
+}
+
+func (ac *clientCtx) Context() context.Context {
+	return ac.ctx
 }
 
 func (ac *clientCtx) Action() Action     { return ac.c }
@@ -60,10 +66,11 @@ func ApplyArgs[T any](ctx ClientContext, opSpec *T, args map[string]any) {
 	*opSpec = *x
 }
 
-func (p *exec) newActionCtx(a Action) *clientCtx {
-	ctx := p.newServiceCtx()
-	ctx.c = a
-	return ctx
+func (p *exec) newActionCtx(ctx context.Context, a Action) *clientCtx {
+	ac := p.newServiceCtx()
+	ac.c = a
+	ac.ctx = ctx
+	return ac
 }
 
 func (p *exec) newServiceCtx() *clientCtx {
@@ -77,12 +84,12 @@ func getActLocalName(act Action) string {
 	return act.String()
 }
 
-func (p *exec) Execute(act Action) (err error) {
-	ctx := p.newActionCtx(act)
+func (p *exec) ExecuteContext(ctx context.Context, act Action) (err error) {
+	ac := p.newActionCtx(ctx, act)
 	if emptyCheck, ok := act.(common.EmptyChecker); ok && emptyCheck.IsEmpty() {
 		return nil
 	}
-	p.l.OnBefore(ctx)
+	p.l.OnBefore(ac)
 	p.cs.Push(act)
 	names := p.cs.Values()
 	slices.Reverse(names)
@@ -91,12 +98,16 @@ func (p *exec) Execute(act Action) (err error) {
 		AddValue("AbsolutePath", dom.ListNode(lo.Map(names, func(item any, _ int) dom.Node {
 			return dom.LeafNode(getActLocalName(item.(Action)))
 		})...))
-	ctx.Data().AddValue("$$_System", sysNode)
-	defer ctx.Data().Remove("$$_System")
-	err = act.Do(ctx)
+	ac.Data().AddValue("$$_System", sysNode)
+	defer ac.Data().Remove("$$_System")
+	err = act.Do(ac)
 	p.cs.Pop()
-	p.l.OnAfter(ctx, err)
+	p.l.OnAfter(ac, err)
 	return err
+}
+
+func (p *exec) Execute(act Action) (err error) {
+	return p.ExecuteContext(context.Background(), act)
 }
 
 func (p *exec) initServices(servicesConfig map[string]ConfigurableSpec) error {
@@ -124,13 +135,17 @@ func (p *exec) closeServices() {
 }
 
 func (p *exec) Run(po *PipelineSpec) error {
+	return p.RunContext(context.Background(), po)
+}
+
+func (p *exec) RunContext(ctx context.Context, po *PipelineSpec) error {
 	if err := p.initServices(po.Services); err != nil {
 		return err
 	}
 	p.d = p.d.Merge(dom.DecodeAnyToNode(po.Vars).AsContainer()).
 		Merge(dom.DecodeAnyToNode(po.Templates).AsContainer())
 	defer p.closeServices()
-	return p.Execute(po)
+	return p.ExecuteContext(ctx, po)
 }
 
 type noopListener struct{}
