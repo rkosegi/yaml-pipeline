@@ -18,7 +18,7 @@
   ```yaml
   abort:
     message: Pipeline aborted
-  when: '{{ not (eq 1502 .result.code) }}'
+  when: "true"
   ```
 
 <h1>call</h1>
