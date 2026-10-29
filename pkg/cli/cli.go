@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/gookit/color"
 	"github.com/kaptinlin/jsonschema"
@@ -46,6 +47,8 @@ type data struct {
 	sl         ytp.Listener
 	colorUse   string
 	outputOpts []string
+	start      time.Time
+	end        time.Time
 }
 
 var (
@@ -121,6 +124,10 @@ func run(ctx context.Context, d *data) error {
 		bytes []byte
 		err   error
 	)
+	d.start = time.Now()
+	defer func() {
+		d.end = time.Now()
+	}()
 	if bytes, err = os.ReadFile(d.file); err != nil {
 		return err
 	}
@@ -177,6 +184,9 @@ To set output option, use argument like this: --output-opt collapse=true
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return run(cmd.Context(), d)
 		},
+		PostRun: func(cmd *cobra.Command, args []string) {
+			printStats(d)
+		},
 	}
 	cmd.Flags().StringSliceVar(&d.outputOpts, "output-opt", d.outputOpts, "Output options. These are decoration-specific")
 	cmd.Flags().StringVar(&d.colorUse, "color", d.colorUse, "Color output (auto/always/never)")
@@ -186,4 +196,8 @@ To set output option, use argument like this: --output-opt collapse=true
 	cmd.Flags().StringVar(&d.file, "file", "", "pipeline file to run")
 	cmd.Flags().StringArrayVar(&d.vals, "set", d.vals, "set value to data tree prior to run")
 	return cmd
+}
+
+func printStats(d *data) {
+	fmt.Fprintln(os.Stderr, color.Gray.Sprintf("[Summary] completed in %v", d.end.Sub(d.start)))
 }
