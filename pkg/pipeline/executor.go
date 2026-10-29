@@ -127,7 +127,8 @@ func (p *exec) Run(po *PipelineSpec) error {
 	if err := p.initServices(po.Services); err != nil {
 		return err
 	}
-	p.d = p.d.Merge(dom.DecodeAnyToNode(po.Vars).AsContainer())
+	p.d = p.d.Merge(dom.DecodeAnyToNode(po.Vars).AsContainer()).
+		Merge(dom.DecodeAnyToNode(po.Templates).AsContainer())
 	defer p.closeServices()
 	return p.Execute(po)
 }

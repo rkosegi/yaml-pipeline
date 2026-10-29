@@ -21,6 +21,7 @@ import "fmt"
 type PipelineSpec struct {
 	// Initial variables
 	Vars       map[string]any              `yaml:"vars,omitempty" json:"vars,omitempty"`
+	Templates  map[string]string           `yaml:"templates,omitempty" json:"templates,omitempty"`
 	Services   map[string]ConfigurableSpec `yaml:"services,omitempty" json:"services,omitempty"`
 	ActionSpec `yaml:",inline" json:",inline"`
 }

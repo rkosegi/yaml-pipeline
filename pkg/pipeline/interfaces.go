@@ -27,7 +27,10 @@ import (
 
 // Executor interface is used by external callers to execute arbitrary Action or run full PipelineSpec.
 type Executor interface {
-	// Run runs pipeline
+	// Run runs pipeline.
+	// Following steps are taken before any Action is executed:
+	// 1. `vars` map from PipelineSpec is merged into global data
+	// 2. `templates` map from PipelineSpec is merged into global data
 	Run(po *PipelineSpec) error
 
 	// Execute executes single Action
