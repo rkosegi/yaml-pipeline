@@ -31,11 +31,15 @@ import (
 	"github.com/rkosegi/yaml-pipeline/pkg/utils"
 	"github.com/rkosegi/yaml-pipeline/pkg/version"
 	"github.com/rkosegi/yaml-toolkit/dom"
+	"github.com/rkosegi/yaml-toolkit/fluent"
+	"github.com/rkosegi/yaml-toolkit/props"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	"github.com/xlab/treeprint"
 	"gopkg.in/yaml.v3"
 )
+
+var pp = props.PathCodec().Parser()
 
 type data struct {
 	sc         *xlog.SlogConfig
@@ -49,6 +53,7 @@ type data struct {
 	outputOpts []string
 	start      time.Time
 	end        time.Time
+	varsFrom   []string
 }
 
 var (
@@ -102,11 +107,41 @@ func preRun(d *data) error {
 	return nil
 }
 
-func setValues(d *data, gd dom.ContainerBuilder) {
+func loadVarsFromFile(fpath string, gd dom.ContainerBuilder) error {
+	f, err := os.Open(fpath)
+	if err != nil {
+		return err
+	}
+	defer func(f *os.File) {
+		_ = f.Close()
+	}(f)
+	vars := gd.Child("vars").(dom.ContainerBuilder)
+	cb, err := dom.DecodeReader(f, fluent.DefaultFileDecoderProvider(fpath))
+	if err != nil {
+		return err
+	}
+	cb.AsContainer().Each(func(cn string, cv dom.Node) bool {
+		vars.Set(pp.MustParse(cn), cv)
+		return false
+	})
+	return nil
+}
+
+func setValues(d *data, gd dom.ContainerBuilder) error {
+	gd.AddValue("vars", dom.ContainerNode())
+	if len(d.varsFrom) > 0 {
+		for _, f := range d.varsFrom {
+			fmt.Fprintln(os.Stderr, color.Blue.Sprintf("[Values] Loading %s", f))
+			if err := loadVarsFromFile(f, gd); err != nil {
+				return err
+			}
+		}
+	}
 	fmt.Fprintln(os.Stderr, color.Blue.Render("[Values] Setting values"))
 	utils.ApplyVarsToDom(d.pp.Vars, "vars", gd)
 	utils.ApplyValues(gd, d.vals)
 	fmt.Fprintln(os.Stderr, color.Blue.Render("[Values] OK"))
+	return nil
 }
 
 func applyColorUse(use string) {
@@ -135,7 +170,9 @@ func run(ctx context.Context, d *data) error {
 		return err
 	}
 	gd := dom.ContainerNode()
-	setValues(d, gd)
+	if err = setValues(d, gd); err != nil {
+		return err
+	}
 	return ytp.New(
 		ytp.WithData(gd),
 		ytp.WithListener(d.sl),
@@ -173,6 +210,15 @@ Supported output decorations:
 +---------+------------------------------------------------------------+
 
 To set output option, use argument like this: --output-opt collapse=true
+
+
+Initial data can be loaded from set of files using --vars-from:
+
+  --vars-from file1.yaml --vars-from file2.yaml
+
+All files must exists and must be parseable (as a mapping/dictionary).
+Data are merged into global data tree in the order they are declared on command line.
+Explicit override using --set is processed afterwards, so it takes precedence.
 `,
 		Version: version.Get(),
 		PreRunE: func(cmd *cobra.Command, args []string) error {
@@ -195,6 +241,7 @@ To set output option, use argument like this: --output-opt collapse=true
 		"Whether to validate pipeline file against current JSON schema")
 	cmd.Flags().StringVar(&d.file, "file", "", "pipeline file to run")
 	cmd.Flags().StringArrayVar(&d.vals, "set", d.vals, "set value to data tree prior to run")
+	cmd.Flags().StringArrayVar(&d.varsFrom, "vars-from", d.varsFrom, "Additional data from files to load under .vars")
 	return cmd
 }
 

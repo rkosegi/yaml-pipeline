@@ -54,5 +54,22 @@ func TestEntrypoint(t *testing.T) {
 		cmd.SetArgs([]string{"--file", "../../testdata/pipeline_just_msg.yaml", "--output", "gitlab"})
 		assert.NoError(t, cmd.Execute())
 	})
+	t.Run("attempt to add vars from non-existent file should fail", func(t *testing.T) {
+		cmd := New()
+		cmd.SetArgs([]string{
+			"--vars-from", "/this/should/not exists",
+			"--file", "../../testdata/pipeline_just_msg.yaml"})
+		assert.Error(t, cmd.Execute())
+
+	})
+
+	t.Run("attempt to add vars from existing file should pass", func(t *testing.T) {
+		cmd := New()
+		cmd.SetArgs([]string{
+			"--vars-from", "../../testdata/doc1.yaml",
+			"--file", "../../testdata/pipeline_just_msg.yaml"})
+		assert.NoError(t, cmd.Execute())
+
+	})
 
 }
