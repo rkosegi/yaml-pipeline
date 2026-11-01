@@ -45,9 +45,7 @@ func TestAbortPipeline(t *testing.T) {
 		err error
 	)
 	p := ActionSpec{
-		ActionMeta: ActionMeta{
-			When: new("{{ eq .ENV \"prod\"}}"),
-		},
+		When: new("{{ eq .ENV \"prod\"}}"),
 		Operations: OpSpec{
 			Abort: &AbortOpSpec{
 				Message: "Pipeline should not run in production",

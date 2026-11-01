@@ -83,9 +83,7 @@ func TestExecute(t *testing.T) {
 	gd = dom.ContainerNode()
 	ex = newTestExec(gd)
 	assert.NoError(t, ex.Execute(&ActionSpec{
-		ActionMeta: ActionMeta{
-			Name: new("root step"),
-		},
+		Name: new("root step"),
 		Operations: OpSpec{
 			Set: &SetOpSpec{
 				Data: map[string]any{
@@ -113,9 +111,7 @@ func TestExecute(t *testing.T) {
 	gd = dom.ContainerNode()
 	ex = newTestExec(gd)
 	assert.NoError(t, ex.Execute(&ActionSpec{
-		ActionMeta: ActionMeta{
-			Name: new("root step"),
-		},
+		Name: new("root step"),
 		Children: ChildActions{
 			"sub_step1": {
 				ActionMeta: ActionMeta{
@@ -142,9 +138,7 @@ func TestExecuteImport(t *testing.T) {
 	gd = dom.ContainerNode()
 	ex = newTestExec(gd)
 	assert.NoError(t, ex.Execute(&ActionSpec{
-		ActionMeta: ActionMeta{
-			Name: new("root step"),
-		},
+		Name: new("root step"),
 		Operations: OpSpec{
 			Import: &ImportOpSpec{
 				File: "../../testdata/props1.properties",
@@ -164,9 +158,7 @@ func TestExecuteImportInvalid(t *testing.T) {
 	gd = dom.ContainerNode()
 	ex = newTestExec(gd)
 	assert.Error(t, ex.Execute(&ActionSpec{
-		ActionMeta: ActionMeta{
-			Name: new("root step"),
-		},
+		Name: new("root step"),
 		Operations: OpSpec{
 			Import: &ImportOpSpec{},
 		},
@@ -181,9 +173,7 @@ func TestExecutePatch(t *testing.T) {
 	gd = dom.ContainerNode()
 	ex = newTestExec(gd)
 	assert.NoError(t, ex.Execute(&ActionSpec{
-		ActionMeta: ActionMeta{
-			Name: new("root step"),
-		},
+		Name: new("root step"),
 		Operations: OpSpec{
 			Patch: &PatchOpSpec{
 				Op:    patch.OpAdd,
@@ -203,9 +193,7 @@ func TestExecuteInnerSteps(t *testing.T) {
 	gd = dom.ContainerNode()
 	ex = newTestExec(gd)
 	assert.NoError(t, ex.Execute(&ActionSpec{
-		ActionMeta: ActionMeta{
-			Name: new("root step"),
-		},
+		Name: new("root step"),
 		Children: ChildActions{
 			"step20": {
 				ActionMeta: ActionMeta{
@@ -242,9 +230,7 @@ func TestExecuteInnerSteps(t *testing.T) {
 
 func TestExecuteInnerStepsFail(t *testing.T) {
 	assert.Error(t, dummyExec.Execute(&ActionSpec{
-		ActionMeta: ActionMeta{
-			Name: new("root step"),
-		},
+		Name: new("root step"),
 		Children: ChildActions{
 			"step20": {
 				ActionMeta: ActionMeta{
@@ -261,9 +247,7 @@ func TestExecuteInnerStepsFail(t *testing.T) {
 
 func TestExecuteInnerStepsSkipped(t *testing.T) {
 	assert.NoError(t, dummyExec.Execute(&ActionSpec{
-		ActionMeta: ActionMeta{
-			Name: new("root step"),
-		},
+		Name: new("root step"),
 		Children: ChildActions{
 			"step20": {
 				ActionMeta: ActionMeta{
@@ -277,9 +261,7 @@ func TestExecuteInnerStepsSkipped(t *testing.T) {
 
 func TestExecuteInnerStepsWhenInvalid(t *testing.T) {
 	assert.Error(t, dummyExec.Execute(&ActionSpec{
-		ActionMeta: ActionMeta{
-			Name: new("root step"),
-		},
+		Name: new("root step"),
 		Children: ChildActions{
 			"step20": {
 				ActionMeta: ActionMeta{
