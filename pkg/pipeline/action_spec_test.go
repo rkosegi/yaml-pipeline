@@ -27,22 +27,16 @@ func TestActionSpecShouldPropagateError(t *testing.T) {
 	as = &ActionSpec{}
 	assert.Nil(t, as.ErrorPropagation)
 	as = &ActionSpec{
-		ActionMeta: ActionMeta{
-			ErrorPropagation: new(ErrorPropagationPolicy("unknown")),
-		},
+		ErrorPropagation: new(ErrorPropagationPolicy("unknown")),
 	}
 	assert.True(t, as.shouldPropagateError())
 	as = &ActionSpec{
-		ActionMeta: ActionMeta{
-			ErrorPropagation: new(ErrorPropagationPolicyIgnore),
-		},
+		ErrorPropagation: new(ErrorPropagationPolicyIgnore),
 	}
 	assert.False(t, as.shouldPropagateError())
 
 	as = &ActionSpec{
-		ActionMeta: ActionMeta{
-			ErrorPropagation: new(ErrorPropagationPolicyIgnore),
-		},
+		ErrorPropagation: new(ErrorPropagationPolicyIgnore),
 		Operations: OpSpec{
 			Abort: &AbortOpSpec{Message: "abort"},
 		},
