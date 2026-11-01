@@ -22,6 +22,9 @@ on:
 env:
   REGISTRY: ghcr.io
 
+permissions:
+  contents: read
+
 jobs:
   goreleaser:
     permissions:
