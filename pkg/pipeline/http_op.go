@@ -29,6 +29,7 @@ import (
 
 // TODO use service from registry instead
 var httpRp = http.DefaultTransport
+var defValidStatusCodes = []int{200, 201, 202, 204}
 
 func (h *HttpOpSpec) canHaveReqBody(m HttpMethod) bool {
 	switch m {
@@ -39,10 +40,11 @@ func (h *HttpOpSpec) canHaveReqBody(m HttpMethod) bool {
 }
 
 func (h *HttpOpSpec) isStatusValid(resp *http.Response) bool {
-	if h.ValidStatusCodes != nil && len(*h.ValidStatusCodes) > 0 {
-		return slices.Contains(*h.ValidStatusCodes, resp.StatusCode)
+	var vsc = &defValidStatusCodes
+	if h.ValidStatusCodes != nil {
+		vsc = h.ValidStatusCodes
 	}
-	return true
+	return slices.Contains(*vsc, resp.StatusCode)
 }
 
 func (h *HttpOpSpec) Do(ctx ActionContext) (err error) {
@@ -77,12 +79,7 @@ func (h *HttpOpSpec) Do(ctx ActionContext) (err error) {
 	defer func(Body io.ReadCloser) {
 		_ = Body.Close()
 	}(resp.Body)
-
-	if err = h.processResponse(ctx, resp); err != nil {
-		return err
-	}
-
-	return nil
+	return h.processResponse(ctx, resp)
 }
 
 func (h *HttpOpSpec) getReqBodyReader(ctx ActionContext) (io.Reader, error) {
@@ -108,6 +105,8 @@ func (h *HttpOpSpec) getReqBodyReader(ctx ActionContext) (io.Reader, error) {
 }
 
 func (h *HttpOpSpec) processResponse(ctx ActionContext, resp *http.Response) (err error) {
+	ctx.Logger().Log(fmt.Sprintf("Got response %v", resp.StatusCode))
+
 	if !h.isStatusValid(resp) {
 		return fmt.Errorf("invalid status %v", resp.Status)
 	}
