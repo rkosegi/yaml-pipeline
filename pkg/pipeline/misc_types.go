@@ -254,7 +254,7 @@ func (ed EncodeDataAs) Encode(node dom.Node) ([]byte, error) {
 	}
 }
 
-func (s *SourceOfData) Resolve(ctx ActionContext) (dom.Leaf, error) {
+func (s *HttpBodyFrom) Resolve(ctx ActionContext) (dom.Leaf, error) {
 	if s.Tree != nil {
 		return dom.LeafNode(s.Tree.Resolve(ctx)), nil
 	}

@@ -76,7 +76,7 @@ actions:
           x-go-type: patch.Op
         value:
           x-go-type: AnyVal
-  - target: $.components.schemas.sourceOfData
+  - target: $.components.schemas.httpBodyFrom
     update:
       properties:
         file:

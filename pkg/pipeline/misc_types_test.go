@@ -82,17 +82,17 @@ val: ""
 
 }
 
-func TestSourceOfData(t *testing.T) {
+func TestHttpBodyFrom(t *testing.T) {
 	var (
 		o   dom.Leaf
 		err error
-		sd  *SourceOfData
+		sd  *HttpBodyFrom
 	)
 	gd := dom.ContainerNode().AddValue("test", dom.LeafNode("abc"))
 	ac := newMockActBuilder().data(gd).build()
 
 	t.Run("tree", func(t *testing.T) {
-		sd = &SourceOfData{
+		sd = &HttpBodyFrom{
 			Tree: &ValOrRef{Ref: "test", isRef: true},
 		}
 		o, err = sd.Resolve(ac)
@@ -103,7 +103,7 @@ func TestSourceOfData(t *testing.T) {
 		t.Run("valid", func(t *testing.T) {
 			fpath := filepath.Join(t.TempDir(), "file.txt")
 			assert.NoError(t, os.WriteFile(fpath, []byte("123XYZ"), 0640))
-			sd = &SourceOfData{
+			sd = &HttpBodyFrom{
 				File: &ValOrRef{Val: fpath},
 			}
 			o, err = sd.Resolve(ac)
@@ -111,7 +111,7 @@ func TestSourceOfData(t *testing.T) {
 			assert.Equal(t, "123XYZ", o.Value())
 		})
 		t.Run("non existent", func(t *testing.T) {
-			sd = &SourceOfData{
+			sd = &HttpBodyFrom{
 				File: &ValOrRef{Val: "/this/should/not/exist"},
 			}
 			_, err = sd.Resolve(ac)
@@ -119,7 +119,7 @@ func TestSourceOfData(t *testing.T) {
 		})
 	})
 	t.Run("none of valid options provided", func(t *testing.T) {
-		sd = &SourceOfData{}
+		sd = &HttpBodyFrom{}
 		_, err = sd.Resolve(ac)
 		assert.Error(t, err)
 	})

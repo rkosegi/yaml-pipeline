@@ -84,7 +84,7 @@ func TestExecuteHttpOp(t *testing.T) {
 		gd = dom.ContainerNode()
 		is = HttpOpSpec{
 			Method: HttpMethodOPTIONS,
-			BodyFrom: &SourceOfData{
+			BodyFrom: &HttpBodyFrom{
 				Tree: &ValOrRef{Val: "nonExistent"},
 			},
 			Url: s.URL,
@@ -118,7 +118,7 @@ func TestExecuteHttpOp(t *testing.T) {
 			Headers: &HttpHeaders{
 				"accept": []string{"application/json"},
 			},
-			BodyFrom: &SourceOfData{
+			BodyFrom: &HttpBodyFrom{
 				Tree: &ValOrRef{Val: "inputBody"},
 			},
 			ParseAs: new(ParseContentModeJson),
@@ -138,12 +138,12 @@ func TestExecuteHttpOp(t *testing.T) {
 			assert.NotNil(t, data)
 		})
 		t.Run("bodyFrom, but incomplete config", func(t *testing.T) {
-			is.BodyFrom = &SourceOfData{}
+			is.BodyFrom = &HttpBodyFrom{}
 			defer func() { is.BodyFrom = nil }()
 			assert.Error(t, New(WithData(gd)).Execute(&is))
 		})
 		t.Run("bodyFrom, but unknown encoding", func(t *testing.T) {
-			is.BodyFrom = &SourceOfData{Tree: &ValOrRef{Val: "nonExistent"}}
+			is.BodyFrom = &HttpBodyFrom{Tree: &ValOrRef{Val: "nonExistent"}}
 			is.EncodeAs = new(EncodeDataAs("garbage"))
 			defer func() { is.BodyFrom = nil; is.EncodeAs = nil }()
 			assert.Error(t, New(WithData(gd)).Execute(&is))
