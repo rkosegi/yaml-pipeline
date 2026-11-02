@@ -18,11 +18,13 @@ package utils
 
 import (
 	"fmt"
+	"log/slog"
 	"os"
 	"strings"
 
 	"github.com/gookit/color"
 	"github.com/kaptinlin/jsonschema"
+	ytp "github.com/rkosegi/yaml-pipeline/pkg/pipeline"
 	"github.com/rkosegi/yaml-pipeline/schemas"
 	"github.com/rkosegi/yaml-toolkit/dom"
 	"github.com/rkosegi/yaml-toolkit/fluent"
@@ -107,4 +109,37 @@ func ValidateFileAgainstSchema(file string) (*jsonschema.EvaluationResult, error
 	}
 	res := schema.Validate(doc)
 	return res, nil
+}
+
+type slogListener struct {
+	ind int
+	bc  int
+	ac  int
+	lc  int
+	l   *slog.Logger
+}
+
+func (s *slogListener) OnBefore(ctx ytp.ActionContext) {
+	s.l.DebugContext(ctx.Context(), "pipeline event", "event_type", "OnBefore", "stack_depth", s.ind, "action", ctx.Action())
+	s.ind++
+	s.bc++
+}
+
+func (s *slogListener) OnAfter(ctx ytp.ActionContext, err error) {
+	s.ind--
+	s.ac++
+	if err != nil {
+		s.l.ErrorContext(ctx.Context(), "pipeline error", "stack_depth", s.ind, "action", ctx.Action().String(), "error", err)
+	} else {
+		s.l.DebugContext(ctx.Context(), "pipeline event", "event_type", "OnAfter", "stack_depth", s.ind, "action", ctx.Action())
+	}
+}
+
+func (s *slogListener) OnLog(ctx ytp.ActionContext, v ...any) {
+	s.l.DebugContext(ctx.Context(), "pipeline event", "event_type", "OnLog", "stack_depth", s.ind, "action", ctx.Action(), "log_args", v)
+	s.lc++
+}
+
+func SlogAdapter(logger *slog.Logger) ytp.Listener {
+	return &slogListener{l: logger}
 }

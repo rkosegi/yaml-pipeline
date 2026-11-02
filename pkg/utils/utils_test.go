@@ -17,9 +17,11 @@ limitations under the License.
 package utils
 
 import (
+	"log/slog"
 	"testing"
 
 	"github.com/kaptinlin/jsonschema"
+	"github.com/rkosegi/yaml-pipeline/pkg/pipeline"
 	"github.com/rkosegi/yaml-toolkit/dom"
 	"github.com/stretchr/testify/assert"
 	"github.com/xlab/treeprint"
@@ -93,5 +95,29 @@ func TestValidateFileAgainstSchema(t *testing.T) {
 	t.Run("invalid YAML should fail", func(t *testing.T) {
 		res, err = ValidateFileAgainstSchema("../../testdata/invalid_pipeline2.yaml")
 		assert.Error(t, err)
+	})
+}
+
+func TestSlogAdapter(t *testing.T) {
+	l := slog.Default()
+	t.Run("normal", func(t *testing.T) {
+		sa := SlogAdapter(l)
+		ps := &pipeline.PipelineSpec{Operations: pipeline.OpSpec{Log: &pipeline.LogOpSpec{Message: "hello"}}}
+		assert.NoError(t, pipeline.New(
+			pipeline.WithListener(sa),
+		).RunContext(t.Context(), ps))
+		assert.Equal(t, 1, sa.(*slogListener).lc)
+		assert.Equal(t, 3, sa.(*slogListener).ac)
+		assert.Equal(t, 3, sa.(*slogListener).bc)
+	})
+	t.Run("error", func(t *testing.T) {
+		sa := SlogAdapter(l)
+		ps := &pipeline.PipelineSpec{Operations: pipeline.OpSpec{Abort: &pipeline.AbortOpSpec{Message: "failure"}}}
+		assert.Error(t, pipeline.New(
+			pipeline.WithListener(sa),
+		).RunContext(t.Context(), ps))
+		assert.Equal(t, 0, sa.(*slogListener).lc)
+		assert.Equal(t, 3, sa.(*slogListener).ac)
+		assert.Equal(t, 3, sa.(*slogListener).bc)
 	})
 }
