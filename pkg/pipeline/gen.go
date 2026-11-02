@@ -249,6 +249,15 @@ type Html2DomOpSpec struct {
 	To string `json:"to" yaml:"to"`
 }
 
+// HttpBodyFrom Describes how to source the data locally.
+type HttpBodyFrom struct {
+	// File Auxiliary object that represent either direct string value or reference to value within the data tree
+	File *ValOrRef `json:"file,omitempty" yaml:"file,omitempty"`
+
+	// Tree Auxiliary object that represent either direct string value or reference to value within the data tree
+	Tree *ValOrRef `json:"tree,omitempty" yaml:"tree,omitempty"`
+}
+
 // HttpHeaders HTTP headers container
 type HttpHeaders map[string][]string
 
@@ -260,7 +269,7 @@ type HttpMethod string
 // In particular, request/response bodies are handled fully in memory, which make this unsuitable for huge data.
 type HttpOpSpec struct {
 	// BodyFrom Describes how to source the data locally.
-	BodyFrom *SourceOfData `json:"bodyFrom,omitempty" yaml:"bodyFrom,omitempty"`
+	BodyFrom *HttpBodyFrom `json:"bodyFrom,omitempty" yaml:"bodyFrom,omitempty"`
 
 	// EncodeAs Defines how node within the data tree will be encoded.
 	//  * binary - content of dom.Leaf, which must be either string or []byte will be used as-is
@@ -652,15 +661,6 @@ type SetOpSpec struct {
 //   - replace - old value is replaced with new.
 //   - merge - merge is attempted by applying new value on top of old one.
 type SetStrategy string
-
-// SourceOfData Describes how to source the data locally.
-type SourceOfData struct {
-	// File Data are read from the file on a local filesystem
-	File *ValOrRef `json:"file,omitempty" yaml:"file,omitempty"`
-
-	// Tree Data is taken from the global data tree at a given path
-	Tree *ValOrRef `json:"tree,omitempty" yaml:"tree,omitempty"`
-}
 
 // StoreResultTo Path to location within the data, where result of operation is store upon success
 type StoreResultTo = *ValOrRef

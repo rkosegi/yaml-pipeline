@@ -313,6 +313,19 @@
         "to"
       ]
     },
+    "httpBodyFrom": {
+      "description": "Describes how to source the data locally.",
+      "properties": {
+        "file": {
+          "$ref": "#/$defs/valOrRef",
+          "description": "Data are read from the file on a local filesystem"
+        },
+        "tree": {
+          "$ref": "#/$defs/valOrRef",
+          "description": "Data is taken from the global data tree at a given path"
+        }
+      }
+    },
     "httpHeaders": {
       "additionalProperties": {
         "items": {
@@ -340,7 +353,7 @@
       "description": "Performs a simple HTTP request.\nFor more advanced HTTP operations, one can use ExecOp with curl.\nIn particular, request/response bodies are handled fully in memory, which make this unsuitable for huge data.",
       "properties": {
         "bodyFrom": {
-          "$ref": "#/$defs/sourceOfData",
+          "$ref": "#/$defs/httpBodyFrom",
           "description": "Where to get request body from"
         },
         "encodeAs": {
@@ -1011,19 +1024,6 @@
         "merge"
       ],
       "type": "string"
-    },
-    "sourceOfData": {
-      "description": "Describes how to source the data locally.",
-      "properties": {
-        "file": {
-          "description": "Data are read from the file on a local filesystem",
-          "type": "string"
-        },
-        "tree": {
-          "description": "Data is taken from the global data tree at a given path",
-          "type": "string"
-        }
-      }
     },
     "storeResultTo": {
       "description": "Path to location within the data, where result of operation is store upon success",
