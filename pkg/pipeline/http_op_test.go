@@ -37,6 +37,14 @@ func (failingRoundTripper) RoundTrip(*http.Request) (*http.Response, error) {
 	return nil, errors.New("transport failed")
 }
 
+type mockRoundTripper struct {
+	resp *http.Response
+}
+
+func (m *mockRoundTripper) RoundTrip(*http.Request) (*http.Response, error) {
+	return m.resp, nil
+}
+
 func TestExecuteHttpOp(t *testing.T) {
 	var (
 		is HttpOpSpec
@@ -46,7 +54,7 @@ func TestExecuteHttpOp(t *testing.T) {
 	s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodOptions:
-			w.WriteHeader(http.StatusInternalServerError)
+			w.WriteHeader(http.StatusOK)
 			return
 		case http.MethodPost:
 			{
@@ -89,6 +97,15 @@ func TestExecuteHttpOp(t *testing.T) {
 			Url:    s.URL,
 		}
 		httpRp = &failingRoundTripper{}
+		defer func() { httpRp = http.DefaultTransport }()
+		assert.Error(t, New().Execute(&is))
+	})
+	t.Run("GET with failing read", func(t *testing.T) {
+		is = HttpOpSpec{
+			Method: HttpMethodGET,
+			Url:    s.URL,
+		}
+		httpRp = &mockRoundTripper{resp: &http.Response{StatusCode: 200, Body: io.NopCloser(common.FailingReader())}}
 		defer func() { httpRp = http.DefaultTransport }()
 		assert.Error(t, New().Execute(&is))
 	})
