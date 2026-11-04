@@ -36,7 +36,7 @@ import (
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	"github.com/xlab/treeprint"
-	"gopkg.in/yaml.v3"
+	"go.yaml.in/yaml/v4"
 )
 
 var pp = props.PathCodec().Parser()

@@ -22,7 +22,7 @@ import (
 	"strings"
 
 	"github.com/rkosegi/yaml-toolkit/dom"
-	"gopkg.in/yaml.v3"
+	"go.yaml.in/yaml/v4"
 )
 
 func (ts *TemplateOpSpec) String() string {

@@ -28,13 +28,13 @@ require (
 	github.com/kaptinlin/jsonschema v0.9.10
 	github.com/otiai10/copy v1.14.1
 	github.com/rkosegi/slog-config v0.0.1
-	github.com/rkosegi/yaml-toolkit v1.0.69
+	github.com/rkosegi/yaml-toolkit v1.0.70-0.20261104090139-8bd6ee9516f4
 	github.com/samber/lo v1.53.0
 	github.com/spf13/cobra v1.10.2
 	github.com/stretchr/testify v1.12.1
 	github.com/xlab/treeprint v1.2.0
+	go.yaml.in/yaml/v4 v4.0.0-rc.6
 	golang.org/x/net v0.62.0
-	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
@@ -52,7 +52,7 @@ require (
 	github.com/huandu/xstrings v1.5.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/kaptinlin/jsonpointer v0.4.28 // indirect
-	github.com/magiconair/properties v1.8.10 // indirect
+	github.com/magiconair/properties v1.18.12 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/oapi-codegen/oapi-codegen/v2 v2.8.1-0.20260717141412-a3b45fcdf451 // indirect
@@ -76,4 +76,5 @@ require (
 	golang.org/x/sys v0.49.0 // indirect
 	golang.org/x/text v0.43.0 // indirect
 	golang.org/x/tools v0.51.0 // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
