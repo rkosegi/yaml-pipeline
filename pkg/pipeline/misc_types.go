@@ -30,7 +30,7 @@ import (
 	"github.com/rkosegi/yaml-toolkit/dom"
 	"github.com/rkosegi/yaml-toolkit/fluent"
 	"github.com/rkosegi/yaml-toolkit/path"
-	"gopkg.in/yaml.v3"
+	"go.yaml.in/yaml/v4"
 )
 
 var (
