@@ -21,7 +21,9 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"mime/multipart"
 	"os"
+	"path/filepath"
 	"strings"
 
 	te "github.com/rkosegi/yaml-pipeline/pkg/pipeline/template_engine"
@@ -231,6 +233,17 @@ func encodeStringLikeNode(node dom.Node) ([]byte, error) {
 	}
 }
 
+func (ed EncodeDataAs) ContentType() string {
+	switch ed {
+	case EncodeDataAsJson:
+		return "application/json; charset=utf-8"
+	case EncodeDataAsYaml:
+		return "application/yaml; charset=utf-8"
+	default:
+		return "application/octet-stream; charset=utf-8"
+	}
+}
+
 func (ed EncodeDataAs) Encode(node dom.Node) ([]byte, error) {
 	if node == nil {
 		return nil, nil
@@ -252,6 +265,28 @@ func (ed EncodeDataAs) Encode(node dom.Node) ([]byte, error) {
 	default:
 		return nil, fmt.Errorf("unknown encode type '%v'", ed)
 	}
+}
+
+func (s *HttpBodyFrom) AddToMultipartForm(ctx ActionContext, name string, w *multipart.Writer) error {
+	if s.Tree != nil {
+		return w.WriteField(name, s.Tree.Resolve(ctx))
+	} else if s.File != nil {
+		fname := s.File.Resolve(ctx)
+		file, err := os.Open(fname)
+		if err != nil {
+			return err
+		}
+		defer func(file *os.File) {
+			_ = file.Close()
+		}(file)
+		fw, err := w.CreateFormFile(name, filepath.Base(fname))
+		if err != nil {
+			return err
+		}
+		_, err = io.Copy(fw, file)
+		return err
+	}
+	return nil
 }
 
 func (s *HttpBodyFrom) Resolve(ctx ActionContext) (dom.Leaf, error) {

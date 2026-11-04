@@ -63,6 +63,8 @@ actions:
       properties:
         storeTo:
           x-go-type: ValOrRef
+  - target: $.components.schemas.httpOpSpec.allOf
+    remove: true
   - target: $.components.schemas.osFileMode
     update:
       x-go-type: os.FileMode

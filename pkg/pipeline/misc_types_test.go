@@ -18,11 +18,13 @@ package pipeline
 
 import (
 	"bytes"
+	"mime/multipart"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 
+	"github.com/rkosegi/yaml-toolkit/common"
 	"github.com/rkosegi/yaml-toolkit/dom"
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/yaml.v3"
@@ -123,6 +125,16 @@ func TestHttpBodyFrom(t *testing.T) {
 		_, err = sd.Resolve(ac)
 		assert.Error(t, err)
 	})
+	t.Run("AddToMultipartForm", func(t *testing.T) {
+		fpath := filepath.Join(t.TempDir(), "file.txt")
+		assert.NoError(t, os.WriteFile(fpath, []byte("123XYZ"), 0640))
+		mw := multipart.NewWriter(common.FailingWriter())
+		sd = &HttpBodyFrom{
+			File: &ValOrRef{Val: fpath},
+		}
+		assert.Error(t, sd.AddToMultipartForm(ac, "file", mw))
+
+	})
 }
 
 func TestEncodeDataAs(t *testing.T) {
@@ -148,6 +160,7 @@ func TestEncodeDataAs(t *testing.T) {
 			data, err = EncodeDataAsJson.Encode(gd.Get(pp.MustParse("test")))
 			assert.NoError(t, err)
 			assert.Equal(t, `"abc"`+"\n", string(data))
+			assert.Contains(t, EncodeDataAsJson.ContentType(), "json")
 		})
 		t.Run("leaf - float", func(t *testing.T) {
 			data, err = EncodeDataAsJson.Encode(gd.Get(pp.MustParse("test3")))
@@ -160,6 +173,7 @@ func TestEncodeDataAs(t *testing.T) {
 			data, err = EncodeDataAsYaml.Encode(gd.Get(pp.MustParse("test")))
 			assert.NoError(t, err)
 			assert.Equal(t, "abc\n", string(data))
+			assert.Contains(t, EncodeDataAsYaml.ContentType(), "yaml")
 		})
 	})
 	t.Run("binary", func(t *testing.T) {
