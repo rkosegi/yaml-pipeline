@@ -165,7 +165,7 @@ func TestTemplateEngineRenderToYaml(t *testing.T) {
 		"y": 25,
 	})
 	assert.NoError(t, err)
-	assert.Equal(t, "x:\n  z: abc\n'y': 25", out)
+	assert.Equal(t, "x:\n  z: abc\n\"y\": 25", out)
 }
 
 func TestTemplateFuncIsEmpty(t *testing.T) {
