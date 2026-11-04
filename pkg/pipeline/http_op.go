@@ -20,6 +20,8 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"maps"
+	"mime/multipart"
 	"net/http"
 	"os"
 	"slices"
@@ -55,12 +57,14 @@ func (h *HttpOpSpec) Do(ctx ActionContext) (err error) {
 		req     *http.Request
 		reqBody io.Reader = nil
 	)
-	if reqBody, err = h.getReqBodyReader(ctx); err != nil {
+	var ct string
+	if reqBody, ct, err = h.getReqBodyReader(ctx); err != nil {
 		return err
 	}
 	if req, err = http.NewRequestWithContext(ctx.Context(), method, u, reqBody); err != nil {
 		return err
 	}
+	req.Header.Set("content-type", ct)
 	if h.Headers != nil {
 		for k, vals := range *h.Headers {
 			for _, v := range vals {
@@ -82,26 +86,53 @@ func (h *HttpOpSpec) Do(ctx ActionContext) (err error) {
 	return h.processResponse(ctx, resp)
 }
 
-func (h *HttpOpSpec) getReqBodyReader(ctx ActionContext) (io.Reader, error) {
+func (h *HttpOpSpec) getFormReader(ctx ActionContext) (io.Reader, string, error) {
+	body := &bytes.Buffer{}
+	w := multipart.NewWriter(body)
+	defer func(writer *multipart.Writer) {
+		_ = writer.Close()
+	}(w)
+
+	for _, k := range slices.Sorted(maps.Keys(*h.Form)) {
+		hf := (*h.Form)[k]
+		if err := hf.AddToMultipartForm(ctx, k, w); err != nil {
+			return nil, "", err
+		}
+	}
+
+	return body, w.FormDataContentType(), nil
+}
+
+func (h *HttpOpSpec) getReqBodyFromReader(ctx ActionContext) (io.Reader, string, error) {
+	var err error
+	if h.EncodeAs == nil {
+		h.EncodeAs = new(EncodeDataAsBinary)
+	}
+	var node dom.Leaf
+	if node, err = h.BodyFrom.Resolve(ctx); err != nil {
+		return nil, h.EncodeAs.ContentType(), err
+	}
+	var data []byte
+	if data, err = h.EncodeAs.Encode(node); err != nil {
+		return nil, h.EncodeAs.ContentType(), err
+	}
+	return bytes.NewReader(data), h.EncodeAs.ContentType(), nil
+}
+
+func (h *HttpOpSpec) getReqBodyReader(ctx ActionContext) (io.Reader, string, error) {
 	var (
 		reqBody io.Reader = nil
 		err     error
 	)
-	if h.BodyFrom != nil && h.canHaveReqBody(h.Method) {
-		if h.EncodeAs == nil {
-			h.EncodeAs = new(EncodeDataAsBinary)
+	ct := "application/octet-stream"
+	if h.canHaveReqBody(h.Method) {
+		if h.BodyFrom != nil {
+			return h.getReqBodyFromReader(ctx)
+		} else if h.Form != nil {
+			return h.getFormReader(ctx)
 		}
-		var node dom.Leaf
-		if node, err = h.BodyFrom.Resolve(ctx); err != nil {
-			return nil, err
-		}
-		var data []byte
-		if data, err = h.EncodeAs.Encode(node); err != nil {
-			return nil, err
-		}
-		reqBody = bytes.NewReader(data)
 	}
-	return reqBody, err
+	return reqBody, ct, err
 }
 
 func (h *HttpOpSpec) processResponse(ctx ActionContext, resp *http.Response) (err error) {

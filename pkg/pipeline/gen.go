@@ -258,6 +258,10 @@ type HttpBodyFrom struct {
 	Tree *ValOrRef `json:"tree,omitempty" yaml:"tree,omitempty"`
 }
 
+// HttpForm Multipart form submitted as a HTTP POST request body.
+// Each key is name of form field. Form is mutually exclusive with bodyFrom
+type HttpForm map[string]HttpBodyFrom
+
 // HttpHeaders HTTP headers container
 type HttpHeaders map[string][]string
 
@@ -275,6 +279,10 @@ type HttpOpSpec struct {
 	//  * binary - content of dom.Leaf, which must be either string or []byte will be used as-is
 	//  * json/yaml - dom.Node will be encoded using respective codec
 	EncodeAs *EncodeDataAs `json:"encodeAs,omitempty" yaml:"encodeAs,omitempty"`
+
+	// Form Multipart form submitted as a HTTP POST request body.
+	// Each key is name of form field. Form is mutually exclusive with bodyFrom
+	Form *HttpForm `json:"form,omitempty" yaml:"form,omitempty"`
 
 	// Headers HTTP headers container
 	Headers *HttpHeaders `json:"headers,omitempty" yaml:"headers,omitempty"`

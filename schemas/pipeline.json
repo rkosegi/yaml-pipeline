@@ -326,6 +326,12 @@
         }
       }
     },
+    "httpForm": {
+      "additionalProperties": {
+        "$ref": "#/$defs/httpBodyFrom"
+      },
+      "description": "Multipart form submitted as a HTTP POST request body.\nEach key is name of form field. Form is mutually exclusive with bodyFrom"
+    },
     "httpHeaders": {
       "additionalProperties": {
         "items": {
@@ -350,6 +356,22 @@
       "type": "string"
     },
     "httpOpSpec": {
+      "allOf": [
+        {
+          "if": {
+            "required": [
+              "form"
+            ]
+          },
+          "then": {
+            "not": {
+              "required": [
+                "bodyFrom"
+              ]
+            }
+          }
+        }
+      ],
       "description": "Performs a simple HTTP request.\nFor more advanced HTTP operations, one can use ExecOp with curl.\nIn particular, request/response bodies are handled fully in memory, which make this unsuitable for huge data.",
       "properties": {
         "bodyFrom": {
@@ -359,6 +381,9 @@
         "encodeAs": {
           "$ref": "#/$defs/encodeDataAs",
           "description": "How to encode request body taken from global data tree before sending"
+        },
+        "form": {
+          "$ref": "#/$defs/httpForm"
         },
         "headers": {
           "$ref": "#/$defs/httpHeaders",

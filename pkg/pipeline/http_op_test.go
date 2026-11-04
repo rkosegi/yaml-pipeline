@@ -137,6 +137,28 @@ func TestExecuteHttpOp(t *testing.T) {
 			assert.NoError(t, err)
 			assert.NotNil(t, data)
 		})
+		t.Run("multipart form", func(t *testing.T) {
+			gd.Set(pp.MustParse("vars.desc"), dom.LeafNode("this is desc"))
+			fpath := filepath.Join(t.TempDir(), "file.txt")
+			is.BodyFrom = nil
+			defer func() { is.Form = nil }()
+			is.Form = &HttpForm{
+				"description": HttpBodyFrom{Tree: &ValOrRef{Val: "{{ .vars.desc }}"}},
+				"file":        HttpBodyFrom{File: &ValOrRef{Val: fpath}},
+			}
+			t.Run("valid", func(t *testing.T) {
+				assert.NoError(t, os.WriteFile(fpath, []byte("test"), 0644))
+				assert.NoError(t, New(WithData(gd)).Execute(&is))
+			})
+			t.Run("valid neither file nor tree", func(t *testing.T) {
+				(*is.Form)["xyz"] = HttpBodyFrom{}
+				assert.NoError(t, New(WithData(gd)).Execute(&is))
+			})
+			t.Run("invalid file", func(t *testing.T) {
+				(*is.Form)["file"] = HttpBodyFrom{File: &ValOrRef{Val: "/this/does/not/exists"}}
+				assert.Error(t, New(WithData(gd)).Execute(&is))
+			})
+		})
 		t.Run("bodyFrom, but incomplete config", func(t *testing.T) {
 			is.BodyFrom = &HttpBodyFrom{}
 			defer func() { is.BodyFrom = nil }()
