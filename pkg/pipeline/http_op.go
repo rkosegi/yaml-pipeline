@@ -128,7 +128,9 @@ func (h *HttpOpSpec) getReqBodyReader(ctx ActionContext) (io.Reader, string, err
 	if h.canHaveReqBody(h.Method) {
 		if h.BodyFrom != nil {
 			return h.getReqBodyFromReader(ctx)
-		} else if h.Form != nil {
+		}
+		if h.Form != nil {
+			h.Method = HttpMethodPOST
 			return h.getFormReader(ctx)
 		}
 	}
@@ -162,7 +164,8 @@ func (h *HttpOpSpec) processResponse(ctx ActionContext, resp *http.Response) (er
 			o.AddValue("status", dom.LeafNode(resp.StatusCode))
 			o.AddValue("body", node)
 			o.AddValue("headers", httpHeaders2Dom(resp.Header))
-			ctx.Logger().Log(fmt.Sprintf("setting result data of %v at %v", node.Desc(), p))
+			ctx.Logger().Log(fmt.Sprintf("setting result data of type '%v' to '%v'",
+				node.Desc(), p))
 			ctx.Data().Set(pp.MustParse(p), o)
 		}
 		if h.WriteTo != nil {

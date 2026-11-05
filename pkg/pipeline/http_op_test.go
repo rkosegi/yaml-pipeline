@@ -143,19 +143,20 @@ func TestExecuteHttpOp(t *testing.T) {
 			is.BodyFrom = nil
 			defer func() { is.Form = nil }()
 			is.Form = &HttpForm{
-				"description": HttpBodyFrom{Tree: &ValOrRef{Val: "{{ .vars.desc }}"}},
-				"file":        HttpBodyFrom{File: &ValOrRef{Val: fpath}},
+				"description": HttpFormField{Tree: &ValOrRef{Val: "{{ .vars.desc }}"}},
+				"file":        HttpFormField{File: &ValOrRef{Val: fpath}},
 			}
 			t.Run("valid", func(t *testing.T) {
+				(*is.Form)["file"] = HttpFormField{File: &ValOrRef{Val: fpath}, Filename: &fpath}
 				assert.NoError(t, os.WriteFile(fpath, []byte("test"), 0644))
 				assert.NoError(t, New(WithData(gd)).Execute(&is))
 			})
 			t.Run("valid neither file nor tree", func(t *testing.T) {
-				(*is.Form)["xyz"] = HttpBodyFrom{}
+				(*is.Form)["xyz"] = HttpFormField{}
 				assert.NoError(t, New(WithData(gd)).Execute(&is))
 			})
 			t.Run("invalid file", func(t *testing.T) {
-				(*is.Form)["file"] = HttpBodyFrom{File: &ValOrRef{Val: "/this/does/not/exists"}}
+				(*is.Form)["file"] = HttpFormField{File: &ValOrRef{Val: "/this/does/not/exists"}}
 				assert.Error(t, New(WithData(gd)).Execute(&is))
 			})
 		})

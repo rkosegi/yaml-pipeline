@@ -125,11 +125,20 @@ func TestHttpBodyFrom(t *testing.T) {
 		_, err = sd.Resolve(ac)
 		assert.Error(t, err)
 	})
+}
+
+func TestHttpFormField(t *testing.T) {
+	var (
+		sd *HttpFormField
+	)
+	gd := dom.ContainerNode().AddValue("test", dom.LeafNode("abc"))
+	ac := newMockActBuilder().data(gd).build()
+
 	t.Run("AddToMultipartForm", func(t *testing.T) {
 		fpath := filepath.Join(t.TempDir(), "file.txt")
 		assert.NoError(t, os.WriteFile(fpath, []byte("123XYZ"), 0640))
 		mw := multipart.NewWriter(common.FailingWriter())
-		sd = &HttpBodyFrom{
+		sd = &HttpFormField{
 			File: &ValOrRef{Val: fpath},
 		}
 		assert.Error(t, sd.AddToMultipartForm(ac, "file", mw))

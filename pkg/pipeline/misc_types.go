@@ -267,26 +267,55 @@ func (ed EncodeDataAs) Encode(node dom.Node) ([]byte, error) {
 	}
 }
 
-func (s *HttpBodyFrom) AddToMultipartForm(ctx ActionContext, name string, w *multipart.Writer) error {
+func (s *HttpFormField) getReader(ctx ActionContext) (io.ReadCloser, error) {
+	var (
+		value string
+		fname string
+		r     io.ReadCloser
+		err   error
+	)
+
 	if s.Tree != nil {
-		return w.WriteField(name, s.Tree.Resolve(ctx))
+		value = s.Tree.Resolve(ctx)
+		r = io.NopCloser(bytes.NewBufferString(value))
 	} else if s.File != nil {
-		fname := s.File.Resolve(ctx)
-		file, err := os.Open(fname)
+		fname = s.File.Resolve(ctx)
+		r, err = os.Open(fname)
 		if err != nil {
-			return err
+			return nil, err
 		}
-		defer func(file *os.File) {
-			_ = file.Close()
-		}(file)
-		fw, err := w.CreateFormFile(name, filepath.Base(fname))
-		if err != nil {
-			return err
-		}
-		_, err = io.Copy(fw, file)
+	} else {
+		return nil, nil
+	}
+	return r, nil
+}
+
+func (s *HttpFormField) getWriter(ctx ActionContext, name string, w *multipart.Writer) (io.Writer, error) {
+	if s.Filename == nil {
+		return w.CreateFormField(name)
+	}
+	return w.CreateFormFile(name, filepath.Base(ctx.TemplateEngine().RenderLenient(*s.Filename, ctx.Snapshot())))
+}
+
+func (s *HttpFormField) AddToMultipartForm(ctx ActionContext, name string, w *multipart.Writer) error {
+	var (
+		fw  io.Writer
+		r   io.ReadCloser
+		err error
+	)
+	if r, err = s.getReader(ctx); err != nil || r == nil {
 		return err
 	}
-	return nil
+	defer func(f io.Closer) {
+		_ = f.Close()
+	}(r)
+
+	fw, err = s.getWriter(ctx, name, w)
+
+	if fw != nil {
+		_, err = io.Copy(fw, r)
+	}
+	return err
 }
 
 func (s *HttpBodyFrom) Resolve(ctx ActionContext) (dom.Leaf, error) {
