@@ -328,9 +328,24 @@
     },
     "httpForm": {
       "additionalProperties": {
-        "$ref": "#/$defs/httpBodyFrom"
+        "$ref": "#/$defs/httpFormField"
       },
       "description": "Multipart form submitted as a HTTP POST request body.\nEach key is name of form field. Form is mutually exclusive with bodyFrom"
+    },
+    "httpFormField": {
+      "allOf": [
+        {
+          "properties": {
+            "filename": {
+              "description": "When set, then field is considered to be file",
+              "type": "string"
+            }
+          }
+        },
+        {
+          "$ref": "#/$defs/httpBodyFrom"
+        }
+      ]
     },
     "httpHeaders": {
       "additionalProperties": {
@@ -360,13 +375,17 @@
         {
           "if": {
             "required": [
-              "form"
+              "form",
+              "method",
+              "url"
             ]
           },
           "then": {
             "not": {
               "required": [
-                "bodyFrom"
+                "bodyFrom",
+                "method",
+                "url"
               ]
             }
           }
