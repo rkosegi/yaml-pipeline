@@ -57,11 +57,36 @@ func (s ActionSpec) Do(ctx ActionContext) error {
 				return nil
 			}
 		}
-		if err := ctx.Executor().ExecuteContext(ctx.Context(), a); err != nil {
-			if s.shouldPropagateError() {
-				return err
-			}
-			return nil
+		if err := s.execute(ctx, a); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (s ActionSpec) execute(ctx ActionContext, act Action) error {
+	if s.Lifecycle == nil {
+		s.Lifecycle = &ActionLifecycle{}
+	}
+	if s.Lifecycle.OnComplete != nil {
+		defer func() {
+			_ = ctx.Executor().ExecuteContext(ctx.Context(), s.Lifecycle.OnComplete)
+		}()
+	}
+
+	if err := ctx.Executor().ExecuteContext(ctx.Context(), act); err != nil {
+		if s.Lifecycle.OnFailure != nil {
+			defer func() {
+				_ = ctx.Executor().ExecuteContext(ctx.Context(), s.Lifecycle.OnFailure)
+			}()
+		}
+		if s.shouldPropagateError() {
+			return err
+		}
+		return nil
+	} else {
+		if s.Lifecycle.OnSuccess != nil {
+			_ = ctx.Executor().ExecuteContext(ctx.Context(), s.Lifecycle.OnSuccess)
 		}
 	}
 	return nil

@@ -82,11 +82,21 @@ type AbortOpSpec struct {
 	Message string `json:"message" yaml:"message"`
 }
 
+// ActionLifecycle Customizes behaviour of action's lifecycle
+type ActionLifecycle struct {
+	OnComplete *ActionSpec `json:"onComplete,omitempty" yaml:"onComplete,omitempty"`
+	OnFailure  *ActionSpec `json:"onFailure,omitempty" yaml:"onFailure,omitempty"`
+	OnSuccess  *ActionSpec `json:"onSuccess,omitempty" yaml:"onSuccess,omitempty"`
+}
+
 // ActionMeta defines model for actionMeta.
 type ActionMeta struct {
 	// ErrorPropagation ErrorPropagation configure behavior of error propagation.
 	//  * ignore - error is silently ignored
 	ErrorPropagation *ErrorPropagationPolicy `json:"errorPropagation,omitempty" yaml:"errorPropagation,omitempty"`
+
+	// Lifecycle Customizes behaviour of action's lifecycle
+	Lifecycle *ActionLifecycle `json:"lifecycle,omitempty" yaml:"lifecycle,omitempty"`
 
 	// Name Name of this step, should be unique within the current scope
 	Name *string `json:"name,omitempty" yaml:"name,omitempty"`
