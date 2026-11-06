@@ -19,6 +19,7 @@ package pipeline
 import (
 	"testing"
 
+	"github.com/rkosegi/yaml-toolkit/dom"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -42,4 +43,64 @@ func TestActionSpecShouldPropagateError(t *testing.T) {
 		},
 	}
 	assert.NoError(t, as.Do(newMockActBuilder().build()))
+}
+
+func TestActionSpecLifecycle(t *testing.T) {
+	var (
+		as *ActionSpec
+		gd dom.ContainerBuilder
+	)
+
+	t.Run("success", func(t *testing.T) {
+		gd = dom.ContainerNode()
+		gd.AddValue("success", dom.LeafNode("no"))
+		as = &ActionSpec{
+			Lifecycle: &ActionLifecycle{
+				OnSuccess: &ActionSpec{
+					Operations: OpSpec{
+						Set: &SetOpSpec{
+							Data: map[string]any{
+								"success": "yes",
+							},
+						},
+					},
+				},
+			},
+		}
+		assert.NoError(t, as.Do(newMockActBuilder().data(gd).build()))
+		assert.Equal(t, "yes", gd.Get(pp.MustParse("success")).AsLeaf().Value())
+	})
+	t.Run("failure", func(t *testing.T) {
+		gd = dom.ContainerNode()
+		gd.AddValue("failure", dom.LeafNode("no"))
+		gd.AddValue("complete", dom.LeafNode("no"))
+		as = &ActionSpec{
+			Operations: OpSpec{
+				Abort: &AbortOpSpec{Message: "abort"},
+			},
+			Lifecycle: &ActionLifecycle{
+				OnComplete: &ActionSpec{
+					Operations: OpSpec{
+						Set: &SetOpSpec{
+							Data: map[string]any{
+								"complete": "yes",
+							},
+						},
+					},
+				},
+				OnFailure: &ActionSpec{
+					Operations: OpSpec{
+						Set: &SetOpSpec{
+							Data: map[string]any{
+								"failure": "yes",
+							},
+						},
+					},
+				},
+			},
+		}
+		assert.Error(t, as.Do(newMockActBuilder().data(gd).build()))
+		assert.Equal(t, "yes", gd.Get(pp.MustParse("failure")).AsLeaf().Value())
+		assert.Equal(t, "yes", gd.Get(pp.MustParse("complete")).AsLeaf().Value())
+	})
 }

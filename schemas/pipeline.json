@@ -33,11 +33,31 @@
       "type": "object",
       "x-doc-gen": "ops"
     },
+    "actionLifecycle": {
+      "description": "Customizes behaviour of action's lifecycle",
+      "properties": {
+        "onComplete": {
+          "$ref": "#/$defs/actionSpec",
+          "description": "Action to perform upon completion, regardless of result"
+        },
+        "onFailure": {
+          "$ref": "#/$defs/actionSpec",
+          "description": "Action to perform in case of the failure"
+        },
+        "onSuccess": {
+          "$ref": "#/$defs/actionSpec",
+          "description": "Action to perform in case of the success"
+        }
+      }
+    },
     "actionMeta": {
       "properties": {
         "errorPropagation": {
           "$ref": "#/$defs/errorPropagationPolicy",
           "description": "ErrorPropagation configure behavior of error propagation. By default, error is propagated to caller."
+        },
+        "lifecycle": {
+          "$ref": "#/$defs/actionLifecycle"
         },
         "name": {
           "description": "Name of this step, should be unique within the current scope",
