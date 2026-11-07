@@ -32,6 +32,9 @@ permissions:
 
 jobs:
   ci:
+    permissions:
+      pull-requests: write
+      contents: write
     runs-on: ubuntu-latest
     steps:
       - name: Harden the runner (Audit all outbound calls)
@@ -77,3 +80,23 @@ jobs:
           distribution: goreleaser
           version: latest
           args: build --snapshot --clean --single-target
+
+      - name: Set up Virtual Environment
+        run: |
+          python3 -m venv .venv
+          echo "$GITHUB_WORKSPACE/.venv/bin" >> $GITHUB_PATH
+
+      - name: Prepare environment for robotframework execution
+        run: make prepare
+
+      - name: Run system tests
+        run: |
+          python3 -m robot --outputdir reports/ systemtests/*-suite.robot
+
+      - name: Generate Status Checks & Reports
+        uses: joonvena/robotframework-reporter-action@229b6d4248b20be6e54f4fc32c7414130d1bf200 # v2.5
+        if: always()
+        with:
+          gh_access_token: ${{ secrets.GITHUB_TOKEN }}
+          report_path: reports
+          summary: 'true'

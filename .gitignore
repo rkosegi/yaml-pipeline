@@ -1,5 +1,7 @@
 .idea
 .run
+.venv
+.cache
 .private
 coverage.out
 dist
