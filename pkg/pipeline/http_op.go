@@ -166,6 +166,7 @@ func (h *HttpOpSpec) processResponse(ctx ActionContext, resp *http.Response) (er
 			o.AddValue("headers", httpHeaders2Dom(resp.Header))
 			ctx.Logger().Log(fmt.Sprintf("setting result data of type '%v' to '%v'",
 				node.Desc(), p))
+			defer ctx.InvalidateSnapshot()
 			ctx.Data().Set(pp.MustParse(p), o)
 		}
 		if h.WriteTo != nil {
