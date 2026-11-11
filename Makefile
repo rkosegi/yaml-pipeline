@@ -31,6 +31,9 @@ build:
 build-all:
 	goreleaser build --snapshot --clean
 
+install:
+	cp dist/yp_linux_amd64_v1/yp ~/bin/
+
 release:
 	goreleaser release --clean
 

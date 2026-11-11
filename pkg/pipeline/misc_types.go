@@ -46,6 +46,25 @@ var (
 	nosd = &StreamDestination{}
 )
 
+type ExecError struct {
+	origErr error
+	err     error
+}
+
+func NewExecError(err error, path string) *ExecError {
+	if _, ok := errors.AsType[*ExecError](err); ok {
+		return err.(*ExecError)
+	}
+	return &ExecError{
+		origErr: err,
+		err:     fmt.Errorf("exec error at path %s: %w", path, err),
+	}
+}
+
+func (e ExecError) Error() string {
+	return e.err.Error()
+}
+
 func errWithInfo(err error, info string) error {
 	return fmt.Errorf("%s: %w", info, err)
 }

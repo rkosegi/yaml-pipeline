@@ -20,6 +20,7 @@ import (
 	"context"
 	"fmt"
 	"slices"
+	"strings"
 
 	"github.com/emirpasic/gods/stacks/arraystack"
 	te "github.com/rkosegi/yaml-pipeline/pkg/pipeline/template_engine"
@@ -93,20 +94,28 @@ func (p *exec) ExecuteContext(ctx context.Context, act Action) (err error) {
 	p.cs.Push(act)
 	names := p.cs.Values()
 	slices.Reverse(names)
+	absPath := dom.ListNode(lo.Map(names, func(item any, _ int) dom.Node {
+		return dom.LeafNode(getActLocalName(item.(Action)))
+	})...)
+	absPathStr := strings.Join(lo.Map(names, func(item any, _ int) string {
+		return getActLocalName(item.(Action))
+	}), "/")
+
 	sysNode := dom.ContainerNode().
 		AddValue("LocalPath", dom.LeafNode(getActLocalName(act))).
-		AddValue("AbsolutePath", dom.ListNode(lo.Map(names, func(item any, _ int) dom.Node {
-			return dom.LeafNode(getActLocalName(item.(Action)))
-		})...))
+		AddValue("AbsolutePath", absPath)
 	ac.Data().AddValue("$$_System", sysNode)
 	defer ac.Data().Remove("$$_System")
 	err = act.Do(ac)
 	p.cs.Pop()
 	p.l.OnAfter(ac, err)
-	return err
+	if err != nil {
+		return NewExecError(err, absPathStr)
+	}
+	return nil
 }
 
-func (p *exec) Execute(act Action) (err error) {
+func (p *exec) Execute(act Action) error {
 	return p.ExecuteContext(context.Background(), act)
 }
 

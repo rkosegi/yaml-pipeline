@@ -60,7 +60,7 @@ func (s *simpleListener) OnAfter(ctx ytp.ActionContext, err error) {
 	s.ind -= 1
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "%s %s %v\n", errStyle.Render("[Error]"), s.indentStr(), ctx.Action())
-		panic(err)
+		return
 	}
 	fmt.Fprintf(os.Stderr, "%s %s %v\n", endOpStyle.Render("[Done ]"), s.indentStr(), ctx.Action())
 }

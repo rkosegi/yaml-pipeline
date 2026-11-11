@@ -47,6 +47,14 @@ func (s ActionSpec) shouldPropagateError() bool {
 }
 
 func (s ActionSpec) Do(ctx ActionContext) error {
+	if s.Lifecycle == nil {
+		s.Lifecycle = &ActionLifecycle{}
+	}
+	if s.Lifecycle.OnComplete != nil {
+		defer func() {
+			_ = ctx.Executor().ExecuteContext(ctx.Context(), s.Lifecycle.OnComplete)
+		}()
+	}
 	for _, a := range []Action{s.Operations, s.Children} {
 		if s.When != nil {
 			if ok, err := ctx.TemplateEngine().EvalBool(*s.When, ctx.Snapshot()); err != nil {
@@ -61,33 +69,28 @@ func (s ActionSpec) Do(ctx ActionContext) error {
 			return err
 		}
 	}
+	if s.Lifecycle.OnSuccess != nil {
+		_ = ctx.Executor().ExecuteContext(ctx.Context(), s.Lifecycle.OnSuccess)
+	}
 	return nil
 }
 
 func (s ActionSpec) execute(ctx ActionContext, act Action) error {
-	if s.Lifecycle == nil {
-		s.Lifecycle = &ActionLifecycle{}
-	}
-	if s.Lifecycle.OnComplete != nil {
+	var softError error
+	if s.Lifecycle.OnFailure != nil {
 		defer func() {
-			_ = ctx.Executor().ExecuteContext(ctx.Context(), s.Lifecycle.OnComplete)
+			if softError != nil {
+				_ = ctx.Executor().ExecuteContext(ctx.Context(), s.Lifecycle.OnFailure)
+			}
 		}()
 	}
-
 	if err := ctx.Executor().ExecuteContext(ctx.Context(), act); err != nil {
-		if s.Lifecycle.OnFailure != nil {
-			defer func() {
-				_ = ctx.Executor().ExecuteContext(ctx.Context(), s.Lifecycle.OnFailure)
-			}()
-		}
 		if s.shouldPropagateError() {
+			softError = err
 			return err
 		}
 		return nil
-	} else {
-		if s.Lifecycle.OnSuccess != nil {
-			_ = ctx.Executor().ExecuteContext(ctx.Context(), s.Lifecycle.OnSuccess)
-		}
 	}
+
 	return nil
 }

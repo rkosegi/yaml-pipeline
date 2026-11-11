@@ -17,11 +17,18 @@ limitations under the License.
 package main
 
 import (
+	"errors"
+	"os"
+
 	"github.com/rkosegi/yaml-pipeline/pkg/cli"
+	"github.com/rkosegi/yaml-pipeline/pkg/pipeline"
 )
 
 func main() {
 	if err := cli.New().Execute(); err != nil {
+		if _, ok := errors.AsType[*pipeline.ExecError](err); ok {
+			os.Exit(1)
+		}
 		panic(err)
 	}
 }
