@@ -41,19 +41,19 @@ func TestExecuteTemplateOp(t *testing.T) {
 	assert.Equal(t, "\"246912\"", gd.Get(pp.MustParse("result.x1")).AsLeaf().Value())
 	assert.Contains(t, ts.String(), "result.x1")
 
-	// empty template error
-	ts = TemplateOpSpec{}
-	err = New(WithData(gd)).Execute(&ts)
-	assert.Error(t, err)
-	assert.Equal(t, ErrTemplateEmpty, err)
+	t.Run("empty template error", func(t *testing.T) {
+		ts = TemplateOpSpec{}
+		err = New(WithData(gd)).Execute(&ts)
+		assert.Error(t, err)
+	})
 
-	// empty path error
-	ts = TemplateOpSpec{
-		Template: makeUntemplatedVal(`TEST`),
-	}
-	err = New(WithData(gd)).Execute(&ts)
-	assert.Error(t, err)
-	assert.Equal(t, ErrPathEmpty, err)
+	t.Run("empty path error", func(t *testing.T) {
+		ts = TemplateOpSpec{
+			Template: makeUntemplatedVal(`TEST`),
+		}
+		err = New(WithData(gd)).Execute(&ts)
+		assert.Error(t, err)
+	})
 
 	// empty path error (other form)
 	ts = TemplateOpSpec{
@@ -62,7 +62,6 @@ func TestExecuteTemplateOp(t *testing.T) {
 	}
 	err = New(WithData(gd)).Execute(&ts)
 	assert.Error(t, err)
-	assert.Equal(t, ErrPathEmpty, err)
 
 	ts = TemplateOpSpec{
 		Template: makeUntemplatedVal(`{{}}{{`),

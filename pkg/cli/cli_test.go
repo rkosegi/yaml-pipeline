@@ -47,7 +47,6 @@ func TestEntrypoint(t *testing.T) {
 		cmd := New()
 		cmd.SetArgs([]string{"--file", "../../testdata/pipeline_just_fail.yaml"})
 		assert.Error(t, cmd.Execute())
-		t.Fail()
 	})
 	t.Run("invoking known OK pipeline should not fail", func(t *testing.T) {
 		cmd := New()

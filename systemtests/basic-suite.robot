@@ -17,7 +17,9 @@
 *** Settings ***
 Documentation    Basic test suite
 
+Library          OperatingSystem
 Library          Process
+Library          String
 Resource         libraries/yp.resource
 
 Suite Setup      Setup
@@ -31,9 +33,7 @@ Print version
 
 Attempt To Run Non Existing Pipeline
     [Documentation]     Try to run pipeline from a file that don't exists.
-    Builtin.Run Keyword And Expect Error    2 != 0
-    ...    yp.Run CLI
-    ...    --file /this/does/not/exists
+    yp.Run CLI    --file /this/does/not/exists    2
 
 Run Simplest Pipeline Possible
     [Documentation]     Run a pipeline that just prints a message
@@ -41,13 +41,42 @@ Run Simplest Pipeline Possible
 
 Run Pipeline That Just Fail
     [Documentation]     Run a pipeline that purposely fail
-    Builtin.Run Keyword And Expect Error    2 != 0
-    ...    yp.Run CLI
-    ...    --file testdata/pipeline_just_fail.yaml
+    yp.Run CLI    --file testdata/pipeline_just_fail.yaml    1
+
+Verify failure event creates exports
+    [Documentation]     Run a pipeline that purposely fail and verify that lifecycle events are triggered
+    ${rand}    String.Generate Random String    8
+    ${dir}    Builtin.Catenate    SEPARATOR=/    ${TEMPDIR}    ${rand}
+    OperatingSystem.Create Directory    ${dir}
+    yp.Run CLI    --file testdata/pipeline-lifecycle-test.yaml --set vars.fail="true" --set vars.debugDir="${dir}"    1
+    ${fileCount}    OperatingSystem.Count Files In Directory    ${dir}    debug-success.yaml
+    Builtin.Should Be Equal    0    ${fileCount}    types=int
+    ${fileCount}    OperatingSystem.Count Files In Directory    ${dir}    debug-complete.yaml
+    Builtin.Should Be Equal    1    ${fileCount}    types=int
+    ${fileCount}    OperatingSystem.Count Files In Directory    ${dir}    debug-failure.yaml
+    Builtin.Should Be Equal    1    ${fileCount}    types=int
+    [Teardown]    OperatingSystem.Remove Directory    ${dir}    ${True}
+
+Verify success event creates exports
+    [Documentation]     Run a pipeline that purposely fail and verify that lifecycle events are triggered
+    ${rand}    String.Generate Random String    8
+    ${dir}    Builtin.Catenate    SEPARATOR=/    ${TEMPDIR}    ${rand}
+    OperatingSystem.Create Directory    ${dir}
+    yp.Run CLI
+    ...    --file testdata/pipeline-lifecycle-test.yaml --set vars.fail="false" --set vars.debugDir="${dir}"
+    ...    0
+    ${fileCount}    OperatingSystem.Count Files In Directory    ${dir}    debug-success.yaml
+    Builtin.Should Be Equal    1    ${fileCount}    types=int
+    ${fileCount}    OperatingSystem.Count Files In Directory    ${dir}    debug-complete.yaml
+    Builtin.Should Be Equal    1    ${fileCount}    types=int
+    ${fileCount}    OperatingSystem.Count Files In Directory    ${dir}    debug-failure.yaml
+    Builtin.Should Be Equal    0    ${fileCount}    types=int
+    [Teardown]    OperatingSystem.Remove Directory    ${dir}    ${True}
 
 
 *** Keywords ***
 Setup
     [Documentation]         Setup this suite
     Builtin.Log    Setting up suite
+    Builtin.Log Variables
     Process.Run Process    make

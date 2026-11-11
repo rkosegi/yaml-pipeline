@@ -20,11 +20,12 @@ Documentation    YP keywords
 
 *** Keywords ***
 Run CLI
-    [Documentation]     Run a CLI and expect exit code 0
-    [Arguments]    ${args}
-    ${result} =    Process.Run Process    ./dist/yp_linux_amd64_v1/yp ${args}
+    [Documentation]     Run a CLI and expect exit code
+    [Arguments]    ${args}    ${rc}=0
+    ${result} =    Process.Run Process    ./dist/yp_linux_amd64_v1/yp --color never ${args}
     ...    shell=True
     Builtin.Log    ${result.stdout}
     Builtin.Log    ${result.stderr}
-    Builtin.Should Be Equal    ${result.rc}    0    type=int
+    Builtin.Log    Exit code: ${result.rc}
+    Builtin.Should Be Equal    ${result.rc}    ${rc}    type=int
     RETURN    ${result}

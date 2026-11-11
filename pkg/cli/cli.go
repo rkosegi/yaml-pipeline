@@ -228,10 +228,18 @@ Explicit override using --set is processed afterwards, so it takes precedence.
 			return preRun(d)
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return run(cmd.Context(), d)
-		},
-		PostRun: func(cmd *cobra.Command, args []string) {
-			printStats(d)
+			defer func() {
+				printStats(d)
+			}()
+			if err := run(cmd.Context(), d); err != nil {
+				if execErr, ok := errors.AsType[*ytp.ExecError](err); ok {
+					cmd.SilenceUsage = true
+					cmd.SilenceErrors = true
+					fmt.Fprintln(os.Stderr, errStyle.Render(execErr))
+				}
+				return err
+			}
+			return nil
 		},
 	}
 	cmd.Flags().StringSliceVar(&d.outputOpts, "output-opt", d.outputOpts, "Output options. These are decoration-specific")

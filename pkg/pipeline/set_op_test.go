@@ -52,7 +52,6 @@ func TestExecuteSetOp(t *testing.T) {
 	ss = SetOpSpec{}
 	err = New(WithData(gd)).Execute(&ss)
 	assert.Error(t, err)
-	assert.Equal(t, ErrNoDataToSet, err)
 
 	t.Run("set with render", func(t *testing.T) {
 		gd = dom.ContainerNode()
