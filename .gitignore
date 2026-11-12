@@ -5,3 +5,4 @@
 .private
 coverage.out
 dist
+.robocop_cache
