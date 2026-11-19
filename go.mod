@@ -27,7 +27,7 @@ require (
 	github.com/inhies/go-bytesize v0.0.0-20220417184213-4913239db9cf
 	github.com/kaptinlin/jsonschema v0.9.10
 	github.com/otiai10/copy v1.14.1
-	github.com/rkosegi/slog-config v0.0.1
+	github.com/rkosegi/slog-config v0.0.2
 	github.com/rkosegi/yaml-toolkit v1.0.70-0.20261104090139-8bd6ee9516f4
 	github.com/samber/lo v1.53.0
 	github.com/spf13/cobra v1.10.2
@@ -59,13 +59,13 @@ require (
 	github.com/oasdiff/yaml v0.1.1 // indirect
 	github.com/oasdiff/yaml3 v0.0.14 // indirect
 	github.com/otiai10/mint v1.6.3 // indirect
-	github.com/prometheus/common v0.67.1 // indirect
+	github.com/prometheus/common v0.73.1 // indirect
 	github.com/santhosh-tekuri/jsonschema/v6 v6.0.3 // indirect
 	github.com/shopspring/decimal v1.4.0 // indirect
 	github.com/speakeasy-api/jsonpath v0.6.3 // indirect
 	github.com/speakeasy-api/openapi v1.24.0 // indirect
 	github.com/spf13/cast v1.10.0 // indirect
-	github.com/spf13/pflag v1.0.10 // indirect
+	github.com/spf13/pflag v1.1.0 // indirect
 	github.com/vmware-labs/yaml-jsonpath v0.3.2 // indirect
 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
 	github.com/yosida95/uritemplate/v3 v3.0.2 // indirect
