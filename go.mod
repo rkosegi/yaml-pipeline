@@ -28,7 +28,7 @@ require (
 	github.com/kaptinlin/jsonschema v0.9.10
 	github.com/otiai10/copy v1.14.1
 	github.com/rkosegi/slog-config v0.0.2
-	github.com/rkosegi/yaml-toolkit v1.0.70-0.20261104090139-8bd6ee9516f4
+	github.com/rkosegi/yaml-toolkit v1.0.70
 	github.com/samber/lo v1.53.0
 	github.com/spf13/cobra v1.10.2
 	github.com/stretchr/testify v1.12.1
@@ -52,7 +52,7 @@ require (
 	github.com/huandu/xstrings v1.5.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/kaptinlin/jsonpointer v0.4.28 // indirect
-	github.com/magiconair/properties v1.18.12 // indirect
+	github.com/magiconair/properties v1.18.13 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/oapi-codegen/oapi-codegen/v2 v2.8.1-0.20260717141412-a3b45fcdf451 // indirect
