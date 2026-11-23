@@ -21,4 +21,4 @@ permissions:
 
 jobs:
   dependency-review:
-    uses: rkosegi/github-workflows/.github/workflows/dependency-review.yaml@ca58d38c18190ae3989779acfb180769a6ce4411 # v0.0.4
+    uses: rkosegi/github-workflows/.github/workflows/dependency-review.yaml@9c2fa7903f12c13f9d0d391583de72f671bc8d9a # v0.0.13
